@@ -131,9 +131,10 @@ T0 分组（实现批次）：
 - 名称带 test 前缀但调用 72 次——疑似调试期遗留的高频用法，Ghidra 确认与 allocPacket 的差异后再定实现策略。
 
 ### 待提取项（依赖 _G.lua 快照/Ghidra）
-- NumericType_* 全部值（changeCurrency/getCurrency 族参数域）
-- tt* 提示类型位掩码全集（sendTipmsg 第三参）
-- property 属性 ID 全集（setIntProperty/getIntProperty 参数域）
+- ~~tt* 提示类型位掩码全集~~ ✅ 已确认（_G.lua）：ttTipmsgWindow=1 ttScreenCenter=2 ttDialog=4 ttHearsay=8 ttMessage=16 ttWarmTip=32 ttGmTip=64 ttChatWindow=128 ttScreenMarquee=256 ttScreenCenterDown=512 ttInvalidTmType=-1
+- ~~货币枚举~~ ✅ 双体系确认：**mt***（mtBindCoin=0, mtBindYuanbao=2, mtYuanbao=3, mtMoneyTypeCount=4）与 **qat***（qatMoney=6, qatBindMoney=5, qatBindYuanBao=7, qatYuanbao=15）——changeCurrency 族用哪套待 Ghidra 确认
+- **NumericType_***（Chips/GuildContrib/GuildFund/GodWeaponExp/ShenShouExp/Achieve 等）：**不在 _G.lua 快照**（比导出版本新的 C++ 注册枚举）→ 从 Ghidra 定位 lua_setglobal("NumericType_...") 注册点提取值（脚本已定位模式）
+- property 属性 ID 全集（setIntProperty/getIntProperty 参数域）：同上路径提取
 
 ## 六、变更流程
 
