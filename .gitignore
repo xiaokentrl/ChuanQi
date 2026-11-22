@@ -1,0 +1,7 @@
+# 运行时垃圾不入库
+scripterror.txt
+nohup.out
+boot.log
+*.log
+data/server/*/Debug/log/
+secrets-backup-本地备份勿提交.txt
