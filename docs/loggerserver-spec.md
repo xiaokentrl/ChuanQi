@@ -122,7 +122,29 @@ cmd=1 记录字段内容与 LCounter 布局逐一互证（见 §四）。
 - `ee cc 00 00 + 4B` 的归属（LogData 外层 or 前记录尾）：差 74 字节，对拍 diff 一轮定案
 - `cdcdcdcd` 恒定性：171 次全命中，可信度高
 
-## 五、编码前待办（更新）
+## 五、★ M1 对拍结论（2026-11-23，首个里程碑验收）（2026-11-23，首个里程碑验收）
+
+**方法**：同一 golden 字节流（546KB/837帧）分别喂原版 loggerserver（logreplay 工具）与 Go 版（replay 模式），比对入库结果。
+
+| 结果 | 原版 C++ | Go 版 |
+|---|---|---|
+| 帧解析 | 837 帧全收 | **837 帧全收，0 解析错误** |
+| economy 列映射 | txt 文件 ground truth | **逐字段吻合**（yb/-400/expenditure/zhanling onReqAddExp/…） |
+| counter 214 条 | 0 行落库 | 206 行成功 + 8 条 UTF-8 截断拒绝 |
+| online 3+117 行 | ✅ 直 INSERT | ✅ 直 INSERT |
+| **非 online 日志落库** | ❌ **全数丢失** | ✅ 正常落库 |
+
+**重大发现（原版缺陷）**：C++ Insert* 用 **LOAD DATA INFILE** 批量导入（先落 `d:/log_x_YYYYMMDDHH.txt` 行文件），
+MySQL 5.7 默认 `--secure-file-priv` 禁止该语句 → **原版生产环境非 online 日志全部静默丢失**
+（只有 cmd=9 online 走直 INSERT 幸存）。Go 版参数化 INSERT 修复此缺陷。
+
+**决策记录**：
+- Go 版不复刻 LOAD DATA 失败路径，直接参数化 INSERT（意图对齐而非缺陷对齐）
+- 8 条 counter 失败 = classfield 定宽 32B 截断中文字符产生非法 UTF-8——与原版 LOAD DATA 行为等价
+  （原版 txt 中同样含坏字节），保持等价；如需兜底可在 cstr() 清理无效 UTF-8 尾字节
+
+**M1 验收状态**：✅ 达成（原版功能等价 + 修复原版数据丢失缺陷 + 对拍闭环）
+
 
 1. **反编译 `PrecessData`**：确认包帧（长度前缀/CMD 位置/serverid 来源）
 2. **反编译 7 个 Insert\***：各表字段序与类型（对照 main.lua 的 INSERT 模板验证）
