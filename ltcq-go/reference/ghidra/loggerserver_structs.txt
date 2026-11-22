@@ -1,0 +1,98 @@
+== STRUCT DataPacketReader  (size=32, path=/DWARF/data_packet_reader.hpp)
+  +0  char *  mem_ptr_  [8]
+  +8  char *  end_ptr_  [8]
+  +16  char *  offset_  [8]
+  +24  char *  data_end_  [8]
+
+== STRUCT LChat  (size=1288, path=/DWARF/log_def.h)
+  +0  ActorId  actorid_  [4]
+  +4  char[64]  aid_  [64]
+  +68  char[32]  name_  [32]
+  +100  char[32]  ip_  [32]
+  +132  char[32]  pf_  [32]
+  +164  int32_t  type_  [4]
+  +168  char[64]  toaid_  [64]
+  +232  char[32]  toname_  [32]
+  +264  char[1024]  content_  [1024]
+
+== STRUCT LCounter  (size=556, path=/DWARF/log_def.h)
+  +0  ActorId  actorid_  [4]
+  +4  char[64]  aid_  [64]
+  +68  char[32]  user_level_  [32]
+  +100  char[32]  counter_  [32]
+  +132  char[32]  value_  [32]
+  +164  char[128]  extra_  [128]
+  +292  char[32]  kingdom_  [32]
+  +324  char[32]  phylum_  [32]
+  +356  char[32]  classfield_  [32]
+  +388  char[32]  family_  [32]
+  +420  char[128]  genus_  [128]
+  +548  bool  save_db_  [1]
+  +552  int32_t  flag_  [4]
+
+== STRUCT LDau  (size=324, path=/DWARF/log_def.h)
+  +0  char[64]  aid_  [64]
+  +64  char[32]  source_  [32]
+  +96  char[32]  affiliate_  [32]
+  +128  char[32]  creative_  [32]
+  +160  char[32]  family_  [32]
+  +192  char[32]  genus_  [32]
+  +224  char[32]  ip_  [32]
+  +256  char[32]  from_uid_  [32]
+  +288  char[32]  extra_  [32]
+  +320  int32_t  flag_  [4]
+
+== STRUCT LEconomy  (size=1384, path=/DWARF/log_def.h)
+  +0  ActorId  actorid_  [4]
+  +4  char[64]  aid_  [64]
+  +68  char[32]  currency_  [32]
+  +100  char[32]  amount_  [32]
+  +132  char[32]  value_  [32]
+  +164  char[32]  kingdom_  [32]
+  +196  char[32]  phylum_  [32]
+  +228  char[32]  classfield_  [32]
+  +260  char[32]  family_  [32]
+  +292  char[32]  genus_  [32]
+  +324  char[128]  extra_  [128]
+  +452  char[32]  extra2_  [32]
+  +484  char[128]  pf_  [128]
+  +612  int32_t  flag_  [4]
+  +616  char[512]  openkey_  [512]
+  +1128  char[128]  pfkey_  [128]
+  +1256  char[128]  pfid_  [128]
+
+== STRUCT LInstall  (size=292, path=/DWARF/log_def.h)
+  +0  char[64]  aid_  [64]
+  +64  char[32]  source_  [32]
+  +96  char[32]  affiliate_  [32]
+  +128  char[32]  creative_  [32]
+  +160  char[32]  family_  [32]
+  +192  char[32]  genus_  [32]
+  +224  char[32]  from_uid_  [32]
+  +256  char[32]  extra_  [32]
+  +288  int32_t  flag_  [4]
+
+== STRUCT LMilestone  (size=168, path=/DWARF/log_def.h)
+  +0  ActorId  actorid_  [4]
+  +4  char[64]  aid_  [64]
+  +68  char[32]  milestone_  [32]
+  +100  char[32]  value_  [32]
+  +132  char[32]  extra_  [32]
+  +164  int32_t  flag_  [4]
+
+== STRUCT LogData  (size=16, path=/DWARF/logger_server.h/LoggerServer)
+  +0  int32_t  cmd_  [4]
+  +4  int32_t  serverId_  [4]
+  +8  DataPacket *  dp_  [8]
+
+== STRUCT LoggerSession  (size=1088, path=/DWARF/logger_session.h)
+  +0  NetSession  super_NetSession  [1056]
+  +1056  LoggerServer *  srv_  [8]
+  +1064  SQLConnection *  db_  [8]
+  +1072  int32_t  watch_id_  [4]
+  +1076  undefined  null  [1]
+  +1077  undefined  null  [1]
+  +1078  undefined  null  [1]
+  +1079  undefined  null  [1]
+  +1080  time_t  report_t_  [8]
+

@@ -43,7 +43,61 @@ cmd/loggerserver:
 └── BI 上报（sendToScribe）：日志打印即可（sendtobi=false 对齐原版配置）
 ```
 
-## 四、★ 实证抓包解码结果（2026-11-22，capture 工具实测）
+## 四、★ 结构体权威布局（DWARF 导出，2026-11-22）
+
+> 来源：Ghidra dump_structs.java（DWARF log_def.h）。记录体 = 整个 POD 结构体裸拷贝（`operator>><LCounter>`）。
+> 与抓包互证：cmd=1 记录中 `01 00 01 00`=ActorId、`"帅哥"`=**aid_（账号）**、`"91"`=user_level_、`"add exp"`=counter_、`"3338"`=value_、`"425256"`=extra_、`"chapter fb win"`=kingdom_ ——之前推断的"角色名32B字段"实为 aid_ 账号字段，已修正。
+
+### LCounter size=556（cmd=1）
+```
++0    actorid_  ActorId[4]     +4    aid_  char[64]     +68   user_level_ char[32]
++100  counter_  char[32]       +132  value_ char[32]    +164  extra_ char[128]
++292  kingdom_  char[32]       +324  phylum_ char[32]   +356  classfield_ char[32]
++388  family_   char[32]       +420  genus_ char[128]   +548  save_db_ bool[1]
++552  flag_     int[4]         （校验: flag_ & 1 有效）
+```
+
+### LEconomy size=1384（cmd=4）
+```
++0 actorid_[4] +4 aid_[64] +68 currency_[32]("yb") +100 amount_[32] +132 value_[32]
++164 kingdom_[32] +196 phylum_[32] +228 classfield_[32] +260 family_[32] +292 genus_[32]
++324 extra_[128] +452 extra2_[32] +484 pf_[128] +612 flag_[4] +616 openkey_[512] +1128 pfkey_[128] +1256 pfid_[128]
+```
+
+### LDau size=324（cmd=3）
+```
++0 aid_[64] +64 source_[32] +96 affiliate_[32] +128 creative_[32] +160 family_[32]
++192 genus_[32] +224 ip_[32] +256 from_uid_[32] +288 extra_[32] +320 flag_[4]
+```
+
+### LInstall size=292（cmd=2）
+```
++0 aid_[64] +64 source_[32] +96 affiliate_[32] +128 creative_[32] +160 family_[32]
++192 genus_[32] +224 from_uid_[32] +256 extra_[32] +288 flag_[4]
+```
+
+### LMilestone size=168（cmd=5）
+```
++0 actorid_[4] +4 aid_[64] +68 milestone_[32] +100 value_[32] +132 extra_[32] +164 …
+```
+
+### LChat size=1288（cmd=14）
+```
++0 actorid_[4] +4 aid_[64] +68 name_[32] +100 ip_[32] +132 pf_[32] +164 type_[4]
++168 toaid_[64] +232 toname_[32] +264 content_[1024]
+```
+
+### DataPacketReader size=32
+`mem_ptr_/end_ptr_/offset_/data_end_` 四指针 —— 即 dp_ 指向的流式读缓冲。
+
+### 记录外层（抓包+PrecessData 综合）
+```
+[2B cmd] ← 流中每记录首字段（cdcdcdcd 后）
+[结构体裸拷贝：从 actorid_/aid_ 起]
+……记录间 ee cc 00 00 + 4B 的归属（LogData 外层字段 or 结构体首部）在对拍中闭环
+```
+
+## 四a、★ 实证抓包解码结果（2026-11-22，capture 工具实测）
 
 **方法**：Go capture 监听器占 7001 → 原版 gameworld 自动重连 → 25 秒抓 98KB 原始字节 → 模式分析。
 工具：`ltcq-go/cmd/loggerserver -capture`（正式保留为对拍工具）。
@@ -60,26 +114,13 @@ cmd/loggerserver:
 
 ### 日志记录流（握手后持续）
 
-以 4 字节分隔符 `cd cd cd cd` 锚定的记录结构（171 条/98KB 实测）：
-
-```
-[4B] cd cd cd cd            记录分隔符
-[2B] cmd                    ← 1=InsertCounter 4=InsertEconomy 9→Lua …（与 PrecessData switch 完全对应）
-[2B] seq                    序号（观测恒 01 00）
-[4B] 00 00 00 00            pad
-[32B] 角色名                UTF-8 零填充定长（"帅哥" 实测 206 次）
-[NB] 按 cmd 的字段流        变长（counter/economy 字段可见 "add exp"/"chapter fb win"/"yb" 等内容）
-[4B?] 记录间还有 ee cc 00 00 + 变长 4B（疑似上一记录尾的 logid/timestamp 字段）
-```
-
-实测样本：cmd=1（counter）记录含 `91`、`add exp`、`3338`、`425256`、`chapter fb win`
-——与 main.lua 的 logCounter INSERT 列序（user_level/counter/value/…/kingdom）吻合；
-cmd=4（economy）记录含 `yb`（元宝缩写）——logEconomy 的 currency 列。
+以 4 字节分隔符 `cd cd cd cd` 锚定的记录结构（171 条/98KB 实测），cmd 分布与 PrecessData switch 完全对应。
+cmd=1 记录字段内容与 LCounter 布局逐一互证（见 §四）。
 
 ### 遗留歧义（M1 编码中用对拍闭环）
 
-- 记录间 `ee cc 00 00 + 4B` 的归属（尾字段 or 头字段）：两种解读差 74 字节，对拍 diff 一轮即可定案
-- `cdcdcdcd` 是否真的恒定（若为随机 pad 则换用 cmd+seq 锚定）——171 次全部命中，可信度高
+- `ee cc 00 00 + 4B` 的归属（LogData 外层 or 前记录尾）：差 74 字节，对拍 diff 一轮定案
+- `cdcdcdcd` 恒定性：171 次全命中，可信度高
 
 ## 五、编码前待办（更新）
 
