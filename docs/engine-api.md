@@ -71,15 +71,69 @@ T0 分组（实现批次）：
 
 > 判断规则：**每秒 ≥5 包/玩家的路径归 Go；交互型/低频路径归 Lua**。新增路径先归类再实现。
 
-## 五、语义规格模板（T0 每函数一节，示例格式）
+## 五、T0 语义规格（v0.2，按调用频次分批填写）
 
-```markdown
+> 包组（LDataPack 全部 37 个）为净字节操作，规格自明，合并一条：
+> **allocPacket(actor, cmd, subcmd) 分配回包（自动写入 CMD/subcmd 头）；write{Int,Short,Byte,Char,String,Data,Double,UInt,Word,Int64…} 顺序写入；read* 读取客户端上行；setPosition/getPosition 定位读写游标；flush 发出；allocBroadcastPacket 场景广播；rollBack 放弃未 flush 的写**。
+> 测试基准：golden 字节（ADR-007）。以下仅列非自明函数。
+
+### LActor.getActorId(actor) → number
+- 调用 1402 处。实体句柄 → 数字 actorId（DB 主键，actor_s1.actors.actorid）。Go：actor.ID()。边界：离线实体无效。
+
 ### LActor.getStaticVar(actor) → table
-- 原版：entity/actor/actor_db.cc（blob 反序列化到 Lua table）
-- Lua 调用：163 处；玩家持久化主通道，结构随系统自定（var.xxx）
-- Go 语义：player.StaticVar() 返回 *lua.LTable（惰性加载，写时标记脏，存盘序列化见 persistence-format.md）
-- 边界：仅玩家在线期间有效；跨登持久；无锁（单 VM 串行）
-```
+- 调用 163 处。**玩家持久化主通道**：各系统存 `var.系统名 = {...}`，跨登录持久（落 actorblob，格式见 persistence-format.md）。
+- Go：返回惰性 LTable，写时标脏，登出/定时序列化。单 VM 串行无锁。
+
+### LActor.postScriptEventLite(actor, delayMs, func, ...) / cancelScriptEvent(handle)
+- 调用 141/84 处。玩家级闭包定时器（postscripttimer.lua 封装，C++ 回调点 `MY_PostScriptOnTimeEvent`）。
+- Go：注册到 postscripttimer 调度器；**登出自动清理**（actorevent aeUserLogout 挂钩）。Lite=一次性，Ex=可重复。
+
+### LActor.giveAwards(actor, awardTable, reason)
+- 调用 133 处。awardTable = 配置奖励列表（如 `TaskCfg.awardList`，元素 {id,count[,bind]}），reason=日志标签字符串。
+- Go：遍历发放 → 物品走背包、货币走 changeCurrency 族；失败整体回滚。canGiveAwards(77 处) 先验背包空间。
+
+### LActor.costItem(actor, itemId, count, reason) → bool
+- 调用 126 处。扣物品，reason 入日志。同族：consumeItem(19)/costItemByUid(6)/checkItemNum(13)。
+- Go：背包扣减 + DB 脏标记；不足返回 false 不扣。
+
+### LActor.getCurrency(actor, type) / changeCurrency(actor, type, delta, reason)
+- 调用 107/69 处。type = NumericType_* 枚举（**C++ 全局注册，Lua 源无定义——提取自 _G.lua 快照，待 Ghidra 交叉确认**）。delta 负=扣。
+- Go：货币表接口；变更入审计日志（对齐原版 log 参数习惯）。
+
+### LActor.getRoleCount(actor) → n / getRole(actor, index) → roleHandle
+- 调用 120/75 处。**合击多角色系统**：index 0 为主角色，1+ 为副角色（开启角色功能页）。
+- Go：player.Roles[]；属性/装备 API 多数有 Role 变体（getRoleCount 的高频说明了多角色渗透深度）。
+
+### LActor.reCalcAttr(actor, force?)
+- 调用 46 处。属性重算收口：遍历各系统加成（Lua 提供 get*Attr 族）→ C++ 合成 → setIntProperty。
+- Go：pipeline 重算（各系统注册的加成提供器按序取值）。force=false 时增量重算。
+
+### LActor.stopAI(actor) / setAITarget / setAIPassivity / setAIAttackMonster
+- 调用 71+ 处。AI 控制族：停 AI/设目标/设被动/指定打怪。
+- Go：AI 状态机接口（scene 层），原版 ai_state 在 C++。
+
+### LActor.enterFuBen(actor, fbId, ...) / exitFuben(actor) / getFubenHandle
+- 调用 43/45/54 处。副本进出（instance 系统对接点）。
+- Go：实例管理器；Lua 侧生命周期回调经 instanceevent。
+
+### LActor.sendTipmsg(actor, msg, typeMask?)
+- 调用 310 处。typeMask=ttScreenCenter/ttTipmsgWindow 等位或（枚举见 _G.lua）。
+- Go：组包 CMD_Notice 系列子命令，写 msg + type。
+
+### LActor.getItemCount(actor, itemId) → n / addItem / giveItem / canAddItem
+- 背包查询/发放族。giveItem(42) 直接发放；addItem(31) 带位置语义；getEquipBagSpace(12) 装备包空间。
+
+### LActor.log(actor, ...)
+- 调用 91 处。玩家级日志（走 loggerserver 通道）。
+- Go：结构化日志事件 → 7001 日志流（与阶段 1 联通）。
+
+### LDataPack.test_allocPack(72 处) 【待确认】
+- 名称带 test 前缀但调用 72 次——疑似调试期遗留的高频用法，Ghidra 确认与 allocPacket 的差异后再定实现策略。
+
+### 待提取项（依赖 _G.lua 快照/Ghidra）
+- NumericType_* 全部值（changeCurrency/getCurrency 族参数域）
+- tt* 提示类型位掩码全集（sendTipmsg 第三参）
+- property 属性 ID 全集（setIntProperty/getIntProperty 参数域）
 
 ## 六、变更流程
 
