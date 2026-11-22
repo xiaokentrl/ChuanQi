@@ -43,7 +43,45 @@ cmd/loggerserver:
 └── BI 上报（sendToScribe）：日志打印即可（sendtobi=false 对齐原版配置）
 ```
 
-## 四、编码前待办
+## 四、★ 实证抓包解码结果（2026-11-22，capture 工具实测）
+
+**方法**：Go capture 监听器占 7001 → 原版 gameworld 自动重连 → 25 秒抓 98KB 原始字节 → 模式分析。
+工具：`ltcq-go/cmd/loggerserver -capture`（正式保留为对拍工具）。
+
+### 连接握手（一次，80 字节）
+
+```
+[4B] ca 66 aa 12        魔数 0x12AA66CA
+[4B] 06 00 00 00        未知（版本/SPID=6？）
+[4B] 01 00 00 00        serverId = 1 ✓
+[64B] "gameworld_s1"    服务名，零填充定长 64B
+[剩余] 零填充至 80B
+```
+
+### 日志记录流（握手后持续）
+
+以 4 字节分隔符 `cd cd cd cd` 锚定的记录结构（171 条/98KB 实测）：
+
+```
+[4B] cd cd cd cd            记录分隔符
+[2B] cmd                    ← 1=InsertCounter 4=InsertEconomy 9→Lua …（与 PrecessData switch 完全对应）
+[2B] seq                    序号（观测恒 01 00）
+[4B] 00 00 00 00            pad
+[32B] 角色名                UTF-8 零填充定长（"帅哥" 实测 206 次）
+[NB] 按 cmd 的字段流        变长（counter/economy 字段可见 "add exp"/"chapter fb win"/"yb" 等内容）
+[4B?] 记录间还有 ee cc 00 00 + 变长 4B（疑似上一记录尾的 logid/timestamp 字段）
+```
+
+实测样本：cmd=1（counter）记录含 `91`、`add exp`、`3338`、`425256`、`chapter fb win`
+——与 main.lua 的 logCounter INSERT 列序（user_level/counter/value/…/kingdom）吻合；
+cmd=4（economy）记录含 `yb`（元宝缩写）——logEconomy 的 currency 列。
+
+### 遗留歧义（M1 编码中用对拍闭环）
+
+- 记录间 `ee cc 00 00 + 4B` 的归属（尾字段 or 头字段）：两种解读差 74 字节，对拍 diff 一轮即可定案
+- `cdcdcdcd` 是否真的恒定（若为随机 pad 则换用 cmd+seq 锚定）——171 次全部命中，可信度高
+
+## 五、编码前待办（更新）
 
 1. **反编译 `PrecessData`**：确认包帧（长度前缀/CMD 位置/serverid 来源）
 2. **反编译 7 个 Insert\***：各表字段序与类型（对照 main.lua 的 INSERT 模板验证）
