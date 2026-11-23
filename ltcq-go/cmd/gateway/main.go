@@ -1,51 +1,178 @@
 // gateway 的 Go 版实现（里程碑 M2）。
-// 职责（对齐原版 GateWay.txt 语义）：
-//   9001 接受客户端 WebSocket → 校验握手 → 透明转发到 gameworld 6001
-//   双向原始字节录制到 reference/captures/（对拍 ADR-007）
-//
-// WS 层：手写 RFC6455 服务端子集（ADR-001，零依赖、字节全控）：
-//   握手响应复刻原版模板（Sec-WebSocket-Accept/101）
-//   客户端帧解码（含掩码还原）→ 裸 payload 转发后端
-//   后端 TCP 字节 → 二进制帧（FIN+opcode 2，无掩码）回客户端
-//
-// 用法: gateway -mode serve [-listen :9001] [-backend 127.0.0.1:6001] [-recdir ../reference/captures]
+// 协议权威来源：Client::OnRecv 反编译（gateway_ws_decomp.c）+ golden 双向抓包。
+// 客户端鉴权：首帧 4B==0xCA0FFFFF → 随机 skey 回发 → 每帧首 4B==skey。
+// 转发格式：cmd=5 payload = NetId(8B) + 00 00 + cd cd + 数据（去 skey）。
 package main
 
 import (
 	"bufio"
-	"crypto/sha1"
+	"encoding/binary"
+	"encoding/hex"
 	"flag"
 	"fmt"
 	"io"
 	"log/slog"
 	"net"
 	"os"
-	"encoding/base64"
-	"encoding/binary"
-	"strings"
 	"sync"
 	"time"
 )
 
-const wsGUID = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11"
+var gateUpFile *os.File
 
-func main() {
-	mode := flag.String("mode", "serve", "运行模式: serve")
-	listen := flag.String("listen", "127.0.0.1:9001", "客户端 WS 监听地址")
-	backend := flag.String("backend", "127.0.0.1:6001", "gameworld 后端地址")
-	recdir := flag.String("recdir", "", "字节录制目录（空=不录制）")
-	flag.Parse()
-
-	switch *mode {
-	case "serve":
-		serve(*listen, *backend, *recdir)
-	default:
-		slog.Error("未知模式", "mode", *mode)
-		os.Exit(1)
+// sendToGate 发送 gate 帧并录制上行（诊断）。
+func sendToGate(game net.Conn, frame []byte) {
+	if gateUpFile != nil {
+		gateUpFile.Write(frame)
+	}
+	if _, err := game.Write(frame); err != nil {
+		slog.Error("gate 上行失败", "err", err)
 	}
 }
 
-func serve(listen, backend, recdir string) {
+type sessionMgr struct {
+	mu     sync.Mutex
+	nextID uint16
+	byID   map[uint16]net.Conn
+	skeys  map[uint16]uint32
+}
+
+func newSessionMgr() *sessionMgr {
+	return &sessionMgr{nextID: 552, byID: map[uint16]net.Conn{}, skeys: map[uint16]uint32{}}
+}
+
+func (m *sessionMgr) alloc() uint16 {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	id := m.nextID
+	m.nextID++
+	return id
+}
+
+func (m *sessionMgr) bind(id uint16, skey uint32, c net.Conn) {
+	m.mu.Lock()
+	m.byID[id] = c
+	m.skeys[id] = skey
+	m.mu.Unlock()
+}
+
+func (m *sessionMgr) get(id uint16) (net.Conn, bool) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	c, ok := m.byID[id]
+	return c, ok
+}
+
+func (m *sessionMgr) remove(id uint16) {
+	m.mu.Lock()
+	delete(m.byID, id)
+	delete(m.skeys, id)
+	m.mu.Unlock()
+}
+
+// knownIDs 当前活跃 sessionId（诊断用）。
+func (m *sessionMgr) knownIDs() []uint16 {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	ids := make([]uint16, 0, len(m.byID))
+	for k := range m.byID {
+		ids = append(ids, k)
+	}
+	return ids
+}
+
+// min 返回较小值。
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
+}
+
+func main() {
+	mode := flag.String("mode", "serve", "运行模式: serve | selftest")
+	listen := flag.String("listen", "127.0.0.1:9001", "客户端 WS 监听地址")
+	backend := flag.String("backend", "127.0.0.1:6002", "gameworld 地址")
+	gatename := flag.String("gatename", "gateway_s1", "注册服务名")
+	recdir := flag.String("recdir", "", "字节录制目录")
+	flag.Parse()
+
+	if *mode == "selftest" {
+		selftest()
+		return
+	}
+	if *mode == "serve" {
+		serve(*listen, *backend, *gatename, *recdir)
+		return
+	}
+	slog.Error("未知模式", "mode", *mode)
+	os.Exit(1)
+}
+
+func serve(listen, backend, gatename, recdir string) {
+	game, err := net.Dial("tcp", backend)
+	if err != nil {
+		slog.Error("gameworld 连接失败", "backend", backend, "err", err)
+		os.Exit(1)
+	}
+	slog.Info("gameworld 已连接", "addr", backend)
+	if recdir != "" {
+		os.MkdirAll(recdir, 0755)
+		gateUpFile, _ = os.OpenFile(recdir+"/gate_upstream.raw", os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0644)
+	}
+	sendToGate(game, buildGateRegistration(gatename))
+	slog.Info("gate 注册已发送", "name", gatename)
+
+	go func() { // 心跳
+		t := time.NewTicker(10 * time.Second)
+		defer t.Stop()
+		for range t.C {
+			sendToGate(game, buildHeartbeat())
+		}
+	}()
+
+	mgr := newSessionMgr()
+	go func() { // 回向帧读取 → 路由
+		r := bufio.NewReaderSize(game, 1<<20)
+		for {
+			cmd, body, err := readGateFrame(r)
+			if err != nil {
+				slog.Error("gate 回向结束（整体退出，守护重启）", "err", err)
+				os.Exit(1)
+			}
+			switch cmd {
+			case gwCmdUserData:
+				if len(body) < userDataNetIDLen+1 {
+					slog.Error("回向 cmd=5 body 过短", "len", len(body), "hex", hex.Dump(body))
+					continue
+				}
+				sid := uint16(body[0]) | uint16(body[1])<<8
+				data := body[userDataNetIDLen:]
+				c, ok := mgr.get(sid)
+				if !ok {
+					slog.Error("回向 sid 未匹配", "sid", sid, "known", fmt.Sprintf("%v", mgr.knownIDs()), "hex", hex.Dump(body[:min(32, len(body))]))
+					continue
+				}
+				if err := writeWSFrame(c, 0x2, data); err != nil {
+					slog.Error("WS 下发失败", "sid", sid, "err", err)
+				}
+			case gwCmdBroadcast:
+				if len(body) > userDataNetIDLen {
+					data := body[userDataNetIDLen:]
+					mgr.mu.Lock()
+					for _, c := range mgr.byID {
+						if c != nil {
+							writeWSFrame(c, 0x2, data)
+						}
+					}
+					mgr.mu.Unlock()
+				}
+			default:
+				slog.Info("gate 回向帧", "cmd", cmd, "len", len(body), "hex", hex.Dump(body[:min(32, len(body))]))
+			}
+		}
+	}()
+
 	ln, err := net.Listen("tcp", listen)
 	if err != nil {
 		slog.Error("监听失败", "addr", listen, "err", err)
@@ -65,129 +192,28 @@ func serve(listen, backend, recdir string) {
 		seq++
 		id := seq
 		mu.Unlock()
-		go handleClient(conn, backend, recdir, id)
+		go handleClient(conn, game, mgr, recdir, id)
 	}
 }
 
-// ---- WS 握手 ----
-
-// readWSHandshake 读取 HTTP 升级请求头，返回 Sec-WebSocket-Key。
-func readWSHandshake(r *bufio.Reader) (string, error) {
-	var req strings.Builder
-	for {
-		line, err := r.ReadString('\n')
-		if err != nil {
-			return "", err
-		}
-		req.WriteString(line)
-		if line == "\r\n" || line == "\n" {
-			break
-		}
-		if len(req.String()) > 16384 {
-			return "", fmt.Errorf("握手头过大")
-		}
-	}
-	key := ""
-	for _, line := range strings.Split(req.String(), "\n") {
-		if strings.HasPrefix(strings.ToLower(line), "sec-websocket-key:") {
-			key = strings.TrimSpace(line[len("Sec-WebSocket-Key:"):])
-		}
-	}
-	if key == "" {
-		return "", fmt.Errorf("缺少 Sec-WebSocket-Key")
-	}
-	slog.Info("WS 握手请求", "key", key, "reqHead", firstLine(req.String()))
-	return key, nil
-}
-
-func firstLine(s string) string {
-	if i := strings.IndexByte(s, '\n'); i >= 0 {
-		return strings.TrimSpace(s[:i])
-	}
-	return strings.TrimSpace(s)
-}
-
-// wsAccept 计算 Sec-WebSocket-Accept（RFC6455 §4.2.2）。
-func wsAccept(key string) string {
-	h := sha1.Sum([]byte(key + wsGUID))
-	return base64.StdEncoding.EncodeToString(h[:])
-}
-
-// ---- WS 帧读写（服务端子集） ----
-
-// readWSFrame 读一帧客户端数据（客户端帧带掩码，此处还原 payload）。
-// 返回 opcode 与还原后的 payload。
-func readWSFrame(r *bufio.Reader) (byte, []byte, error) {
-	var h [2]byte
-	if _, err := io.ReadFull(r, h[:]); err != nil {
+func readGateFrame(r *bufio.Reader) (uint16, []byte, error) {
+	head := make([]byte, 14)
+	if _, err := io.ReadFull(r, head); err != nil {
 		return 0, nil, err
 	}
-	opcode := h[0] & 0x0F
-	masked := h[1]&0x80 != 0
-	l := uint64(h[1] & 0x7F)
-	switch l {
-	case 126:
-		var ext [2]byte
-		if _, err := io.ReadFull(r, ext[:]); err != nil {
-			return 0, nil, err
-		}
-		l = uint64(binary.BigEndian.Uint16(ext[:]))
-	case 127:
-		var ext [8]byte
-		if _, err := io.ReadFull(r, ext[:]); err != nil {
-			return 0, nil, err
-		}
-		l = binary.BigEndian.Uint64(ext[:])
+	cmd, bodyLen, ok := parseGateFrame(head)
+	if !ok {
+		return 0, nil, fmt.Errorf("gate 帧魔数不符: %s", hex.Dump(head[:4]))
 	}
-	if l > 1<<24 { // 16MB 上限，防畸形帧
-		return 0, nil, fmt.Errorf("WS 帧过大 %d", l)
-	}
-	var mask [4]byte
-	if masked {
-		if _, err := io.ReadFull(r, mask[:]); err != nil {
-			return 0, nil, err
-		}
-	}
-	payload := make([]byte, l)
-	if _, err := io.ReadFull(r, payload); err != nil {
+	body := make([]byte, bodyLen)
+	if _, err := io.ReadFull(r, body); err != nil {
 		return 0, nil, err
 	}
-	if masked {
-		for i := range payload {
-			payload[i] ^= mask[i%4]
-		}
-	}
-	return opcode, payload, nil
+	return cmd, body, nil
 }
 
-// writeWSFrame 写一帧到客户端（服务端帧不掩码）。
-func writeWSFrame(w io.Writer, opcode byte, payload []byte) error {
-	var head [10]byte
-	head[0] = 0x80 | opcode // FIN + opcode
-	n := len(payload)
-	idx := 2
-	switch {
-	case n < 126:
-		head[1] = byte(n)
-	case n <= 0xFFFF:
-		head[1] = 126
-		binary.BigEndian.PutUint16(head[2:4], uint16(n))
-		idx = 4
-	default:
-		head[1] = 127
-		binary.BigEndian.PutUint64(head[2:10], uint64(n))
-		idx = 10
-	}
-	if _, err := w.Write(head[:idx]); err != nil {
-		return err
-	}
-	_, err := w.Write(payload)
-	return err
-}
-
-// ---- 会话中继 ----
-
-func handleClient(client net.Conn, backend string, recdir string, id int) {
+// handleClient 客户端会话：鉴权状态机 + 转发（对齐 Client::OnRecv）。
+func handleClient(client net.Conn, game net.Conn, mgr *sessionMgr, recdir string, id int) {
 	defer client.Close()
 	remote := client.RemoteAddr().String()
 	start := time.Now()
@@ -200,23 +226,14 @@ func handleClient(client net.Conn, backend string, recdir string, id int) {
 	}
 	resp := fmt.Sprintf("HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: %s\r\n\r\n", wsAccept(key))
 	if _, err := client.Write([]byte(resp)); err != nil {
-		slog.Error("101 响应失败", "err", err)
 		return
 	}
-	slog.Info("WS 握手通过", "remote", remote, "session", id)
 
-	// 连接后端
-	game, err := net.Dial("tcp", backend)
-	if err != nil {
-		slog.Error("后端连接失败", "backend", backend, "err", err)
-		return
-	}
-	defer game.Close()
-
-	// 录制器
+	var skey uint32
+	authed := false
+	sid := mgr.alloc()
 	var recC2G, recG2C *os.File
 	if recdir != "" {
-		os.MkdirAll(recdir, 0755)
 		recC2G, _ = os.OpenFile(fmt.Sprintf("%s/session%03d_c2g_%s.raw", recdir, id, start.Format("150405")), os.O_CREATE|os.O_WRONLY, 0644)
 		recG2C, _ = os.OpenFile(fmt.Sprintf("%s/session%03d_g2c_%s.raw", recdir, id, start.Format("150405")), os.O_CREATE|os.O_WRONLY, 0644)
 		if recC2G != nil {
@@ -227,72 +244,70 @@ func handleClient(client net.Conn, backend string, recdir string, id int) {
 		}
 	}
 
-	var wg sync.WaitGroup
-	done := make(chan struct{})
-
-	// 客户端 → 后端：WS 帧 → 裸 payload
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		defer close(done)
-		for {
-			opcode, payload, err := readWSFrame(r)
-			if err != nil {
-				slog.Info("客户端侧关闭", "session", id, "err", err)
-				game.Close()
-				return
+	for {
+		opcode, payload, err := readWSFrame(r)
+		if err != nil {
+			slog.Info("客户端断开", "sid", sid, "err", err)
+			if authed {
+				sendToGate(game, buildUserClose(sid))
+				mgr.remove(sid)
 			}
-			switch opcode {
-			case 0x8: // close
-				slog.Info("客户端 close 帧", "session", id)
-				game.Close()
-				return
-			case 0x9: // ping → pong（原版网关语义待对拍，先本地应答）
-				if err := writeWSFrame(client, 0xA, payload); err != nil {
-					return
-				}
-				continue
-			case 0xA:
-				continue // pong 忽略
-			}
-			if recC2G != nil {
-				recC2G.Write(payload)
-			}
-			if _, err := game.Write(payload); err != nil {
-				slog.Error("转发后端失败", "session", id, "err", err)
-				client.Close()
-				return
-			}
+			return
 		}
-	}()
-
-	// 后端 → 客户端：TCP 字节 → 二进制帧
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		buf := make([]byte, 1<<16)
-		for {
-			n, err := game.Read(buf)
-			if n > 0 {
-				if recG2C != nil {
-					recG2C.Write(buf[:n])
-				}
-				if err := writeWSFrame(client, 0x2, buf[:n]); err != nil {
-					slog.Info("回写客户端失败", "session", id, "err", err)
-					game.Close()
-					return
-				}
+		switch opcode {
+		case 0x8:
+			slog.Info("客户端 close", "sid", sid)
+			if authed {
+				sendToGate(game, buildUserClose(sid))
+				mgr.remove(sid)
 			}
-			if err != nil {
-				slog.Info("后端侧关闭", "session", id, "err", err)
-				client.Close()
+			return
+		case 0x9:
+			writeWSFrame(client, 0xA, payload)
+			continue
+		case 0xA:
+			continue
+		}
+		if !authed {
+			if !clientHandshakeCode(payload) {
+				slog.Error("客户端首帧校验失败", "payload", hex.Dump(payload))
 				return
 			}
+			skey = genSkey()
+			sk := make([]byte, 4)
+			binary.LittleEndian.PutUint32(sk, skey)
+			if err := writeWSFrame(client, 0x2, sk); err != nil {
+				return
+			}
+			authed = true
+			ip, _, _ := net.SplitHostPort(remote)
+			sendToGate(game, buildUserOpen(sid, ip))
+			mgr.bind(sid, skey, client)
+			slog.Info("客户端鉴权通过", "sid", sid, "skey", fmt.Sprintf("%08x", skey))
+			continue
 		}
-	}()
-
-	wg.Wait()
-	slog.Info("会话结束", "session", id, "duration", time.Since(start))
+		if len(payload) < 4 || binary.LittleEndian.Uint32(payload[0:4]) != skey {
+			slog.Error("skey 校验失败，断开", "sid", sid)
+			return
+		}
+		if recC2G != nil {
+			recC2G.Write(payload[4:])
+		}
+		sendToGate(game, buildUserData(sid, payload[4:]))
+	}
 }
 
-var _ = io.Discard
+// selftest 打印协议构造 hex，与 golden 逐字节对照。
+func selftest() {
+	fmt.Println("== 注册 80B ==")
+	fmt.Println(hex.Dump(buildGateRegistration("gateway_s1")))
+	fmt.Println("== 心跳 ==")
+	fmt.Println(hex.Dump(buildHeartbeat()))
+	fmt.Println("== cmd=1 会话建立 (golden payloadLen=0x2E) ==")
+	fmt.Println(hex.Dump(buildUserOpen(552, "127.0.0.1")))
+	data := make([]byte, 54)
+	copy(data, []byte{0, 0, 0, 0, 0xff, 1, 1, 0, 0, 0, 6, 0})
+	copy(data[12:], "\xe5\xb8\x85\xe5\x93\xa5\x00\x20\x00")
+	fmt.Println("== cmd=5 数据转发 (golden payloadLen=0x44) ==")
+	fmt.Println(hex.Dump(buildUserData(552, data)))
+}
