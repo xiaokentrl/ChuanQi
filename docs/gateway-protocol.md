@@ -75,3 +75,23 @@ login.min.js 开始游戏 → HTTP Login.php（建号验证 ✓ nginx log 实证
 ### M2 验收状态
 - 协议破解 100% ｜ Go 实现完成 ｜ gameworld 密码验证实证通过
 - 待办：客户端参数流修复后（egret 发完整登录包）→ 客户端经 Go gateway 进游戏 = M2 验收
+
+## 六、★ M2 卡点最终破译（2026-11-23）：SysVarMgr 加载死锁
+
+**现象链**：gameworld 启动卡 `StartEngine` 的 `while(!isInitComponentFinished)` 循环（"wait for data"刷屏）→ `started_=false` → gate 的 cmd=5（登录转发）被静默忽略（cmd=1/注册在循环内 ProcessSysMsg 正常处理——openuser/registe success 实证）
+
+**反编译定案（SysVarMgr，initcomp/sysvar_decomp.c）**：
+```c
+isLoad: return sysVarCount_ == curSysVarCount_;
+Load:   sysVarCount_ = -1; curSysVarCount_ = 0;
+        → 向 dbserver 发命令 0x209（system_var_mgr.cc:0x19）
+        → 等 dbserver 返回 sysvar 表数据（OnDbReturnData 逐条 createSysVar）
+```
+**卡死条件**：dbserver 对 0x209 的响应未到达 → sysVarCount_ 保持 -1 → isLoad 永远 false。
+- actor_s1.sysvar 表存在但 0 行（dump 空结构）
+- dbserver boot.log 无 sysvar 相关日志（处理静默）
+- 07:42 时代 password ok 曾触发 = 当时 dbserver 对 0x209 有响应（状态完好窗口）
+
+**修复方向**：①反编译 dbserver 的 0x209 处理函数（dbserver 已导入 Ghidra）；②或抓 5001 流量看 0x209 请求/响应；③或 sysvar 表插入种子行测试
+
+**教训**：曾误判 golden cmd=5 的 `00 00 cd cd` 为 gateway 前缀——实际是客户端登录数据自带字段，gateway 双重添加导致额外失败（已回退）
