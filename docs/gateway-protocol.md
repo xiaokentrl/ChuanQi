@@ -52,3 +52,26 @@ gameworld 侧日志：`new gate connect,idx=0` + `gateway client (...) registe s
 5. 客户端断开 → 发 cmd=2
 6. 接收 gameworld 回向帧 → 按 sessionId 路由到对应客户端 WS（回向解析待 §三 定案后补）
 ```
+
+## 五、★ M2 实测结论（2026-11-23）：Go gateway 协议正确，卡点在客户端参数流
+
+### gateway 侧已验证（探针 + 逐字节对照）
+- 注册/心跳/cmd=1/cmd=5 帧**与 golden 逐字节同构**（gate_upstream.raw 解析证明）
+- gameworld 端实证：registe success ✓ / openuser ✓ / **password ok ✓**（buildUserData 修正后）
+- **重要更正**：golden cmd=5 的 `00 00 cd cd` 是**客户端登录数据自带字段**（勿在 gateway 加前缀——双重添加曾致静默失败，已回退）
+
+### 客户端参数流（egret 登录包构造链）
+```
+login.min.js 开始游戏 → HTTP Login.php（建号验证 ✓ nginx log 实证）
+→ window.start(param) → index.js:544 window['paraUrl'] = param
+→ main.min.js 读 paraUrl 构造 WS 登录包 → 发送
+```
+- **实测差异**：当前 egret 登录包缺 `cd cd 00 00 00 00` 字段段（52B vs golden 58B）
+- 根因方向：param 由 Serverlist.php 响应构造（srvname/ip/port/url 字段），
+  Login.php 响应内容可能参与登录包字段填充——下一步在 login.min.js 中定位登录包构造代码
+  （grep login.min.js 的帧组装逻辑），对比 Serverlist 响应字段
+- **gateway 侧无问题**：Go gateway 转发与原版逐字节同构已实证
+
+### M2 验收状态
+- 协议破解 100% ｜ Go 实现完成 ｜ gameworld 密码验证实证通过
+- 待办：客户端参数流修复后（egret 发完整登录包）→ 客户端经 Go gateway 进游戏 = M2 验收

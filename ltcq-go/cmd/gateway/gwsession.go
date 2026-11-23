@@ -84,13 +84,12 @@ func buildUserClose(sessionID uint16) []byte {
 	return buildGateFrame(gwCmdUserClose, p)
 }
 
-// buildUserData 数据转发（cmd=5）。golden payload 68B =
-// NetId(8B) + 00 00 + cd cd + 客户端数据(54B) —— 对齐 Client::OnRecv：
-// allocProtoPacket(cmd=5) → operator<<<NetId(net_id_) → writeBuf(buf+4, size-4)，前置另有 4B。
+// buildUserData 数据转发（cmd=5）。golden 实证：NetId(8B) + 客户端数据原样。
+// 客户端登录数据自带 00 00 cd cd 字段（gateway_ws_decomp writeBuf(buf+4,size-4) 仅去 skey），
+// 勿重复添加前缀——双重添加曾导致 gameworld 登录线程静默忽略。
 func buildUserData(sessionID uint16, data []byte) []byte {
-	p := make([]byte, 0, 12+len(data))
+	p := make([]byte, 0, 8+len(data))
 	p = append(p, buildNetID(sessionID)...)
-	p = append(p, 0, 0, 0xcd, 0xcd)
 	p = append(p, data...)
 	return buildGateFrame(gwCmdUserData, p)
 }
