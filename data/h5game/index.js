@@ -55,7 +55,17 @@ if (urlData.indexOf("?") != -1) {
     }
     window['userData'] = objDat;
 } else {
-    window['userData'] = null;
+    // 本地/测试环境：无 URL 参数时提供默认 userData（egret 登录包需要这些字段，
+    // null 会导致登录包缺 cd cd 00 00 00 00 字段段被 gameworld 拒绝）
+    window['userData'] = {
+        "uid": "帅哥",
+        "user_id": "帅哥",
+        "openId": "帅哥",
+        "sdkloginmodel": "0",
+        "channelExt": "",
+        "game_appid": "1",
+        "pid": "1"
+    };
 }
 document.getElementById("mainDiv").innerHTML = '<iframe id="paramIframe" style="border: 0px; width: 100%;height: 100%;"src="./indexlogin.html?v=' + Math.random() + '"></iframe>';
 // window.addEventListener("message", function (event) {
