@@ -2,9 +2,10 @@
 // 协议规格：docs/loggerserver-spec.md（DWARF 结构布局 + golden 抓包实证）。
 //
 // 模式：
-//   serve   监听 7001，握手→帧循环→按 cmd 写 MySQL（默认）
-//   capture 抓包模式：占 7001 落盘原始字节（对拍工具）
-//   replay  离线解析 golden 文件（-dry 只统计；连库时真实写入）
+//
+//	serve   监听 7001，握手→帧循环→按 cmd 写 MySQL（默认）
+//	capture 抓包模式：占 7001 落盘原始字节（对拍工具）
+//	replay  离线解析 golden 文件（-dry 只统计；连库时真实写入）
 package main
 
 import (

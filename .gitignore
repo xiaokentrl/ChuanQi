@@ -6,3 +6,9 @@ boot.log
 data/server/*/Debug/log/
 secrets-backup-本地备份勿提交.txt
 data/server/*/Debug/gameworld/runtime/rank/
+
+# 编译/调试产物
+*.exe~
+data/server/*/Debug/gameworld/runtime/*.bin
+ltcq-go/reference/captures/go_test/
+ltcq-go/reference/captures/go_login_test/

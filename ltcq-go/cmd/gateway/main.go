@@ -18,7 +18,10 @@ import (
 	"time"
 )
 
-var gateUpFile *os.File
+var (
+	gateUpFile   *os.File
+	gateDownFile *os.File
+)
 
 // sendToGate 发送 gate 帧并录制上行（诊断）。
 func sendToGate(game net.Conn, frame []byte) {
@@ -28,6 +31,29 @@ func sendToGate(game net.Conn, frame []byte) {
 	if _, err := game.Write(frame); err != nil {
 		slog.Error("gate 上行失败", "err", err)
 	}
+}
+
+// readRawGateFrame 读一帧原始字节并解析，返回 (原始字节, cmd, body, err)。
+// 原始字节用于 g2c 录制（ADR-007 对拍基准），body 为去掉 14B 头与 2B cmd 的负载。
+func readRawGateFrame(r *bufio.Reader) (raw []byte, cmd uint16, body []byte, err error) {
+	head := make([]byte, 14)
+	if _, err = io.ReadFull(r, head); err != nil {
+		return
+	}
+	c, bodyLen, ok := parseGateFrame(head)
+	if !ok {
+		err = fmt.Errorf("gate 帧魔数不符: %s", hex.Dump(head[:4]))
+		return
+	}
+	// parseGateFrame 返回的 bodyLen 已是 payloadLen-2（即 cmd 之后的 body 实际长度）
+	raw = make([]byte, 14+int(bodyLen))
+	copy(raw, head)
+	body = make([]byte, bodyLen)
+	if _, err = io.ReadFull(r, body); err != nil {
+		return
+	}
+	copy(raw[14:], body)
+	return raw, c, body, nil
 }
 
 type sessionMgr struct {
@@ -63,6 +89,14 @@ func (m *sessionMgr) get(id uint16) (net.Conn, bool) {
 	return c, ok
 }
 
+// getSkey 取会话 skey（回向登录帧需回显，对齐 C++ gateway 行为）。
+func (m *sessionMgr) getSkey(id uint16) (uint32, bool) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	s, ok := m.skeys[id]
+	return s, ok
+}
+
 func (m *sessionMgr) remove(id uint16) {
 	m.mu.Lock()
 	delete(m.byID, id)
@@ -91,8 +125,8 @@ func min(a, b int) int {
 
 func main() {
 	mode := flag.String("mode", "serve", "运行模式: serve | selftest")
-	listen := flag.String("listen", "127.0.0.1:9001", "客户端 WS 监听地址")
-	backend := flag.String("backend", "127.0.0.1:6002", "gameworld 地址")
+	listen := flag.String("listen", "0.0.0.0:9002", "客户端 WS 监听地址（s1=9002，对齐 GateWay.txt）")
+	backend := flag.String("backend", "127.0.0.1:6001", "gameworld 地址（s1=6001，对齐 GameWorld.txt）")
 	gatename := flag.String("gatename", "gateway_s1", "注册服务名")
 	recdir := flag.String("recdir", "", "字节录制目录")
 	flag.Parse()
@@ -119,6 +153,7 @@ func serve(listen, backend, gatename, recdir string) {
 	if recdir != "" {
 		os.MkdirAll(recdir, 0755)
 		gateUpFile, _ = os.OpenFile(recdir+"/gate_upstream.raw", os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0644)
+		gateDownFile, _ = os.OpenFile(recdir+"/gate_downstream.raw", os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0644)
 	}
 	sendToGate(game, buildGateRegistration(gatename))
 	slog.Info("gate 注册已发送", "name", gatename)
@@ -135,10 +170,13 @@ func serve(listen, backend, gatename, recdir string) {
 	go func() { // 回向帧读取 → 路由
 		r := bufio.NewReaderSize(game, 1<<20)
 		for {
-			cmd, body, err := readGateFrame(r)
+			raw, cmd, body, err := readRawGateFrame(r)
 			if err != nil {
 				slog.Error("gate 回向结束（整体退出，守护重启）", "err", err)
 				os.Exit(1)
+			}
+			if gateDownFile != nil {
+				gateDownFile.Write(raw) // g2c 录制：完整下行帧（含14B头）
 			}
 			switch cmd {
 			case gwCmdUserData:
@@ -152,6 +190,16 @@ func serve(listen, backend, gatename, recdir string) {
 				if !ok {
 					slog.Error("回向 sid 未匹配", "sid", sid, "known", fmt.Sprintf("%v", mgr.knownIDs()), "hex", hex.Dump(body[:min(32, len(body))]))
 					continue
+				}
+				// 登录结果回包（[ff][01][result]）需回显 skey 4B，对齐 C++ 现网
+				// 实测 0a bb 09 1c ff 01 00（skey = 登录帧前缀 1c09bb0a 的小端字节）。
+				// 其他业务回包保持原样（golden 记录回向零样本，避免破坏已验证协议）。
+				if len(data) >= 3 && data[0] == 0xff && data[1] == 0x01 {
+					if sk, ok := mgr.getSkey(sid); ok {
+						skBytes := make([]byte, 4)
+						binary.LittleEndian.PutUint32(skBytes, sk)
+						data = append(skBytes, data...)
+					}
 				}
 				if err := writeWSFrame(c, 0x2, data); err != nil {
 					slog.Error("WS 下发失败", "sid", sid, "err", err)
@@ -196,22 +244,6 @@ func serve(listen, backend, gatename, recdir string) {
 	}
 }
 
-func readGateFrame(r *bufio.Reader) (uint16, []byte, error) {
-	head := make([]byte, 14)
-	if _, err := io.ReadFull(r, head); err != nil {
-		return 0, nil, err
-	}
-	cmd, bodyLen, ok := parseGateFrame(head)
-	if !ok {
-		return 0, nil, fmt.Errorf("gate 帧魔数不符: %s", hex.Dump(head[:4]))
-	}
-	body := make([]byte, bodyLen)
-	if _, err := io.ReadFull(r, body); err != nil {
-		return 0, nil, err
-	}
-	return cmd, body, nil
-}
-
 // handleClient 客户端会话：鉴权状态机 + 转发（对齐 Client::OnRecv）。
 func handleClient(client net.Conn, game net.Conn, mgr *sessionMgr, recdir string, id int) {
 	defer client.Close()
@@ -232,16 +264,13 @@ func handleClient(client net.Conn, game net.Conn, mgr *sessionMgr, recdir string
 	var skey uint32
 	authed := false
 	sid := mgr.alloc()
-	var recC2G, recG2C *os.File
+	var recC2G *os.File
 	if recdir != "" {
 		recC2G, _ = os.OpenFile(fmt.Sprintf("%s/session%03d_c2g_%s.raw", recdir, id, start.Format("150405")), os.O_CREATE|os.O_WRONLY, 0644)
-		recG2C, _ = os.OpenFile(fmt.Sprintf("%s/session%03d_g2c_%s.raw", recdir, id, start.Format("150405")), os.O_CREATE|os.O_WRONLY, 0644)
 		if recC2G != nil {
 			defer recC2G.Close()
 		}
-		if recG2C != nil {
-			defer recG2C.Close()
-		}
+		// g2c 改为回向 pump 统一写 gate_downstream.raw（原每会话 g2c 文件只 open 不写）。
 	}
 
 	for {

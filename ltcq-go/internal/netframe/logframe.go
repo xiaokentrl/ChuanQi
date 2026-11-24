@@ -49,8 +49,8 @@ func ParseHandshake(b []byte) (LogHandshake, error) {
 
 // LogFrame 是一条日志记录帧：Cmd + 结构体裸拷贝 body。
 type LogFrame struct {
-	Cmd   uint16
-	Body  []byte // payload 去掉 2B cmd 后的部分（即结构体本体）
+	Cmd  uint16
+	Body []byte // payload 去掉 2B cmd 后的部分（即结构体本体）
 }
 
 // FrameReader 从流式连接持续读帧。调用方需先读完握手。

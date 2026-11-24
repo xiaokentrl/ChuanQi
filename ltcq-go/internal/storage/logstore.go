@@ -131,8 +131,10 @@ func (s *Store) InsertMilestone(serverID int32, r netframe.MilestoneRec) error {
 // —— 待对拍校准，见 docs/loggerserver-spec.md 遗留歧义。
 func (s *Store) InsertChat(serverID int32, r netframe.ChatRec) error {
 	y, m := s.ym()
-	_, err := s.DB.Exec(fmt.Sprintf(sqlLogChat, y, m, r.ActorID, r.Type, 0, 0, 0, 0, "",
-		"", r.Content, 0, 0, 0, 0, 0, 0, serverID))
+	// 列序：actorid,ret,amount,value2,kingdom,phylum,transactionid,extra,msgtype,p1..p5,serverid
+	// 原占位实现把 %s 列传了 int（vet 报错），此处按字段类型对齐；具体语义待对拍校准。
+	_, err := s.DB.Exec(fmt.Sprintf(sqlLogChat, y, m, r.ActorID, r.Type, 0, 0,
+		r.IP, r.PF, r.Aid, r.Content, r.Type, 0, 0, 0, 0, 0, serverID))
 	return err
 }
 

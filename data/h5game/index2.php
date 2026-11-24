@@ -17,7 +17,7 @@
     <link rel="stylesheet" href="/static/css/index.css?v20161122v3">
     <link rel="stylesheet" href="/static/css/h5sdk.css?v20161122v3">
     <link rel="stylesheet" href="/static/css/game.css?v20161122v3">
-    <script type="text/javascript" src="http://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>
+    <script type="text/javascript" src="/static/js/jquery-2.1.4.min.js"></script>
     <script type="text/javascript">
         function is_mobile() {
             var screen = '';

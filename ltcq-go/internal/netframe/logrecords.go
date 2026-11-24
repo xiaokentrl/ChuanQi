@@ -46,15 +46,15 @@ func DecodeCounter(body []byte) (CounterRec, error) {
 
 // InstallRec 对应 LInstall（292B，cmd=2）。无 actorid_，首字段 aid_（写入 actorid 列，%s）。
 type InstallRec struct {
-	Aid        string
-	Source     string
-	Affiliate  string
-	Creative   string
-	Family     string
-	Genus      string
-	FromUID    string
-	Extra      string
-	Flag       int32
+	Aid       string
+	Source    string
+	Affiliate string
+	Creative  string
+	Family    string
+	Genus     string
+	FromUID   string
+	Extra     string
+	Flag      int32
 }
 
 func DecodeInstall(body []byte) (InstallRec, error) {
@@ -212,7 +212,9 @@ func DecodeOnline(body []byte) (OnlineRec, error) {
 	return r, nil
 }
 
-func le32(b []byte) uint32 { return uint32(b[0]) | uint32(b[1])<<8 | uint32(b[2])<<16 | uint32(b[3])<<24 }
+func le32(b []byte) uint32 {
+	return uint32(b[0]) | uint32(b[1])<<8 | uint32(b[2])<<16 | uint32(b[3])<<24
+}
 
 func errShort(name string, got, want int) error {
 	return fmt.Errorf("netframe: %s body 过短 got=%d want=%d", name, got, want)

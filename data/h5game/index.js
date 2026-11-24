@@ -45,27 +45,30 @@ if (window["istest"]) {//对外测试
     window["isAutoOpenNotice"] = false;
 }
 var urlData = window.location.search; //获取url中"?"符后的字串
+// egret 登录包必需字段（缺字段会被 gameworld 拒绝：cd cd 00 00 00 00 字段段缺失）
+window['userData'] = {
+    "uid": "帅哥",
+    "user_id": "帅哥",
+    "openId": "帅哥",
+    "sdkloginmodel": "0",
+    "channelExt": "",
+    "game_appid": "1",
+    "pid": "1"
+};
 if (urlData.indexOf("?") != -1) {
     urlData = urlData.substr(1);
-    // window['userData']=str.split("&");
     var strs = urlData.split("&");
-    var objDat = {};
     for (var i = 0; i < strs.length; i++) {
-        objDat[strs[i].split("=")[0]] = unescape(strs[i].split("=")[1]);
+        var kv = strs[i].split("=");
+        window['userData'][kv[0]] = unescape(kv[1]);
     }
-    window['userData'] = objDat;
-} else {
-    // 本地/测试环境：无 URL 参数时提供默认 userData（egret 登录包需要这些字段，
-    // null 会导致登录包缺 cd cd 00 00 00 00 字段段被 gameworld 拒绝）
-    window['userData'] = {
-        "uid": "帅哥",
-        "user_id": "帅哥",
-        "openId": "帅哥",
-        "sdkloginmodel": "0",
-        "channelExt": "",
-        "game_appid": "1",
-        "pid": "1"
-    };
+    // URL 只带 uid 时，同步身份字段，避免登录包 identity 不一致
+    if (window['userData']['uid'] && !window['userData']['user_id']) {
+        window['userData']['user_id'] = window['userData']['uid'];
+    }
+    if (window['userData']['uid'] && !window['userData']['openId']) {
+        window['userData']['openId'] = window['userData']['uid'];
+    }
 }
 document.getElementById("mainDiv").innerHTML = '<iframe id="paramIframe" style="border: 0px; width: 100%;height: 100%;"src="./indexlogin.html?v=' + Math.random() + '"></iframe>';
 // window.addEventListener("message", function (event) {

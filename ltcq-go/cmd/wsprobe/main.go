@@ -83,7 +83,7 @@ func readServerFrame(r *bufio.Reader) (byte, []byte, error) {
 }
 
 func main() {
-	addr := flag.String("addr", "127.0.0.1:9001", "gateway 地址")
+	addr := flag.String("addr", "127.0.0.1:9002", "gateway 地址（s1=9002）")
 	account := flag.String("account", "帅哥", "账号")
 	flag.Parse()
 
@@ -136,14 +136,14 @@ func main() {
 	fmt.Printf("收到帧 opcode=%d payload=%s (skey=%08x)\n", op, hex.Dump(payload), binary.LittleEndian.Uint32(payload))
 
 	// 4. 登录帧（skey 前缀 + 模拟登录数据：对齐 golden cmd=5 数据部分）
-	login := make([]byte, 0, 54)
-	login = append(login, 0, 0, 0, 0)                    // 4B
-	login = append(login, 0xff, 0x01, 0x01, 0, 0, 0)     // 6B
-	login = append(login, 0x06, 0x00)                    // 2B
-	login = append(login, []byte(*account)...)           // 账号 UTF-8
-	login = append(login, 0, 0x20, 0x00)                 // 3B
+	login := make([]byte, 0, 57)
+	login = append(login, 1, 0, 0, 0)                                    // 4B golden: 01 00 00 00（勿用 00 00 00 00，gameworld 会拒登）
+	login = append(login, 0xff, 0x01, 0x01, 0, 0, 0)                     // 6B
+	login = append(login, 0x06, 0x00)                                    // 2B
+	login = append(login, []byte(*account)...)                           // 账号 UTF-8
+	login = append(login, 0, 0x20, 0x00)                                 // 3B
 	login = append(login, []byte("e10adc3949ba59abbe56e057f20f883e")...) // md5 32B
-	login = append(login, 0)                             // 1B
+	login = append(login, 0)                                             // 1B
 	fmt.Printf("登录帧数据 %d B: %s\n", len(login), hex.Dump(login))
 	if err := writeClientFrame(conn, 0x2, login, payload); err != nil {
 		fmt.Println("登录发送失败:", err)

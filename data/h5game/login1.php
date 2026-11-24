@@ -17,7 +17,7 @@
     <meta name="format-detection" content="telephone=no" />
     <link rel="stylesheet" href="/static/v2/css/common_style.css">
     <link rel="stylesheet" href="/static/v2/css/h5_center.css">
-    <script type="text/javascript" src="http://libs.baidu.com/jquery/2.1.4/jquery.min.js">
+    <script type="text/javascript" src="/static/js/jquery-2.1.4.min.js">
     </script>
     <script type="text/javascript" src="/static/js/h5_common.js">
     </script>

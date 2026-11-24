@@ -56,15 +56,35 @@ WS 握手复刻 + 8192 会话池 + 6001 透明转发（不解包），双向字�
 ### 阶段 4 · Go gameworld 宿主（6-10 周，核心）
 | 子项 | 内容 |
 |---|---|
-| 4.1 luahost | Interpreter 接口 + gopher-lua 实现 + #include 预处理器（once/#ifndef/#if OSTYPE）+ _G.lua 枚举注入 |
-| 4.2 加载链冒烟 | **726 文件零错误——第 13 周前必须达成（最大风险关口）** |
-| 4.3 engineapi | registry 表驱动实现 L* API（T0 优先），含 Lua 调用超时看门狗（500ms，原版缺失） |
-| 4.4 五大注册表 | netmsgdispatcher/actorevent/monevent/csmsg/dbret 回调接通（csmsg 为 stub） |
-| 4.5 网络路由 | 6001、OnNetMsg、LDataPack 收发 |
-| 4.6 场景实体 | AOI/移动广播/怪物 AI（Go 实现——ADR-004 红线） |
-| 4.7 定时器四层 | OnGameTimer / 5 秒精度 / supertimer / postscripttimer |
+| 4.1 luahost | ✅ 已实现：Interpreter 接口 + gopher-lua 宿主 + `--#` 预处理器（include/once/pragma/ifndef/ifdef/if/define/endif/else）+ 500ms PCall 看门狗 + require loader（dataRoot/functions 解析）+ `_G.lua` 枚举注入（1214 常量 + SystemId/Protocol 占位，真实值待 Ghidra） |
+| 4.2 加载链冒烟 | **726 文件零错误——第 13 周前必须达成（最大风险关口）**；✅ 2026-11-23 已提前预研：446 个 .lua 编译 444/446（99.6%），见下方"冒烟预研结论" |
+| 4.3 engineapi | 🔶 进行中：registry 表驱动（声明式 Entry + CI 可校验）；LDataPack 包组（write*/read*/writeData/flush，golden 字节测试）；LActor T0 约 60 API 已注册，其中 getLevel/getName/getCurrency/changeCurrency/getItemCount/costItem/getStaticVar 已接内存实体；T1/T2 长尾待补 |
+| 4.4 五大注册表 | ✅ 已实现：加载原版 5 个 Lua module + System stub + Go 触发入口（Fire/FirePCall），csmsg 按 ADR-005 stub；4 测试通过（真实 OnNetMsg/OnActorEvent 回调、超时） |
+| 4.5 网络路由 | ✅ 已实现：`netframe` 网关帧编解码下沉 + `NetRouter`（sid↔actor 映射、cmd=5 上行→OnNetMsg、LDataPack.flush→cmd=5 回包帧）+ `cmd/gameworld` 6001 骨架（80B 注册握手 + 帧 pump）；4 测试通过（帧→OnNetMsg→readInt→回包帧全链路、会话映射、未绑定 actor、短帧拒绝） |
+| 4.6 场景实体 | 🔶 骨架：内存 Actor（id/level/name/currency/items/staticVar + 脏标记）已接 T0 LActor API，3 测试通过；AOI/移动广播/怪物 AI（ADR-004 红线）待做 |
+| 4.7 定时器四层 | ✅ 骨架完成：Go 毫秒调度器（postScriptEvent/cancelScriptTimer）+ L1/L2 节拍（TickMinute/Tick5s）+ 加载 supertimer/postscripttimer Lua 模块；4 测试通过（一次性/周期/取消/节拍） |
 
 验收：原客户端连 Go 全栈，登录→进场景→打怪→拾取→存盘重登不丢。
+
+> **M2 实测修订（2026-11-23）**：隔离端口对照证明 Go 网关协议正确（握手/skey/注册/cmd=5 上行均实证），探针打现网 C++ 网关能拿到登录成功回包 `ff 01 00`。Go 全栈无回包的根因在 **Go gameworld 缺引擎级登录状态机**（登录 `CMD_Login=255` 由 C++ `GameGate`/`Actor::Onlogin` 处理，非 Lua 协议），诊断日志实证帧已到达（`sid=552 sysid=1 cmdid=0 len=62`）。
+>
+> **✅ 已修复（同日）**：`internal/engineapi/login.go` 实现登录状态机（解析→MD5 校验→openuser→BindActor→回包），`NetRouter` 按 `CMD_Login` 分流；`cmd/gateway` 回向补 skey 回显。隔离端口实测回包 `71 a0 97 68 ff 01 00`（len=7）与 C++ 现网同构，真实 MySQL 校验通过。**M2 网关侧 + 登录鉴权已达字节对齐；剩余 M4 工作：登录后的完整业务逻辑（aeUserLogin 事件链、角色数据加载、进场景）**。详见 RUNBOOK §七.8。
+
+#### 冒烟预研结论（2026-11-23，提前验证 4.2 风险关口）
+
+工具：`cmd/luasmoke`（`go run ./cmd/luasmoke -dir <gameworld/data> -mode compile|load`）。依赖 gopher-lua v1.1.0（Lua 5.1 实现）。
+
+| 验证级别 | 范围 | 结果 |
+|---|---|---|
+| 语法编译（compile） | 446 个 `.lua` 业务脚本 | **444/446 通过（99.6%）** |
+| 语法编译（compile） | 全部 1395 个资产（.lua/.config/.confg） | 1363/1395（97.7%） |
+| 执行（load，带 stub） | 446 个 `.lua` | 75/446（16.8%）——失败均为依赖未就绪（require 模块 62、全局表 nil 307），非语法/引擎不兼容 |
+
+结论：
+- **项目核心策略可行**：gopher-lua 能编译 99.6% 的业务脚本，726 文件零错误的风险关口基本排除（无需切换到 LuaJIT，ADR-002 触发条件未满足）。
+- 2 个 `.lua` 编译失败（`config/modules/moduleclass/cornucopia.lua`、`sample.lua`）为裸表表达式 `{...}`（非语句块），原版按表达式 eval，非 gopher-lua 不兼容。
+- 30 个 `.config` 失败为原版自定义多表序列/编码格式（如 `language/lang/*.config` 末尾 `},`），需 luahost 预处理器处理（4.1），非阻塞。
+- load 模式的失败正是阶段 4.3（engineapi 568 API）+ 4.4（五大注册表）+ 加载顺序要解决的问题——**属预期工作量，不是可行性风险**。
 
 ### 阶段 5 · 数值校准与长尾（2-4 周）
 属性管线（reCalcAttr）、技能伤害对齐；差异单滚动管理。

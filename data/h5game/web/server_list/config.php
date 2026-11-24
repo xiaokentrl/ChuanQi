@@ -33,7 +33,7 @@ $serverlist = array(
 	array(
 		'srvname' =>urlencode('双线1区'),
 		'ip' => '127.0.0.1',
-		'port' => '9001',
+		'port' => '9002',
 		'index' => 1,
 		'status' => 0,
 		'url' => 'http://localhost/web/s10001/Login.php/',
