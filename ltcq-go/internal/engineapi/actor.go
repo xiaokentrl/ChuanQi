@@ -129,7 +129,8 @@ func init() {
 	Register(Entry{Name: "LActor.setIntProperty", Fn: realSetIntProperty, Meta: "原版 _G.lua:1011-1124 | 白名单字段写内存，货币/VIP 走专用存档；ID/坐标/HP/未证实属性失败关闭"})
 	Register(Entry{Name: "LActor.getGuildId", Fn: realGetGuildID, Meta: "Lua调用: 63处 | 已接 actors.guildid"})
 	Register(Entry{Name: "LActor.getGuildName", Fn: realGetGuildName, Meta: "Lua调用: 2处 | actors.guild_name 登录快照"})
-	Register(Entry{Name: "LActor.setCamp", Fn: stubNoop, Meta: "推断 | 占位"})
+	Register(Entry{Name: "LActor.setCamp", Fn: realSetCamp, Meta: "Lua调用: 51处 | 在线玩家内存阵营标签，失败关闭"})
+	Register(Entry{Name: "LActor.getCamp", Fn: realGetCamp, Meta: "Lua调用: 11处 | 在线玩家内存阵营标签，离线/非法为 0"})
 	Register(Entry{Name: "LActor.getGuildPtr", Fn: stubInt1, Meta: "推断 | 占位"})
 	Register(Entry{Name: "LActor.getVipLevel", Fn: realGetVipLevel, Meta: "Lua调用: 47处 | 已接 actors.vip_level"})
 	Register(Entry{Name: "LActor.setVipLevel", Fn: realSetVipLevel, Meta: "Lua调用: 4处 | 先原子存档再更新内存"})
@@ -505,6 +506,45 @@ func realSetIntProperty(a ...luahost.Value) (luahost.Value, error) {
 		return nil, nil
 	}
 	return nil, nil
+}
+
+func realSetCamp(a ...luahost.Value) (luahost.Value, error) {
+	if len(a) < 2 {
+		return nil, nil
+	}
+	actorID, ok := actorHandleArgument(a[0])
+	if !ok {
+		return nil, nil
+	}
+	camp, err := integerArgument(a[1])
+	if err != nil {
+		return nil, nil
+	}
+	actor := DefaultActorManager.Get(actorID)
+	if actor == nil {
+		return nil, nil
+	}
+	actor.mu.Lock()
+	actor.Camp = camp
+	actor.mu.Unlock()
+	return nil, nil
+}
+
+func realGetCamp(a ...luahost.Value) (luahost.Value, error) {
+	if len(a) == 0 {
+		return 0, nil
+	}
+	actorID, ok := actorHandleArgument(a[0])
+	if !ok {
+		return 0, nil
+	}
+	actor := DefaultActorManager.Get(actorID)
+	if actor == nil {
+		return 0, nil
+	}
+	actor.mu.RLock()
+	defer actor.mu.RUnlock()
+	return actor.Camp, nil
 }
 
 func currencyTypeForProperty(property int) int {

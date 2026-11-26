@@ -171,6 +171,12 @@ T0 分组（实现批次）：
 - `P_ID`、坐标、`P_HP/P_MAXHP` 读侧以 World 实体为准，单写 Actor 会造成状态不一致，继续失败关闭；未证实属性、非法/离线句柄、非整数参数、负数金额/等级等同样不修改任何状态、不抛 Lua 错误。
 - 内存字段写入只标 `Actor.Dirty`，不声称已下发协议或接入 `reCalcAttr` 属性管线；`setExp/setLevel` 仍需完整经验链，不能用本 API 代替。
 
+### LActor.setCamp(actor, camp) / getCamp(actor)
+- 调用 51/11 处。实参来源包括 actorID、guildID、`CampType_Player`、`WorldBossCampType_*`、副本分配值（100/200）等；`getCamp` 用于阵营比较、排行榜暂存与副本发包数据。
+- `CampType_*` 全局枚举数值在资产中只见引用未见定义，已确认的只有文件内 local 表（`leadfuben.lua:3-7` 为 0/1/2）与 `crosswujifbmgr.lua:4-7` 的 100/200，因此 Go 不按 0..2 范围校验，只接受整数。
+- Go 在 `Actor` 上新增进程内 `Camp` 标签，`setCamp` 写在线 Actor，`getCamp` 读在线 Actor；离线、非法句柄、非整数参数失败关闭，`getCamp` 返回 0。
+- 不落库、不标脏、不发协议、不参与 `CombatManager` 敌对判定；怪物/机器人句柄、`getCampId`、`Fuben.setMonsterCamp` 均不在此 API 覆盖范围内。
+
 ### LActor.stopAI(actor) / setAITarget(source, target) / getAITarget(entity) / setAIAttackMonster(actor) / setAITargetNull(entity)
 - `actorrole.lua:89-110` 用目标句柄为 0 的切换请求恢复自动打怪，用 `stopAI` 停止 AI；`citysystem.lua:282-293` 读取击杀者当前目标，`citysystem.lua:455` 调 `setAITargetNull` 清目标；`ai_action.lua:108-118` 与 `worldboss.lua:946` 允许怪物显式指定玩家目标。
 - Go 在进程共享 `CombatManager` 中保存玩家停战标记、玩家→怪物显式目标与怪物→玩家仇恨目标。`installCombatAPI` 为每个 Lua VM 注册捕获各自 Combat 的闭包，运行时不再依赖包级全局 Combat。

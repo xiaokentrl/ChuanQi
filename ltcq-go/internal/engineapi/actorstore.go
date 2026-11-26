@@ -41,6 +41,7 @@ type Actor struct {
 	AppID             string        // 渠道 ID（actors.appid）
 	PfID              string        // 平台 ID（actors.pfid）
 	GuildID           int           // 公会 ID（actors.guildid）
+	Camp              int           // 进程内阵营标签，不落库、不发包、不参与战斗判定
 	GuildName         string        // 公会名快照（actors.guild_name）
 	ChapterLevel      int           // 章节等级（actors.chapterlevel）
 	MonthCard         int           // 月卡状态（actors.monthcard）

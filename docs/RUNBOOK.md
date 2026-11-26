@@ -858,3 +858,15 @@ IDE 预览实测时 gameworld 日志出现大量未响应上行帧，其中 `sys
 - `setintproperty_test.go` 覆盖白名单字段 Lua 写入后 `getIntProperty` 回读、金币/元宝存档调用与内存值、绑定币不写 actors 表、VIP 存档、存档失败回滚、非法参数与离线句柄。
 - 新增 `setCurrencyAmount` 仅用于绝对数量写入，不复用 `changeCurrency` 的增量/溢出语义；零变更不写库。
 - 未新增数据库表/字段、未改协议或前端资源，也未触碰共享数据库；现有源码与文档已分批提交，抓包产物与 `.codebuddy` 计划文件未纳入提交。
+
+## 四十一、A5-20：阵营标签 setCamp/getCamp（2026-11-26）
+
+### 实现依据与边界
+- `setCamp` 51 处、`getCamp` 11 处。实参包括自身 actorID、guildID、`CampType_Player`、`WorldBossCampType_*`、副本分配值（100/200）等；`getCamp` 用于阵营比较、排行榜暂存和 `crosswujifb.lua:331` 的发包数据。
+- `CampType_*` 全局枚举数值在 `_G.lua` 与原版 Lua 资产中只有引用没有定义；已确认的仅是 `leadfuben.lua:3-7` 文件内 local 表 0/1/2 与 `crosswujifbmgr.lua:4-7` 的 100/200。因此 Go 只校验整数性，不做 0..2 范围校验。
+- 只给在线 Actor 增加进程内 `Camp` 标签：不写库、不标脏、不发协议、不接 `CombatManager` 敌对判定；怪物/机器人句柄、`getCampId`、`Fuben.setMonsterCamp` 不在本批范围。
+
+### 验证与运行边界
+- `camp_test.go` 覆盖 0/1/2/100/200/大整数/负数的 Lua 写入回读、float64 整数值接受、空参/非整数/离线/不存在句柄的失败关闭，以及写入后 `Dirty` 仍为 false。
+- `P_CAMP=94` 仅见原版 DC 日志读取，未见 `setIntProperty(P_CAMP, ...)`；本批不把阵营并入 `setIntProperty` 白名单。
+- 未新增数据库表/字段、未改协议或前端资源，也未触碰共享数据库或现网服务。
