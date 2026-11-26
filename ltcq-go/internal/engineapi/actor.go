@@ -82,6 +82,8 @@ func init() {
 	Register(Entry{Name: "LActor.getBagItemCount", Fn: realGetBagItemCount, Meta: "Lua调用: 5处 | 背包物品总数量 | 已接背包"})
 	Register(Entry{Name: "LActor.costItem", Fn: realCostItem, Meta: "Lua调用: 126处 | Go原子扣减+存档+协议通知 | 已接背包"})
 	Register(Entry{Name: "LActor.giveItem", Fn: realGiveItem, Meta: "Go发放: itemId,count | 已接背包"})
+	Register(Entry{Name: "LActor.addItem", Fn: realAddItem, Meta: "Lua调用: 31处 | 取 args[1]=itemId,args[4]=count，quality/strong/bind/日志忽略"})
+	Register(Entry{Name: "LActor.getStoreItemCount", Fn: realGetStoreItemCount, Meta: "Lua调用: 11处 | ipBag=0 返回背包总数，其他仓库类型失败关闭为 0"})
 	Register(Entry{Name: "LActor.checkItemNum", Fn: realCheckItemNum, Meta: "Lua调用: 13处 | 窄语义：仅查道具数量，useYuanBao=true 失败关闭"})
 	Register(Entry{Name: "LActor.consumeItem", Fn: realConsumeItem, Meta: "Lua调用: 19处 | 窄语义：仅 costItem，不处理元宝替代"})
 

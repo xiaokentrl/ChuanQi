@@ -84,3 +84,50 @@ func TestConsumeItemNarrow(t *testing.T) {
 		t.Fatalf("失败路径修改了背包: %d want 3", actor.Items[1001])
 	}
 }
+
+func TestAddItemAndStoreItemCount(t *testing.T) {
+	DefaultActorManager = NewActorManager()
+	g := luahost.NewGopherLua(luahost.Config{OSType: "WIN"})
+	defer g.Close()
+	if err := InstallAll(g); err != nil {
+		t.Fatal(err)
+	}
+	actor := DefaultActorManager.GetOrCreate(101)
+
+	got, err := g.Call("LActor.addItem", 101, 2001, 0, 0, 3, 1, "test", 1)
+	if err != nil || got.(bool) != true {
+		t.Fatalf("addItem=%v err=%v", got, err)
+	}
+	if actor.Items[2001] != 3 {
+		t.Fatalf("addItem 后数量=%d want 3", actor.Items[2001])
+	}
+
+	total, err := g.Call("LActor.getStoreItemCount", 101, 0)
+	if err != nil || total.(int) != 3 {
+		t.Fatalf("getStoreItemCount(ipBag)=%v err=%v want 3", total, err)
+	}
+	for _, storeType := range []int{1, 2, 3, 5, 99} {
+		got, err := g.Call("LActor.getStoreItemCount", 101, storeType)
+		if err != nil || got.(int) != 0 {
+			t.Errorf("storeType=%d 应失败关闭: got=%v err=%v", storeType, got, err)
+		}
+	}
+
+	blocked := [][]luahost.Value{
+		{101, 2002, 0, 0},
+		{0, 2002, 0, 0, 1, 1},
+		{101, -1, 0, 0, 1, 1},
+		{101, 2002, 0, 0, 0, 1},
+		{101, 2002, 0, 0, -1, 1},
+		{101, 2002, 0, 0, 1.5, 1},
+	}
+	for _, args := range blocked {
+		got, err := g.Call("LActor.addItem", args...)
+		if err != nil || got.(bool) != false {
+			t.Errorf("非法 addItem 应失败关闭: args=%v got=%v err=%v", args, got, err)
+		}
+	}
+	if actor.Items[2002] != 0 {
+		t.Fatalf("失败路径创建了物品: %d", actor.Items[2002])
+	}
+}

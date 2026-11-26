@@ -733,6 +733,51 @@ func realGetBagItemCount(a ...luahost.Value) (luahost.Value, error) {
 	return total, nil
 }
 
+func realGetStoreItemCount(a ...luahost.Value) (luahost.Value, error) {
+	if len(a) < 2 {
+		return 0, nil
+	}
+	storeType, err := integerArgument(a[1])
+	if err != nil || storeType != 0 {
+		return 0, nil
+	}
+	actorID, ok := actorHandleArgument(a[0])
+	if !ok {
+		return 0, nil
+	}
+	actor := DefaultActorManager.Get(actorID)
+	if actor == nil {
+		return 0, nil
+	}
+	actor.mu.RLock()
+	defer actor.mu.RUnlock()
+	total := 0
+	for _, count := range actor.Items {
+		total += count
+	}
+	return total, nil
+}
+
+func realAddItem(a ...luahost.Value) (luahost.Value, error) {
+	if len(a) < 5 {
+		return false, nil
+	}
+	actorID, ok := actorHandleArgument(a[0])
+	if !ok {
+		return false, nil
+	}
+	itemID, err := integerArgument(a[1])
+	if err != nil || itemID <= 0 {
+		return false, nil
+	}
+	count, err := integerArgument(a[4])
+	if err != nil || count <= 0 {
+		return false, nil
+	}
+	actor := DefaultActorManager.GetOrCreate(actorID)
+	return actor.AddItem(itemID, count)
+}
+
 func realGetZhuanShengLevel(a ...luahost.Value) (luahost.Value, error) {
 	if len(a) == 0 {
 		return 0, nil

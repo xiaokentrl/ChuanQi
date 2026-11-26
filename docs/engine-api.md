@@ -203,6 +203,8 @@ T0 分组（实现批次）：
 
 ### LActor.getItemCount(actor, itemId) → n / addItem / giveItem / canAddItem
 - 背包查询/发放族。giveItem(42) 直接发放；addItem(31) 带位置语义；getEquipBagSpace(12) 装备包空间。
+- Go 已实现 `addItem(actor,itemId,quality,strong,count,bind,logstr,logId)` 的窄语义：取 `args[1]=itemId`、`args[4]=count` 复用 `Actor.AddItem`，quality/strong/bind/日志参数忽略，不检查装备背包容量。
+- `getStoreItemCount(actor,storeType)`（11 处）仅 `ipBag=0` 返回背包物品总数；`ipDepot=1/ipLottery=2/ipEntrust=3/ipBabel=5` 等其他仓库类型返回 0，不伪造仓库；离线/非法参数同样返回 0。
 
 ### LActor.log(actor, ...)
 - 调用 91 处。玩家级业务日志，原版最终走 loggerserver 通道。

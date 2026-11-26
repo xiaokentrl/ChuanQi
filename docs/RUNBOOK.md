@@ -931,3 +931,15 @@ IDE 预览实测时 gameworld 日志出现大量未响应上行帧，其中 `sys
 - 新增 `bagapi_test.go`：覆盖 `checkItemNum` 的足够/不足/精确/`false`/`nil` 标志、元宝标志失败关闭、非法参数与离线；覆盖 `consumeItem` 成功扣减、库存不足、元宝标志、非法参数、离线及失败路径不改背包。
 - 新增 `truthy` 仅用于 Lua 布尔开关判定，不参与物品数量或货币计算。
 - 未改前端、schema、共享数据库或现网服务；C++ 基线试玩服务保持运行，Go 隔离服务未启动。
+
+## 四十五、A5-23：addItem/getStoreItemCount（2026-11-26）
+
+### 实现依据与边界
+- `LActor.addItem` 31 处调用，参数布局稳定为 `(actor, itemId, quality, strong, count, bind, logstr, logId)`，代表见 `txvipaward.lua:204/249/294/339/383/420/453`、`cdkey.lua:61`、`microclient.lua:91/120`。Go 只取 `args[1]=itemId` 与 `args[4]=count` 复用 `Actor.AddItem`；quality/strong/bind/日志参数无背包模型，明确忽略且不检查装备背包容量。
+- `LActor.getStoreItemCount` 11 处调用，`_G.lua:210-215` 已确认 `ipBag=0`、`ipDepot=1`、`ipLottery=2`、`ipEntrust=3`。仅 `ipBag=0` 复用背包物品总数；depot/lottery/entrust/babel 等其他仓库类型一律返回 0，不伪造仓库。
+- 两者均只操作在线 Actor 的 `Items` map；离线/非法句柄、非整数、`itemId<=0`、`count<=0` 一律失败关闭，不改状态。
+- `LActor.AddSkill` 虽有 7 处调用，但实参既出现 `THCfg.skill_id` 也出现 `k*1000+v`，与现有 `Skills[skillBaseID(job,slot)]` 的映射关系未证实，继续暂缓；`LDataPack.writePacket` 缺长度前缀 golden，也暂缓。
+
+### 验证与运行边界
+- `bagapi_test.go` 扩展覆盖 `addItem` 参数位置（第 5 参为 count）、背包增量、非法参数失败关闭；覆盖 `getStoreItemCount(ipBag)` 总数与 1/2/3/5/99 仓库类型失败关闭。
+- 未改前端、schema、共享数据库或现网服务；C++ 基线试玩服务保持运行，Go 隔离服务未启动。
