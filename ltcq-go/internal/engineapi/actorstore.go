@@ -951,6 +951,57 @@ func realCostItem(a ...luahost.Value) (luahost.Value, error) {
 	return ok, err
 }
 
+func truthy(v luahost.Value) bool {
+	switch x := v.(type) {
+	case nil:
+		return false
+	case bool:
+		return x
+	case int:
+		return x != 0
+	case int64:
+		return x != 0
+	case float64:
+		return x != 0
+	case string:
+		return x != ""
+	default:
+		return true
+	}
+}
+
+func realCheckItemNum(a ...luahost.Value) (luahost.Value, error) {
+	if len(a) < 3 || (len(a) > 3 && truthy(a[3])) {
+		return false, nil
+	}
+	itemID, count := asInt(a[1]), asInt(a[2])
+	if itemID <= 0 || count <= 0 {
+		return false, nil
+	}
+	actor := DefaultActorManager.Get(asActorID(a[0]))
+	if actor == nil {
+		return false, nil
+	}
+	actor.mu.RLock()
+	defer actor.mu.RUnlock()
+	return actor.Items[itemID] >= count, nil
+}
+
+func realConsumeItem(a ...luahost.Value) (luahost.Value, error) {
+	if len(a) < 3 || (len(a) > 3 && truthy(a[3])) {
+		return false, nil
+	}
+	itemID, count := asInt(a[1]), asInt(a[2])
+	if itemID <= 0 || count <= 0 {
+		return false, nil
+	}
+	actor := DefaultActorManager.Get(asActorID(a[0]))
+	if actor == nil {
+		return false, nil
+	}
+	return actor.CostItem(itemID, count)
+}
+
 func realGiveItem(a ...luahost.Value) (luahost.Value, error) {
 	if len(a) < 3 {
 		return false, nil

@@ -917,3 +917,17 @@ IDE 预览实测时 gameworld 日志出现大量未响应上行帧，其中 `sys
 - 新增 `datapack_read_test.go`：覆盖 writeData→readData 往返（含 int64/string）、readInt64 大整数、越界/未知类型/非法字段数。
 - 新增 `changemoney_test.go`：覆盖元宝扩展参数调用的三参桥接、金币三参短调用、余额与存档器调用、离线/非法参数/余额不足失败关闭。
 - 未改前端、schema、共享数据库或现网服务；C++ 基线试玩服务保持运行，Go 隔离服务未启动。
+
+## 四十四、A5-22：背包 checkItemNum/consumeItem 窄语义（2026-11-26）
+
+### 实现依据与边界
+- 原版 `actorcost.lua:6-65` 定义了 `checkItemNum/consumeItem`，本质是 Lua 包装：`useYuanBao=true` 时按 `storecommon.getYuanBaoPrice(itemId)` 用元宝补差价。商城价表与元宝替代价没有可安全复用的证据，且 `actorzhuanseng.lua:70/73/82/85` 会由客户端包打开该分支，因此本批**只做窄语义**。
+- `checkItemNum(actor,itemId,count[,useYuanBao])`：仅当 `useYuanBao` 为 false/nil、itemId>0、count>0、Actor 在线时读 `Actor.Items` 返回是否够数；`useYuanBao=true`、非法参数、离线一律 false。
+- `consumeItem(actor,itemId,count[,useYuanBao,log])`：同样条件下直接复用 `Actor.CostItem`，复用其先落库后改内存与背包协议通知；不查商城价、不扣元宝，第 5 参日志忽略。库存不足、非法参数、离线、`useYuanBao=true` 一律 false 且不改状态。
+- 与 `costItem` 的分工：`costItem` 是底层原子扣减，`consumeItem` 是原版 Lua 包装名的窄兼容入口；两者都不处理元宝替代。
+- `LActor.relive` 经复核有 35 处调用，但原版常同时做坐标、地图/副本、AI、Buff 与复活超时处理；`World.RevivePlayer` 仅复位 HP 并发 `EventEnter`，不足以安全实现完整语义，继续暂缓。
+
+### 验证与运行边界
+- 新增 `bagapi_test.go`：覆盖 `checkItemNum` 的足够/不足/精确/`false`/`nil` 标志、元宝标志失败关闭、非法参数与离线；覆盖 `consumeItem` 成功扣减、库存不足、元宝标志、非法参数、离线及失败路径不改背包。
+- 新增 `truthy` 仅用于 Lua 布尔开关判定，不参与物品数量或货币计算。
+- 未改前端、schema、共享数据库或现网服务；C++ 基线试玩服务保持运行，Go 隔离服务未启动。

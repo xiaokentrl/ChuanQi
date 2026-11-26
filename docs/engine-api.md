@@ -128,6 +128,12 @@ T0 分组（实现批次）：
 - 调用 126 处。扣物品，reason 入日志。同族：consumeItem(19)/costItemByUid(6)/checkItemNum(13)。
 - Go：背包扣减 + DB 脏标记；不足返回 false 不扣。
 
+### LActor.checkItemNum(actor, itemId, count[, useYuanBao]) / consumeItem(actor, itemId, count[, useYuanBao, log]) → bool
+- 原版 `actorcost.lua:6-65` 是 Lua 包装，`useYuanBao=true` 会按商城价用元宝补差价；该价格表与替代价证据不足，Go 只实现窄语义。
+- `checkItemNum`：仅读 `Actor.Items`，`useYuanBao=false/nil`、itemId>0、count>0、Actor 在线时返回是否够数；其余 false。
+- `consumeItem`：同条件下复用 `Actor.CostItem`（先落库后改内存并通知背包协议），忽略第 5 参日志；不查商城价、不扣元宝。库存不足、`useYuanBao=true`、非法参数、离线均 false 且不改状态。
+- 两者均不是底层 `costItem` 的完整替代；`actorzhuanseng.lua` 的客户端元宝替代分支与 `guildgather.lua` 的本地元宝数量逻辑均不在覆盖范围内。
+
 ### LActor.getCurrency(actor, type) / getMoneyCount(actor, type) / changeCurrency(actor, type, delta, reason)
 - 调用 107/36/69 处。已确认使用 **mt*** 枚举：mtBindCoin=0、mtCoin=1、mtBindYuanbao=2、mtYuanbao=3。
 - `getCurrency` 与 `getMoneyCount` 共用在线 Actor 查询实现：`actors.gold/yuanbao` 登录时装入货币表 1/3；绑定货币 0/2 及未知类型当前返回 0。空参、缺类型或离线返回 0，不创建 Actor。

@@ -20,6 +20,15 @@
 - **M4 的 "golden 终验" 实际已完成**：真实浏览器已验证 ActorBaseData/RoleData/EnterScene 被客户端正确消费、法阵段 436B 布局正确、ClientConfig 正常。ROADMAP.md 与 protocol-frame.md 已回填实测终验。
 - **背包不是待办**：`bag.go` 已实现 `cmdBag=3` 的 InitData(1)/Delete(3)/Add(4)/Update(5)/UseItem(6)、MySQL `actorvariable.variable` blob 存取（含 CRC）、`Actor.AddItem/CostItem`，客户端真实验收通过。掉落/拾取直接复用 `Actor.AddItem`。
 
+## 一·五、Go 端后续规划（2026-11-26 更新）
+
+- **原则**：只做有现有字段、World/Actor 状态、原版调用点或对称写/读证据的 API；stub 不计入覆盖门禁；不改前端、schema、共享数据库或现网服务。
+- **A5 收尾**：按 `engine-api-matrix.tsv` 高频缺口逐批补齐可安全实现的 API。已完成 A5-19 `setIntProperty`、A5-20 `setCamp/getCamp`、A5-21 `readInt64/readData/changeMoney`、A5-22 `checkItemNum/consumeItem` 窄语义。继续暂缓 `relive`、`giveAwards/canGiveAwards`、`setExp/setLevel`、`reCalcAttr`、`getEntityType` 等缺容量模型、枚举值、协议或状态副作用的项。
+- **B1 全栈演练**：用隔离端口（16001/19002）与独立库，把真实客户端的 server_list 指向 Go 网关，跑登录→创角→进场景→打怪→背包→存盘重登全链路；不触碰当前 C++ 基线服务。
+- **B2 稳定性**：72h soak、同号重连、登录失败回滚、长时间内存/DB 一致性检查。
+- **M6 校准**：5000 机器人压测与数值对齐；跨服按 ADR-005 保持 stub。
+- **A2 掉落/拾取**：继续等待 C++ golden，禁止无 golden 猜协议。
+
 ## 二、路线图（2026-11-25 按需求价值重排）
 
 优先级判据：**玩家可见的数据正确性 > 玩法功能 > 架构长尾 > 需 golden 才能安全做的项**。
@@ -59,7 +68,7 @@
 
 ## 三、当前执行点
 
-- **当前执行点**：A1/A4-1/A4-2/M5-H/A3/A5-1/A5-3/A5-4/A5-5/A5-6 至 A5-21 已完成 → 继续 **A5 engineapi 长尾**。A5-21 补齐 `LDataPack.readInt64/readData` 与 `LActor.changeMoney`；下一批候选是 `LActor.relive` 和背包 `checkItemNum/consumeItem`，仍须避开元宝替代价等未证实语义。A5-20 将 `setCamp/getCamp` 接为在线 Actor 进程内阵营标签，仅校验整数、不落库/不发包/不参与战斗判定；A5-19 将 `setIntProperty` 接入白名单写入：内存字段标脏，金币/元宝/绑定币按绝对数量写入（金币/元宝先落库），VIP 复用 `setVipLevel` 原子存档；`P_ID`、坐标、HP/MaxHP 因读侧 World 优先继续失败关闭。下一批只做有现有字段或在线状态支撑的 API，不再把证据不足的写接口当作可用。奖励入口 `giveAwards/canGiveAwards` 已核定仍缺装备背包容量和跨表原子性，继续暂缓；`sendTipmsg/reCalcAttr` 仍无完整证据，不猜协议。`setExp` 需连同缺失的 `setLevel` 规划完整经验链；`getLastLoginIp` 需先证实整数 IP 到原字符串的编码；`getEntityType` 需先取得原版 `EntityType_*` 枚举数值，均不做猜测实现。RoleData 技能段已确认是 5×int32 等级而非配置 ID。
+- **当前执行点**：A1/A4-1/A4-2/M5-H/A3/A5-1/A5-3/A5-4/A5-5/A5-6 至 A5-22 已完成 → 继续 **A5 engineapi 长尾**。A5-22 补齐背包 `checkItemNum/consumeItem` 窄语义；`relive` 经复核缺复活协议/地图状态证据，继续暂缓。A5-21 补齐 `LDataPack.readInt64/readData` 与 `LActor.changeMoney`；A5-20 将 `setCamp/getCamp` 接为在线 Actor 进程内阵营标签，仅校验整数、不落库/不发包/不参与战斗判定；A5-19 将 `setIntProperty` 接入白名单写入：内存字段标脏，金币/元宝/绑定币按绝对数量写入（金币/元宝先落库），VIP 复用 `setVipLevel` 原子存档；`P_ID`、坐标、HP/MaxHP 因读侧 World 优先继续失败关闭。下一批只做有现有字段或在线状态支撑的 API，不再把证据不足的写接口当作可用。奖励入口 `giveAwards/canGiveAwards` 已核定仍缺装备背包容量和跨表原子性，继续暂缓；`sendTipmsg/reCalcAttr` 仍无完整证据，不猜协议。`setExp` 需连同缺失的 `setLevel` 规划完整经验链；`getLastLoginIp` 需先证实整数 IP 到原字符串的编码；`getEntityType` 需先取得原版 `EntityType_*` 枚举数值，均不做猜测实现。RoleData 技能段已确认是 5×int32 等级而非配置 ID。
 - **背包的位置**：已完成（M5-H），不是待办；掉落/拾取阶段会调用它，不重复做。
 - **A2 掉落暂缓**：golden 缺失，见第四节。
 - **现场约定**：写代码期间 IDE 预览不再长期占用；实测采用"起隔离 Go 服务 → 验证 → 停服务 → 恢复 C++ 现网 9002"的短周期，避免 Go 服务长期挂在隔离端口。
@@ -109,3 +118,4 @@
 - 2026-11-26 A5-20：`LActor.setCamp` 从占位改为在线 Actor 进程内阵营标签写入，并新增 `LActor.getCamp` 只读查询。`CampType_*` 全局枚举数值只见引用未见定义，故只校验整数不做范围限制；0/1/2/100/200/大整数/负数均可往返。空参、非整数、离线/不存在句柄失败关闭，`getCamp` 返回 0。不落库、不标脏、不发协议、不参与 `CombatManager` 敌对判定；新增 `camp_test.go`，覆盖往返与失败边界，未改前端、schema 或共享数据库。
 - 2026-11-26 新前端接入本机 C++ 基线试玩（非 Go 重写）：把 `game.yyzzu.com` 前端包通过 `http://demo.test/` 接入本机 C++ 环境。仅改前端两个 PHP 配置（区服 IP/端口/URL、站点根 URL）与 EServer nginx vhost 的 `sub_filter` 响应替换；JS/HTML/资源零改动。按原版顺序启动 C++ 四件套，真实浏览器验证登录框→开始游戏→进入场景成功。目的与复现/回滚步骤已记入 `RUNBOOK.md` 四十二。
 - 2026-11-26 A5-21：从高频矩阵缺口中补齐 `LDataPack.readInt64`（小端 64 位）与 `LDataPack.readData`（按 `dt*` 常量读取变参，与 writeData 对称），并注册 `LActor.changeMoney` 为 `changeCurrency` 兼容别名（前三个参数同构，第 6 参 tip 作 reason，扩展参数不参与扣款）。新增 `datapack_read_test.go` 与 `changemoney_test.go`，覆盖往返、大整数、越界/未知类型、余额与存档、失败关闭；未改前端、schema 或共享数据库。
+- 2026-11-26 A5-22 + Go 端规划：在 `NEXT-STEPS.md` 新增「一·五 Go 端后续规划」，明确 A5 收尾→B1 全栈→B2 soak→M6 校准的推进顺序与暂缓边界。实现 `LActor.checkItemNum/consumeItem` 窄语义：只查/扣 `Actor.Items`，`useYuanBao=true`、非法参数、离线句柄、库存不足一律失败关闭；不查商城价、不扣元宝、不处理元宝替代。新增 `bagapi_test.go` 覆盖计数、扣减、扩展参数与失败边界；`relive` 因缺复活协议/地图/坐标副作用证据继续暂缓。
