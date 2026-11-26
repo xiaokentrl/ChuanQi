@@ -943,3 +943,44 @@ IDE 预览实测时 gameworld 日志出现大量未响应上行帧，其中 `sys
 ### 验证与运行边界
 - `bagapi_test.go` 扩展覆盖 `addItem` 参数位置（第 5 参为 count）、背包增量、非法参数失败关闭；覆盖 `getStoreItemCount(ipBag)` 总数与 1/2/3/5/99 仓库类型失败关闭。
 - 未改前端、schema、共享数据库或现网服务；C++ 基线试玩服务保持运行，Go 隔离服务未启动。
+
+## 四十六、B1 起点：Go 隔离全栈登录进场景（2026-11-26）
+
+### 目的与边界
+在不触碰 C++ 基线（`80/5001/6001/7001/9002`）与共享库 `actor_s1` 的前提下，用隔离库、隔离端口和隔离客户端入口验证 Go 服务端能完成真实客户端的登录鉴权、角色加载与进入游戏场景。
+
+### 隔离环境
+- 隔离库：`actor_s1_m5e_b1_20261126`，从 `actor_s1` 克隆 `haohaiyao`/actor `65537` 的 `globaluser/actors/roles/actorvariable/actorbinarydata`；创建命令：
+  `M5E_DSN='root:123456@tcp(127.0.0.1:3306)/actor_s1?charset=utf8' go run setup_m5e_db.go -mode setup -database actor_s1_m5e_b1_20261126 -account haohaiyao -actor 65537`
+  （脚本位于 `ltcq-go/reference/captures/browser_retaliation_20261125/`）
+- Go 二进制：`ltcq-go/.tmp_b1/gameworld.exe`、`gateway.exe`，由 `go build` 生成。
+- nginx 0080 入口：`D:/tools/EServer-data/etc/nginx/conf/vhosts/demo.test_8080.conf`，`listen 8080`、`server_name demo.test`，根目录与 80 站点相同；不改前端 PHP 配置，在响应层替换：
+  - `window.loginType = 1` → `0`
+  - 区服列表 URL → `http://demo.test:8080/web/server_list/Serverlist.php/`
+  - `window['userData'] = null;` → 默认登录字段
+  - `"port":"9002"` → `"port":"19002"`
+
+### 启动步骤
+在 `ltcq-go` 目录执行：
+```bash
+go build -o .tmp_b1/gameworld.exe ./cmd/gameworld
+go build -o .tmp_b1/gateway.exe ./cmd/gateway
+.tmp_b1/gameworld.exe -listen 127.0.0.1:16001 \
+  -data ../data/server/s1/Debug/gameworld/data -ostype WIN \
+  -dsn 'root:123456@tcp(127.0.0.1:3306)/actor_s1_m5e_b1_20261126?charset=utf8' \
+  -monster-spawns config/monster_spawns.example.json
+.tmp_b1/gateway.exe -listen 127.0.0.1:19002 -backend 127.0.0.1:16001 -gatename gateway_s1
+```
+验收时 `16001/19002` 均监听，`gateway` 日志出现 `gameworld 已连接` 与 `gate 注册已发送`。
+
+### 验证结果
+- 浏览器打开 `http://demo.test:8080/`，登录框出现，账号 `haohaiyao`，区服 `双线1区`（响应中端口已替换为 `19002`）。
+- 点击“开始游戏”后客户端资源加载/解压成功，进入游戏场景；截图见 `ltcq-go/.tmp_b1/go_after_start.png`。
+- gameworld 日志出现 `账号鉴权通过 sid=552 account=haohaiyao accountID=121103`，随后大量 `sysid/cmdid` 上行帧，说明角色加载与场景包交互正常。
+- C++ 基线 `80/5001/6001/7001/9002` 与 MySQL `3306` 全程在线；未改前端文件、schema 或共享库。
+
+### 保留与回滚
+- 隔离环境当前**保持运行**，便于继续 B1 剩余链路（打怪/背包/存盘重登）。
+- 停止顺序：浏览器 → Go gateway（PID 见运行日志）→ Go gameworld；不要停止 C++ gateway/gameworld。
+- 若需撤掉 8080 入口：`nginx.exe -p D:/tools/EServer-data/childApp/server/nginx -s reload` 前删除 `demo.test_8080.conf`；80 站点 `demo.test` 不受影响。
+- 若需删除隔离库：在 `ltcq-go/reference/captures/browser_retaliation_20261125/` 执行 `setup_m5e_db.go -mode drop -database actor_s1_m5e_b1_20261126`（`M5E_DSN` 同上）。
