@@ -1,5 +1,6 @@
 // wsprobe：模拟 egret 客户端走 gateway 完整流程，逐步打印（M2 调试探针）。
-// 流程：WS 握手 → auth 帧(0xCA0FFFFF) → 收 skey → 登录帧(skey+数据) → 观察 5 秒响应。
+// 流程：WS 握手 → auth 帧(0xCA0FFFFF) → 收 skey → 登录帧(skey+数据) → 观察响应。
+// 支持 count/concurrency 批量并发，用于 B2 soak 与 M6 机器人 burst 准备。
 package main
 
 import (
@@ -12,11 +13,11 @@ import (
 	"math/rand"
 	"net"
 	"os"
+	"sync"
 	"time"
 )
 
 func writeClientFrame(w io.Writer, opcode byte, payload []byte, skey []byte) error {
-	// 客户端帧：payload = skey(4B) + 数据，必须掩码
 	full := make([]byte, 0, 4+len(payload))
 	if skey != nil {
 		full = append(full, skey...)
@@ -82,85 +83,135 @@ func readServerFrame(r *bufio.Reader) (byte, []byte, error) {
 	return opcode, payload, nil
 }
 
-func main() {
-	addr := flag.String("addr", "127.0.0.1:9002", "gateway 地址（s1=9002）")
-	account := flag.String("account", "帅哥", "账号")
-	flag.Parse()
-
-	conn, err := net.Dial("tcp", *addr)
+func probe(addr, account string, observe time.Duration, quiet bool) error {
+	conn, err := net.Dial("tcp", addr)
 	if err != nil {
-		fmt.Println("连接失败:", err)
-		os.Exit(1)
+		return fmt.Errorf("连接失败: %w", err)
 	}
 	defer conn.Close()
 	r := bufio.NewReader(conn)
 
-	// 1. WS 握手
-	key := "dGhlIHNhbXBsZSBub25jZQ==" // 固定 test key（RFC 示例）
-	req := fmt.Sprintf("GET / HTTP/1.1\r\nHost: %s\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Key: %s\r\nSec-WebSocket-Version: 13\r\n\r\n", *addr, key)
+	key := "dGhlIHNhbXBsZSBub25jZQ=="
+	req := fmt.Sprintf("GET / HTTP/1.1\r\nHost: %s\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Key: %s\r\nSec-WebSocket-Version: 13\r\n\r\n", addr, key)
 	if _, err := conn.Write([]byte(req)); err != nil {
-		fmt.Println("握手发送失败:", err)
-		return
+		return fmt.Errorf("握手发送失败: %w", err)
 	}
-	// 读 101 响应
 	var resp []byte
 	for {
 		line, err := r.ReadString('\n')
 		if err != nil {
-			fmt.Println("读 101 失败:", err)
-			return
+			return fmt.Errorf("读 101 失败: %w", err)
 		}
 		resp = append(resp, line...)
 		if line == "\r\n" {
 			break
 		}
 	}
-	fmt.Printf("101 响应 %d B: %q\n", len(resp), string(resp[:60])+"...")
+	if !quiet {
+		fmt.Printf("101 响应 %d B\n", len(resp))
+	}
 
-	// 2. auth 帧（0xCA0FFFFF，无 skey 前缀）
 	auth := make([]byte, 4)
 	binary.LittleEndian.PutUint32(auth, 0xCA0FFFFF)
 	if err := writeClientFrame(conn, 0x2, auth, nil); err != nil {
-		fmt.Println("auth 发送失败:", err)
-		return
+		return fmt.Errorf("auth 发送失败: %w", err)
 	}
-	fmt.Println("auth 帧已发: ffffffff...0xCA0FFFFF")
 
-	// 3. 读 skey 回发
 	conn.SetReadDeadline(time.Now().Add(3 * time.Second))
-	op, payload, err := readServerFrame(r)
+	op, skeyPayload, err := readServerFrame(r)
 	if err != nil {
-		fmt.Println("等 skey 超时/失败:", err)
-		return
+		return fmt.Errorf("等 skey 超时/失败: %w", err)
 	}
-	fmt.Printf("收到帧 opcode=%d payload=%s (skey=%08x)\n", op, hex.Dump(payload), binary.LittleEndian.Uint32(payload))
+	if op != 0x2 || len(skeyPayload) < 4 {
+		return fmt.Errorf("skey 帧异常: opcode=%d len=%d", op, len(skeyPayload))
+	}
+	if !quiet {
+		fmt.Printf("收到 skey 帧 opcode=%d skey=%08x\n", op, binary.LittleEndian.Uint32(skeyPayload))
+	}
 
-	// 4. 登录帧（skey 前缀 + 模拟登录数据：对齐 golden cmd=5 数据部分）
-	accountBytes := []byte(*account)
+	accountBytes := []byte(account)
 	login := make([]byte, 0, 51+len(accountBytes))
-	login = append(login, 1, 0, 0, 0)                                          // 4B golden: 01 00 00 00（勿用 00 00 00 00，gameworld 会拒登）
-	login = append(login, 0xff, 0x01, 0x01, 0, 0, 0)                           // 6B
-	login = binary.LittleEndian.AppendUint16(login, uint16(len(accountBytes))) // 账号长度，原版默认“帅哥”为 6B
-	login = append(login, accountBytes...)                                     // 账号 UTF-8
-	login = append(login, 0, 0x20, 0x00)                                       // 3B
-	login = append(login, []byte("e10adc3949ba59abbe56e057f20f883e")...)       // md5 32B
-	login = append(login, 0)                                                   // 1B
-	fmt.Printf("登录帧数据 %d B: %s\n", len(login), hex.Dump(login))
-	if err := writeClientFrame(conn, 0x2, login, payload); err != nil {
-		fmt.Println("登录发送失败:", err)
-		return
+	login = append(login, 1, 0, 0, 0)
+	login = append(login, 0xff, 0x01, 0x01, 0, 0, 0)
+	login = binary.LittleEndian.AppendUint16(login, uint16(len(accountBytes)))
+	login = append(login, accountBytes...)
+	login = append(login, 0, 0x20, 0x00)
+	login = append(login, []byte("e10adc3949ba59abbe56e057f20f883e")...)
+	login = append(login, 0)
+	if err := writeClientFrame(conn, 0x2, login, skeyPayload); err != nil {
+		return fmt.Errorf("登录发送失败: %w", err)
 	}
-	fmt.Println("登录帧已发（skey 前缀）")
+	if !quiet {
+		fmt.Printf("登录帧已发（%d B）\n", len(login))
+	}
 
-	// 5. 观察 5 秒响应
-	conn.SetReadDeadline(time.Now().Add(5 * time.Second))
-	for i := 0; i < 20; i++ {
+	conn.SetReadDeadline(time.Now().Add(observe))
+	frames := 0
+	for {
 		op, payload, err := readServerFrame(r)
 		if err != nil {
-			fmt.Println("观察结束:", err)
-			return
+			if ne, ok := err.(net.Error); ok && ne.Timeout() {
+				return nil
+			}
+			return err
 		}
-		fmt.Printf("响应帧 #%d opcode=%d len=%d: %s\n", i+1, op, len(payload), hex.Dump(payload[:min(48, len(payload))]))
+		frames++
+		if !quiet {
+			fmt.Printf("响应帧 #%d opcode=%d len=%d: %s\n", frames, op, len(payload), hex.Dump(payload[:min(48, len(payload))]))
+		}
+	}
+}
+
+func main() {
+	addr := flag.String("addr", "127.0.0.1:9002", "gateway 地址")
+	account := flag.String("account", "帅哥", "账号")
+	count := flag.Int("count", 1, "总探测次数")
+	concurrency := flag.Int("concurrency", 1, "并发数")
+	observe := flag.Duration("observe", 5*time.Second, "每次登录后观察时长")
+	quiet := flag.Bool("quiet", false, "批量时减少输出")
+	flag.Parse()
+
+	if *count <= 0 || *concurrency <= 0 || *observe <= 0 {
+		fmt.Fprintln(os.Stderr, "count/concurrency/observe 必须为正数")
+		os.Exit(2)
+	}
+
+	start := time.Now()
+	jobs := make(chan int, *count)
+	for i := 0; i < *count; i++ {
+		jobs <- i
+	}
+	close(jobs)
+
+	var wg sync.WaitGroup
+	var mu sync.Mutex
+	ok, fail := 0, 0
+	for w := 0; w < *concurrency; w++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			for range jobs {
+				if err := probe(*addr, *account, *observe, *quiet); err != nil {
+					mu.Lock()
+					fail++
+					mu.Unlock()
+					if !*quiet {
+						fmt.Println("probe 失败:", err)
+					}
+					continue
+				}
+				mu.Lock()
+				ok++
+				mu.Unlock()
+			}
+		}()
+	}
+	wg.Wait()
+
+	fmt.Printf("wsprobe summary: total=%d ok=%d fail=%d concurrency=%d elapsed=%s\n",
+		*count, ok, fail, *concurrency, time.Since(start).Round(time.Millisecond))
+	if fail > 0 {
+		os.Exit(1)
 	}
 }
 

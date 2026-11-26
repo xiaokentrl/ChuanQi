@@ -1030,3 +1030,29 @@ go build -o .tmp_b1/gateway.exe ./cmd/gateway
 ### 边界与后续
 - 72h soak 尚未执行，本批只完成短周期代理验证；长时间内存趋势、连接泄漏与跨天 DB 一致性仍需单独安排。
 - 隔离环境 `16001/19002`、nginx `8080` 入口、隔离库继续保持运行；C++ 基线 `80/5001/6001/7001/9002` 未受影响，未改前端文件或共享库。
+
+## 四十九、B2 72h soak 启动与 M6 批量探针准备（2026-11-26）
+
+### 72h 后台 soak
+- 脚本：`ltcq-go/.tmp_b1/soak_72h.ps1`；日志：`ltcq-go/.tmp_b1/soak_72h.log`。
+- 启动命令：后台 `pwsh -NoProfile -ExecutionPolicy Bypass -File soak_72h.ps1`，PID `19184`，开始 `2026-11-26 23:15:59`，计划结束 `2026-11-29 23:15:59`。
+- 每分钟记录一次：gameworld/gateway 工作集、`dbcheck.php` 角色与背包状态、`wsprobe -account haohaiyao` 的登录回包与观察结束。
+- 首轮日志确认 `SOAK_START`，登录回包 `ff 01 00`；后续在 23:17:04 记录 `level=52 exp=925 gold=28000`，说明 soak 登录会触发服务端自动战斗奖励，DB 数值随周期增长属于预期，不能当作“DB 不变”的证据。
+
+### wsprobe 批量并发能力
+- `cmd/wsprobe/main.go` 新增 `-count/-concurrency/-observe/-quiet`：
+  - 单探针保持原逐步输出；
+  - 批量模式用 worker pool 并发调用 `probe()`，`-quiet` 只输出 summary；
+  - 账号长度仍按实际 UTF-8 字节数写小端 u16。
+- 回归：`gofmt -l cmd/wsprobe/main.go` 无输出，`go vet ./...`、`go test ./... -count=1` 全通过，Lint 无新增问题。
+
+### 批量 burst 结果
+- `100` 次 / `20` 并发 / `observe=500ms`：`ok=100 fail=0 elapsed=2.511s`。
+- `500` 次 / `50` 并发 / `observe=300ms`：`ok=500 fail=0 elapsed=3.027s`；gameworld 日志新增 1000 行常规帧记录，`WARN/ERROR/失败/panic` 过滤无命中。
+- 内存：gameworld `31.25MB → 31.30MB`，gateway `17.57MB → 26.08MB`；30 秒后 gameworld `31.37MB`、gateway `26.08MB`，gateway 工作集未回落，记为后续内存泄漏观察项（可能是 Go runtime 保留堆，不直接等同于泄漏）。
+- DB：各表行数稳定为 `globaluser=1 actors=1 roles=2 actorvariable=1 actorbinarydata=1`，背包 blob 长度与尾字节不变；角色经验/金币因 72h soak 周期登录持续增加，不作为 burst 数据污染。
+
+### 边界与后续
+- 5000 机器人全量压测尚未执行；当前只完成 100/500 路探针 burst，作为 M6 前置能力验证。
+- 72h soak 结束后需判读 `soak_72h.log` 的内存趋势、登录失败率和 DB 一致性；若 gateway 工作集持续不回落，需追加连接泄漏专项检查。
+- 隔离环境与 C++ 基线继续并存，未改前端、schema 或共享库。
