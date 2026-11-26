@@ -1074,3 +1074,33 @@ go build -o .tmp_b1/gateway.exe ./cmd/gateway
 
 ### 边界
 - 72h soak PID 19184 仍在运行；C++ 基线 `80/5001/6001/7001/9002` 未受影响，未改前端、schema 或共享库。
+
+## 五十一、暂缓项证据复核与 A2 golden 捕获准备（2026-11-26）
+
+### A2 掉落/拾取：仍无 golden
+- `ltcq-go/reference/captures/` 下无 drop/pick 相关 raw/json；`cpp_golden_20261124/*.raw` 仅握手/登录；`bag_cpp_golden.json` 只验证背包初始化；`bag_mutate_browser_proof.json` 的 `firstDropPacket` 指背包 Add，不是地面掉落。
+- 已验证击杀包序是 `[00][10] → [00][05] → [00][07]`（实体消失、金币、经验），没有地面掉落物出现/拾取包。
+- 原版 `sBaseCmd_GetItem=6`、`enDropBag=6`、`aeDropItem=90` 等常量存在，但未绑定到掉落/拾取协议；不可拿背包 `[03][04]/[03][05]` 或实体 `[00][04]/[00][10]` 代推。
+- 仍缺：击杀掉落下行 raw、拾取上行 raw、拾取后掉落物消失/背包 Add/提示的下行包序与状态快照。
+
+### AddSkill：继续暂缓
+- `THCfg.skill_id` 来自 `togetherhit.config:6`，样例 `{71001,72001,73001}`；`godweaponbase.lua:312` 传入 `k*1000+v`，样例 `16001..16010/26001..27001/27001..27010`。二者都属于 `SkillsConfig` 的 configID 空间。
+- Go `Skills` 键是 `skillBaseID(job,slot)=job*10000+slot*1000+1`，值为等级；`getRoleSkillLevel` 按 `index=0..4` 读 5 个槽。把 `Skills[71001]=1` 或 `Skills[16001]=1` 会形成孤儿状态，不会被升级、施放或登录下发读取。
+- 调用对象还混有 actor、role、monster（`flamestamp.lua:352`），无法统一映射到当前 `Actor.Skills`。结论：不实现，不写 `Skills`，不发包，不落库。
+
+### LDataPack.writePacket：继续暂缓
+- Ghidra `functions.tsv:5602` 只确认 `LDataPack::writePacket` arity=3；Lua 调用有省略第三参和显式 `false`，全树未见 `true`。
+- 没有 byte-level golden 能区分“裸写子包”与“u16 小端长度前缀 + 子包”；跨服 handler 立即 `readInt/readByte` 的流控只是间接证据。
+- 缺失最小 golden：一次已知 `src` 字节、`dst` before/after、第三参取值/缺省的完整 flush 或网络帧。结论：不注册、不猜测实现，避免部分字节写入。
+
+### M6 数值对齐缺口
+- Go `monster_spawns.example.json` 的 `exp=100/gold=1000` 是开发示例值；RUNBOOK 十已记录它是示例配置，不是 C++ 对照。
+- C++ `drop.lua:15-59` 消费 droptable，`actorawards.lua:9/14` 把 `type=0` 的 `id` 传给 `LActor.changeCurrency`；`_G.lua:171-176` 的 `mtBindCoin=0/mtCoin=1/mtBindYuanbao=2/mtYuanbao=3` 表明 `type=0,id=0/1/2` 是绑定币/金币/绑定元宝，经验走独立链路。
+- `DropTableConfig[130002]` 虽有金币 51686/绑定币 400/绑定元宝 60 等数值，但 `worldboss.config:453-470` 的 `joinReward=130002` 实际解析到 `DropGroupConfig[130002]` 的物品表，不能据此给 monster 31001 定经验/金币。
+- 结论：真实击杀奖励数值仍需 C++ golden，不能靠现有文本配置直接对齐。
+
+### A2 golden 捕获入口已就绪
+- 新增 nginx vhost：`D:/tools/EServer-data/etc/nginx/conf/vhosts/demo.test_8081.conf`，`listen 8081`、`server_name demo.test`，前端根目录与 80/8080 相同。
+- 响应层替换：区服列表 URL → `http://demo.test:8081/web/server_list/Serverlist.php/`、端口 `9002` → `19003`、`loginType=0` 与默认 `userData`。
+- 已 `nginx -t` 与 reload 验证：`http://demo.test:8081/` 返回 200，区服 JSON 端口为 `19003`。
+- 待用户确认后执行：在 `ltcq-go` 目录运行 `go run ./cmd/tcpcap -listen 127.0.0.1:19003 -to 127.0.0.1:9002 -out reference/captures/a2_drop_pickup_20261126.raw`，打开 `http://demo.test:8081/`，在 C++ 试玩服做“击杀怪物→掉落物出现→拾取”，停止 tcpcap 后解析 raw。未确认前不启动抓包、不改 C++ 服务。
