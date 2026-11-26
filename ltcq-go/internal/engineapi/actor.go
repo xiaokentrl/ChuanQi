@@ -126,7 +126,7 @@ func init() {
 	Register(Entry{Name: "LActor.enterFuBen", Fn: stubNoop, Meta: "Lua调用: 43处 | 占位"})
 
 	// === 属性/阵营/公会/VIP（T0 #36,38,42,44,46,47）===
-	Register(Entry{Name: "LActor.setIntProperty", Fn: stubNoop, Meta: "占位 | property ID 待 Ghidra 提取"})
+	Register(Entry{Name: "LActor.setIntProperty", Fn: realSetIntProperty, Meta: "原版 _G.lua:1011-1124 | 白名单字段写内存，货币/VIP 走专用存档；ID/坐标/HP/未证实属性失败关闭"})
 	Register(Entry{Name: "LActor.getGuildId", Fn: realGetGuildID, Meta: "Lua调用: 63处 | 已接 actors.guildid"})
 	Register(Entry{Name: "LActor.getGuildName", Fn: realGetGuildName, Meta: "Lua调用: 2处 | actors.guild_name 登录快照"})
 	Register(Entry{Name: "LActor.setCamp", Fn: stubNoop, Meta: "推断 | 占位"})
@@ -418,6 +418,107 @@ func realGetIntProperty(a ...luahost.Value) (luahost.Value, error) {
 		return actor.VIPLevel, nil
 	default:
 		return 0, nil
+	}
+}
+
+func realSetIntProperty(a ...luahost.Value) (luahost.Value, error) {
+	if len(a) < 3 {
+		return nil, nil
+	}
+	actorID, ok := actorHandleArgument(a[0])
+	if !ok {
+		return nil, nil
+	}
+	property, err := integerArgument(a[1])
+	if err != nil {
+		return nil, nil
+	}
+	value, err := integerArgument(a[2])
+	if err != nil {
+		return nil, nil
+	}
+	actor := DefaultActorManager.Get(actorID)
+	if actor == nil {
+		return nil, nil
+	}
+
+	switch property {
+	case propertyBindCoin, propertyCoin, propertyBindYB, propertyYB:
+		if value < 0 {
+			return nil, nil
+		}
+		_ = setCurrencyAmount(actor, currencyTypeForProperty(property), value)
+		return nil, nil
+	case propertyVIPLevel:
+		if value < 0 {
+			return nil, nil
+		}
+		_, _ = realSetVipLevel(a[0], value)
+		return nil, nil
+	case propertyLevel:
+		if value <= 0 {
+			return nil, nil
+		}
+		actor.mu.Lock()
+		if actor.Level != value {
+			actor.Level = value
+			actor.Dirty = true
+		}
+		actor.mu.Unlock()
+	case propertySex, propertyVocation, propertyGuildID:
+		if value < 0 {
+			return nil, nil
+		}
+		actor.mu.Lock()
+		switch property {
+		case propertySex:
+			actor.Sex = value
+		case propertyVocation:
+			actor.Job = value
+		case propertyGuildID:
+			actor.GuildID = value
+		}
+		actor.Dirty = true
+		actor.mu.Unlock()
+	case propertyExp, propertyFight:
+		if value < 0 {
+			return nil, nil
+		}
+		actor.mu.Lock()
+		if property == propertyExp {
+			actor.Exp = int64(value)
+		} else {
+			actor.TotalPower = int64(value)
+		}
+		actor.Dirty = true
+		actor.mu.Unlock()
+	case propertyRecharge:
+		if value < 0 {
+			return nil, nil
+		}
+		actor.mu.Lock()
+		actor.Recharge = value
+		actor.Dirty = true
+		actor.mu.Unlock()
+	default:
+		// P_ID、坐标、HP/MaxHP 读侧以 World 为准；未证实属性一律失败关闭。
+		return nil, nil
+	}
+	return nil, nil
+}
+
+func currencyTypeForProperty(property int) int {
+	switch property {
+	case propertyBindCoin:
+		return 0
+	case propertyCoin:
+		return currencyGold
+	case propertyBindYB:
+		return 2
+	case propertyYB:
+		return currencyYuanBao
+	default:
+		return -1
 	}
 }
 

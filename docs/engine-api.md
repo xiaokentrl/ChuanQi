@@ -165,6 +165,12 @@ T0 分组（实现批次）：
 - 调用 46 处。属性重算收口：遍历各系统加成（Lua 提供 get*Attr 族）→ C++ 合成 → setIntProperty。
 - Go：pipeline 重算（各系统注册的加成提供器按序取值）。force=false 时增量重算。
 
+### LActor.setIntProperty(actor, property, value)
+- 调用 66 处；property 枚举全集 `_G.lua:1011-1124` 已确认，A5-13 已先接通同白名单的只读查询。
+- Go 仅写已证实且 Actor 有对应字段的白名单：等级、性别、职业、经验、公会 ID、战力、累计充值；金币/元宝/绑定币按绝对数量写入内存，其中金币/元宝先经现有 `actors.gold/yuanbao` 存档器落库，VIP 复用 `setVipLevel` 的原子存档链。
+- `P_ID`、坐标、`P_HP/P_MAXHP` 读侧以 World 实体为准，单写 Actor 会造成状态不一致，继续失败关闭；未证实属性、非法/离线句柄、非整数参数、负数金额/等级等同样不修改任何状态、不抛 Lua 错误。
+- 内存字段写入只标 `Actor.Dirty`，不声称已下发协议或接入 `reCalcAttr` 属性管线；`setExp/setLevel` 仍需完整经验链，不能用本 API 代替。
+
 ### LActor.stopAI(actor) / setAITarget(source, target) / getAITarget(entity) / setAIAttackMonster(actor) / setAITargetNull(entity)
 - `actorrole.lua:89-110` 用目标句柄为 0 的切换请求恢复自动打怪，用 `stopAI` 停止 AI；`citysystem.lua:282-293` 读取击杀者当前目标，`citysystem.lua:455` 调 `setAITargetNull` 清目标；`ai_action.lua:108-118` 与 `worldboss.lua:946` 允许怪物显式指定玩家目标。
 - Go 在进程共享 `CombatManager` 中保存玩家停战标记、玩家→怪物显式目标与怪物→玩家仇恨目标。`installCombatAPI` 为每个 Lua VM 注册捕获各自 Combat 的闭包，运行时不再依赖包级全局 Combat。

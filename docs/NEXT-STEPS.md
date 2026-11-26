@@ -59,7 +59,7 @@
 
 ## 三、当前执行点
 
-- **当前执行点**：A1/A4-1/A4-2/M5-H/A3/A5-1/A5-3/A5-4/A5-5/A5-6 至 A5-18 已完成 → 继续 **A5 engineapi 长尾**。A5-18 已接通共享 CombatManager 的停战、显式目标、目标读取、清目标与恢复索敌；Combat API 按 Lua VM 闭包绑定，补齐同号重连串行化、登录回滚清 AI 与实时目标状态校验。下一批仅盘点有现有字段或在线状态支撑的只读 API。奖励入口 `giveAwards/canGiveAwards` 已核定仍缺装备背包容量和跨表原子性，继续暂缓；`sendTipmsg/reCalcAttr` 仍无完整证据，不猜协议。`setExp` 需连同缺失的 `setLevel` 规划完整经验链；`getLastLoginIp` 需先证实整数 IP 到原字符串的编码；`getEntityType` 需先取得原版 `EntityType_*` 枚举数值，均不做猜测实现。RoleData 技能段已确认是 5×int32 等级而非配置 ID。
+- **当前执行点**：A1/A4-1/A4-2/M5-H/A3/A5-1/A5-3/A5-4/A5-5/A5-6 至 A5-19 已完成 → 继续 **A5 engineapi 长尾**。A5-19 将 `setIntProperty` 接入白名单写入：内存字段标脏，金币/元宝/绑定币按绝对数量写入（金币/元宝先落库），VIP 复用 `setVipLevel` 原子存档；`P_ID`、坐标、HP/MaxHP 因读侧 World 优先继续失败关闭。下一批只做有现有字段或在线状态支撑的 API，不再把证据不足的写接口当作可用。奖励入口 `giveAwards/canGiveAwards` 已核定仍缺装备背包容量和跨表原子性，继续暂缓；`sendTipmsg/reCalcAttr` 仍无完整证据，不猜协议。`setExp` 需连同缺失的 `setLevel` 规划完整经验链；`getLastLoginIp` 需先证实整数 IP 到原字符串的编码；`getEntityType` 需先取得原版 `EntityType_*` 枚举数值，均不做猜测实现。RoleData 技能段已确认是 5×int32 等级而非配置 ID。
 - **背包的位置**：已完成（M5-H），不是待办；掉落/拾取阶段会调用它，不重复做。
 - **A2 掉落暂缓**：golden 缺失，见第四节。
 - **现场约定**：写代码期间 IDE 预览不再长期占用；实测采用"起隔离 Go 服务 → 验证 → 停服务 → 恢复 C++ 现网 9002"的短周期，避免 Go 服务长期挂在隔离端口。
@@ -105,3 +105,4 @@
 - 2026-11-26 A5-17：`LActor.log` 从空操作改为本地 `slog.Info` 结构化日志，保留严格正整数 Actor ID 与字符串化可变参数；非法句柄按 0 记录，离线正整数按原 ID 记录，不查询/创建 Actor 或修改业务状态。覆盖消息字段、标量/nil 参数、空参、零/负/小数/字符串/NaN/Inf/离线句柄；全量 go test/vet/diff-check 通过。当前未接 7001 或日志库，Lua 表不声称完整序列化；Go 隔离服务保持关闭。
 - 2026-11-26 A5-18：`stopAI/setAITarget/getAITarget/setAIAttackMonster` 接入进程共享 `CombatManager`；新增玩家停战与显式目标状态，支持玩家→怪物、怪物→玩家同场景存活目标，停战保留目标、设置目标恢复战斗、恢复自动打怪清显式目标。死亡/离场/跨场景/非法类型失败关闭，断线清理 AI 状态；覆盖 Lua 桥接、目标优先、越界不回退、怪物指定玩家、失效清理、非法参数、未绑定管理器与 8 路并发；全量 go test/vet/diff-check 通过。未新增表/字段、协议或前端修改，Go 隔离服务保持关闭。`setAIPassivity/reCalcAttr/getGuildPtr` 继续暂缓。
 - 2026-11-26 A5-18 复核加固：删除包级全局 Combat，改为按 Lua VM 闭包绑定各自 CombatManager；登录事件失败回滚先清 AI 再移出 World；路由生命周期锁串行化旧连接离场与同号重登；索敌实时重读 World 的 HP/位置/场景，跳过同 Tick 已死亡或离场目标。据 `citysystem.lua:455` 新增 `setAITargetNull`，只清显式目标或怪物仇恨并保留停战，区别于恢复索敌的 `setAIAttackMonster`。覆盖双 VM 隔离、同号重连、登录回滚、同 Tick 死亡目标与清目标边界；全量 go test/vet/diff-check 与 shuffle 回归通过，Go 隔离服务保持关闭。
+- 2026-11-26 A5-19：`LActor.setIntProperty` 从占位改为白名单写入。等级/性别/职业/经验/公会/战力/充值写内存并标脏；金币/元宝/绑定币按绝对数量写入，金币/元宝先经现有 `CurrencyStore` 落库，VIP 复用 `setVipLevel` 原子存档；`P_ID`、坐标、HP/MaxHP 因读侧 World 优先继续失败关闭。覆盖白名单回读、金币/元宝/绑定币/VIP 写入、存档失败回滚、非法参数与离线边界；新增 `setintproperty_test.go` 单测通过，未改前端、schema 或共享数据库。

@@ -845,3 +845,16 @@ IDE 预览实测时 gameworld 日志出现大量未响应上行帧，其中 `sys
 - 覆盖真实 gopher-lua 调用、显式目标优先、停战保留目标、清目标保留停战、恢复索敌、越界不回退、怪物指定玩家、死亡/离场/跨场景清理、PvP/非法配对、空参/小数/字符串/NaN/Inf/离线、未绑定 Combat、双 VM Combat 隔离、同号重连、登录回滚、同 Tick 死亡目标跳过与 8 路并发。
 - `go test ./... -count=1`、`go vet ./...`、目标文件空白检查和 `gofmt` 检查通过；`go test ./internal/engineapi -shuffle=on -count=3` 与全量 `go test ./... -shuffle=on -count=1` 通过，未发现共享全局状态顺序泄漏；`go test -race` 仍待 CGO 环境。
 - Go 隔离端口 `16001/19002` 未监听，C++ 基线 `9002/6001/5001/7001/80` 均在监听；未修改游戏前端、schema、共享数据库或现网账号数据，也未提交或推送。
+
+## 四十、A5-19：setIntProperty 白名单写入（2026-11-26）
+
+### 实现依据与边界
+- `_G.lua:1011-1124` 的 property 枚举全集已确认；A5-13 已实现同白名单的 `getIntProperty` 只读映射，本批补齐对称写入侧。
+- 等级、性别、职业、经验、公会 ID、战力、累计充值直接写 Actor 现有字段并标 `Dirty`，不声称已接入 `reCalcAttr` 或完整升级链；`setExp/setLevel` 仍按证据不足暂缓。
+- 金币/元宝/绑定币按**绝对数量**写入：金币/元宝先经现有 `CurrencyStore` 写 `actors.gold/yuanbao` 再改内存，绑定币仅改内存，与 `changeCurrency` 落库边界一致；VIP 复用 `setVipLevel` 的先落库后改内存链路。
+- `P_ID`、坐标、`P_HP/P_MAXHP` 读取以 World 实体为准，单独写 Actor 会造成读回不一致，继续失败关闭；未知属性、非法/离线句柄、非整数参数、负数金额/等级同样不改状态、不抛 Lua 错误。
+
+### 验证与运行边界
+- `setintproperty_test.go` 覆盖白名单字段 Lua 写入后 `getIntProperty` 回读、金币/元宝存档调用与内存值、绑定币不写 actors 表、VIP 存档、存档失败回滚、非法参数与离线句柄。
+- 新增 `setCurrencyAmount` 仅用于绝对数量写入，不复用 `changeCurrency` 的增量/溢出语义；零变更不写库。
+- 未新增数据库表/字段、未改协议或前端资源，也未触碰共享数据库；现有源码与文档已分批提交，抓包产物与 `.codebuddy` 计划文件未纳入提交。

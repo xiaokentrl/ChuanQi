@@ -876,6 +876,30 @@ func realChangeCurrency(a ...luahost.Value) (luahost.Value, error) {
 	return nil, nil
 }
 
+func setCurrencyAmount(actor *Actor, currencyType, amount int) error {
+	if actor == nil || currencyType < 0 || amount < 0 {
+		return fmt.Errorf("货币写入参数非法: actor=%v type=%d amount=%d", actor, currencyType, amount)
+	}
+	actor.mu.Lock()
+	defer actor.mu.Unlock()
+	if actor.Currency == nil {
+		actor.Currency = map[int]int{}
+	}
+	if actor.Currency[currencyType] == amount {
+		return nil
+	}
+	if currencyType == currencyGold || currencyType == currencyYuanBao {
+		if actor.currencyStore == nil {
+			return fmt.Errorf("金币/元宝存档器未绑定: actor=%d type=%d", actor.ID, currencyType)
+		}
+		if err := actor.currencyStore.SaveCurrency(actor.ID, currencyType, int64(amount)); err != nil {
+			return fmt.Errorf("货币存档失败: actor=%d type=%d amount=%d: %w", actor.ID, currencyType, amount, err)
+		}
+	}
+	actor.Currency[currencyType] = amount
+	return nil
+}
+
 func realChangeYuanBao(a ...luahost.Value) (luahost.Value, error) {
 	if len(a) < 2 {
 		return nil, fmt.Errorf("changeYuanBao 缺少角色或数量")
