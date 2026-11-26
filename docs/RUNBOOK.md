@@ -1056,3 +1056,21 @@ go build -o .tmp_b1/gateway.exe ./cmd/gateway
 - 5000 机器人全量压测尚未执行；当前只完成 100/500 路探针 burst，作为 M6 前置能力验证。
 - 72h soak 结束后需判读 `soak_72h.log` 的内存趋势、登录失败率和 DB 一致性；若 gateway 工作集持续不回落，需追加连接泄漏专项检查。
 - 隔离环境与 C++ 基线继续并存，未改前端、schema 或共享库。
+
+## 五十、M6 5000 路机器人 burst 与下一步规划（2026-11-26）
+
+### 5000 路 burst
+- 命令：`wsprobe -addr 127.0.0.1:19002 -account haohaiyao -count 5000 -concurrency 100 -observe 100ms -quiet`。
+- 结果：`total=5000 ok=5000 fail=0 concurrency=100 elapsed=5.064s`；gameworld 日志新增约 1 万行常规帧记录，`WARN/ERROR/失败/panic` 过滤无命中。
+- 内存：gameworld 工作集 `31,510,528 → 35,373,056` B，gateway `17,166,336 → 34,738,176` B；冷却 60s 后 gameworld `35,454,976` B、gateway `34,738,176` B，均未回落。
+- 连接：19002 上 `ESTABLISHED=2`、`TIME_WAIT=5002`，符合 5000 次短连接 burst 后的内核状态；服务仍监听，后续 soak 登录回包正常。
+- DB：各表行数仍为 `globaluser=1 actors=1 roles=2 actorvariable=1 actorbinarydata=1`，背包 blob 长度与尾字节不变；角色经验/金币随 72h soak 周期正常增长，不把 burst 记为数据污染。
+
+### 下一步规划
+1. **等 72h soak 结束**（计划 2026-11-29 23:15:59）后判读 `soak_72h.log` 的内存趋势、登录失败率、DB 一致性；gateway 工作集不回落列为专项观察点。
+2. **A2 掉落/拾取 golden**：需用户确认在 C++ 试玩服做一次“打怪掉落→拾取”，用 `tcpcap` 抓 C++ 下行 golden；拿到包序前继续暂缓 Go 侧实现。
+3. **A5 暂缓项**：`relive/AddSkill/writePacket/giveAwards/setExp/reCalcAttr/getEntityType` 等只在枚举、容量模型、协议 golden 或状态副作用证据补全后恢复，不靠猜测推进。
+4. **M6 数值对齐**：5000 路 burst 已通过，后续重点是伤害/经验/掉落等数值与 C++ golden 对齐，而不是继续堆并发。
+
+### 边界
+- 72h soak PID 19184 仍在运行；C++ 基线 `80/5001/6001/7001/9002` 未受影响，未改前端、schema 或共享库。

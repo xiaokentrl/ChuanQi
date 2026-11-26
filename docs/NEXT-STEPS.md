@@ -26,8 +26,9 @@
 - **A5 收尾**：按 `engine-api-matrix.tsv` 高频缺口逐批补齐可安全实现的 API。已完成 A5-19 `setIntProperty`、A5-20 `setCamp/getCamp`、A5-21 `readInt64/readData/changeMoney`、A5-22 `checkItemNum/consumeItem`、A5-23 `addItem/getStoreItemCount` 窄语义。继续暂缓 `relive`、`giveAwards/canGiveAwards`、`setExp/setLevel`、`reCalcAttr`、`getEntityType` 等缺容量模型、枚举值、协议或状态副作用的项；`AddSkill` 因传入 ID 与 `Skills[baseID]` 映射未证实、`writePacket` 因缺长度前缀 golden 暂缓。
 - **B1 全栈演练**：✅ 已验收——隔离库 `actor_s1_m5e_b1_20261126` + `16001/19002` + `http://demo.test:8080/` 跑通登录鉴权→角色加载→进场景→打怪奖励→存档→重登恢复；C++ 基线 `80/5001/6001/7001/9002` 全程未受影响。背包 UI 点击未展开面板，改以 `actorvariable.variable` blob 长度/尾字节在重登前后一致验证背包数据稳定。
 - **B2 稳定性**：🔶 同号并发登录、失败回滚、10 轮短周期 soak 已通过；72h soak 已于 2026-11-26 23:15:59 后台启动（PID 19184，结束时间 2026-11-29 23:15:59），日志 `ltcq-go/.tmp_b1/soak_72h.log` 每分钟记录内存/DB/登录回包；长时间趋势待结束后判读。
-- **M6 校准**：🔶 `wsprobe` 已具备 `count/concurrency/observe` 批量并发能力，100 路/500 路 burst 全部成功；5000 机器人全量压测与数值对齐待执行，跨服按 ADR-005 保持 stub。
+- **M6 校准**：🔶 `wsprobe` 已具备 `count/concurrency/observe` 批量并发能力；100/500/5000 路 burst 均全部成功（5000 路/100 并发/100ms 观察，5.064s 完成）。数值对齐与跨服仍待处理，跨服按 ADR-005 保持 stub。
 - **A2 掉落/拾取**：继续等待 C++ golden，禁止无 golden 猜协议。
+- **下一步（2026-11-26 规划）**：① 等 72h soak（PID 19184）结束后判读日志；② A2 掉落/拾取需要用户确认在 C++ 试玩服做一次“打怪掉落→拾取”并抓 C++ golden，拿到包序后再实现 Go 侧；③ A5 暂缓项（`relive/AddSkill/writePacket/giveAwards` 等）只在枚举、容量模型、协议 golden 或状态副作用证据补全后恢复；④ 5000 路 burst 已通过，下一步是数值对齐而非继续堆并发。
 
 ## 二、路线图（2026-11-25 按需求价值重排）
 
@@ -68,7 +69,7 @@
 
 ## 三、当前执行点
 
-- **当前执行点**：A1/A4-1/A4-2/M5-H/A3/A5-1/A5-3/A5-4/A5-5/A5-6 至 A5-23、B1 全链路完成，B2 短周期完成且 72h soak 后台运行中 → 继续 **M6 批量压测准备**。B2 已通过同号并发登录、失败回滚、10 轮 soak，72h soak PID 19184 运行中；M6 已完成 100/500 路 burst 探针改造；B1 已用隔离库/端口/8080 入口跑通登录→进场景→打怪奖励→存档→重登恢复；A5-23 补齐 `addItem/getStoreItemCount`；`AddSkill` 因技能 ID 到 `Skills[baseID]` 映射未证实、`writePacket` 因长度前缀缺 golden 暂缓。A5-22 补齐背包 `checkItemNum/consumeItem` 窄语义；`relive` 经复核缺复活协议/地图状态证据，继续暂缓。A5-21 补齐 `LDataPack.readInt64/readData` 与 `LActor.changeMoney`；A5-20 将 `setCamp/getCamp` 接为在线 Actor 进程内阵营标签，仅校验整数、不落库/不发包/不参与战斗判定；A5-19 将 `setIntProperty` 接入白名单写入：内存字段标脏，金币/元宝/绑定币按绝对数量写入（金币/元宝先落库），VIP 复用 `setVipLevel` 原子存档；`P_ID`、坐标、HP/MaxHP 因读侧 World 优先继续失败关闭。下一批只做有现有字段或在线状态支撑的 API，不再把证据不足的写接口当作可用。奖励入口 `giveAwards/canGiveAwards` 已核定仍缺装备背包容量和跨表原子性，继续暂缓；`sendTipmsg/reCalcAttr` 仍无完整证据，不猜协议。`setExp` 需连同缺失的 `setLevel` 规划完整经验链；`getLastLoginIp` 需先证实整数 IP 到原字符串的编码；`getEntityType` 需先取得原版 `EntityType_*` 枚举数值，均不做猜测实现。RoleData 技能段已确认是 5×int32 等级而非配置 ID。
+- **当前执行点**：A1/A4-1/A4-2/M5-H/A3/A5-1/A5-3/A5-4/A5-5/A5-6 至 A5-23、B1 全链路、B2 短周期、M6 5000 路 burst 完成；72h soak 后台运行中 → 下一步等 soak 判读 + 准备 A2 golden。B2 已通过同号并发登录、失败回滚、10 轮 soak，72h soak PID 19184 运行中；M6 100/500/5000 路 burst 全部成功；B1 已用隔离库/端口/8080 入口跑通登录→进场景→打怪奖励→存档→重登恢复；A5-23 补齐 `addItem/getStoreItemCount`；`AddSkill` 因技能 ID 到 `Skills[baseID]` 映射未证实、`writePacket` 因长度前缀缺 golden 暂缓。A5-22 补齐背包 `checkItemNum/consumeItem` 窄语义；`relive` 经复核缺复活协议/地图状态证据，继续暂缓。A5-21 补齐 `LDataPack.readInt64/readData` 与 `LActor.changeMoney`；A5-20 将 `setCamp/getCamp` 接为在线 Actor 进程内阵营标签，仅校验整数、不落库/不发包/不参与战斗判定；A5-19 将 `setIntProperty` 接入白名单写入：内存字段标脏，金币/元宝/绑定币按绝对数量写入（金币/元宝先落库），VIP 复用 `setVipLevel` 原子存档；`P_ID`、坐标、HP/MaxHP 因读侧 World 优先继续失败关闭。下一批只做有现有字段或在线状态支撑的 API，不再把证据不足的写接口当作可用。奖励入口 `giveAwards/canGiveAwards` 已核定仍缺装备背包容量和跨表原子性，继续暂缓；`sendTipmsg/reCalcAttr` 仍无完整证据，不猜协议。`setExp` 需连同缺失的 `setLevel` 规划完整经验链；`getLastLoginIp` 需先证实整数 IP 到原字符串的编码；`getEntityType` 需先取得原版 `EntityType_*` 枚举数值，均不做猜测实现。RoleData 技能段已确认是 5×int32 等级而非配置 ID。
 - **背包的位置**：已完成（M5-H），不是待办；掉落/拾取阶段会调用它，不重复做。
 - **A2 掉落暂缓**：golden 缺失，见第四节。
 - **现场约定**：写代码期间 IDE 预览不再长期占用；实测采用"起隔离 Go 服务 → 验证 → 停服务 → 恢复 C++ 现网 9002"的短周期，避免 Go 服务长期挂在隔离端口。
@@ -124,3 +125,4 @@
 - 2026-11-26 B1 全链路：在同一隔离环境点击怪物完成击杀，画面金币增长；隔离库 `actors` 由 `exp=1000/gold=10000` 变为 `exp=1300/gold=13000`，证明战斗奖励已落库。背包 UI 点击未展开面板，改以 `actorvariable.variable` 存档 blob 长度 `17329` 与尾字节在重登前后一致验证背包数据稳定。重新登录后角色等级 51、经验/金币保持击杀后数值，怪物按配置刷新，存盘重登链路通过。详见 `RUNBOOK.md` 四十七。
 - 2026-11-26 B2 短周期：修复 `cmd/wsprobe/main.go` 账号长度字段写死为 6 的问题，改为按实际账号 UTF-8 字节数写小端 u16。不存在账号 `notexist_b2` 登录回包 `ff 01 02`，gameworld 未创建 Actor，隔离库各表行数与角色数值不变；两个 `haohaiyao` 并发登录均回 `ff 01 00`，账号鉴权通过，DB 仍只有 1 个 actor。10 轮 wsprobe soak（约 50s）中 gameworld 内存 31.10MB→31.09MB、gateway 13.59MB→14.53MB，日志无 WARN/ERROR，DB 行数与角色数值不变。72h soak 尚未执行。详见 `RUNBOOK.md` 四十八。
 - 2026-11-26 B2/M6 准备：启动 72h 后台 soak（PID 19184，日志 `ltcq-go/.tmp_b1/soak_72h.log`，结束 2026-11-29 23:15:59），每分钟记录内存/DB/登录回包。扩展 `wsprobe` 增加 `-count/-concurrency/-observe/-quiet`：100 路/20 并发 2.511s 全部成功；500 路/50 并发 3.027s 全部成功，日志无 WARN/ERROR，DB 表行数稳定；gateway 工作集由 17.5MB 升至 26.1MB 且 30s 后未回落，作为后续内存泄漏观察项。5000 机器人全量压测待执行。详见 `RUNBOOK.md` 四十九。
+- 2026-11-26 M6 5000 路 burst：`wsprobe -count 5000 -concurrency 100 -observe 100ms -quiet` 5.064s 完成，`ok=5000 fail=0`；gameworld 工作集 31.51MB→35.37MB，gateway 17.17MB→34.74MB，冷却 60s 后分别 35.45MB/34.74MB；19002 上 ESTABLISHED=2、TIME_WAIT=5002，符合短连接 burst 特征；gameworld 日志无 WARN/ERROR。DB 表行数稳定、背包 blob 不变，角色经验/金币随 72h soak 周期正常增长。详见 `RUNBOOK.md` 五十。
