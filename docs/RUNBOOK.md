@@ -131,3 +131,717 @@ WS 握手返回 HTTP/1.1 101
    - 隔离端口端到端实证：Go 网关 :19002 + Go gameworld :16001 + 真实 MySQL，探针 `帅哥` 登录回包 `71 a0 97 68 ff 01 00`（skey=`6897a071` 小端 + `ff 01 00`），**len=7 与 C++ 现网同构**；gameworld 日志 `密码校验通过 account=帅哥 accountID=121102` / `登录绑定 actor sid=552 actorID=1`。
    - 单测 3 项：`ParseLoginFrame` golden / 成功回包字节+绑定 / 密码错误拒绝；全量 gofmt/vet/test 通过；现网服务全程未动。
 - 排障后务必恢复 C++ 网关（停 Go 网关 → 启 `gateway.exe`），避免游戏服务中断。
+
+## 八、登录后进场景验证（2026-11-24）
+
+### Go 登录后业务链
+
+1. `internal/engineapi/login.go`：`ff01` 只鉴权，不创建或绑定角色；`ff04` 返回角色列表；`ff02` 校验职业/性别后创建角色及关联记录；`ff05` 校验角色归属后绑定 Actor，并调用登录后处理器。
+2. `internal/engineapi/postlogin.go`：加载角色并填充内存 Actor，依次下发 `ActorBaseData`（`[00][01]`）、`RoleData`（`[00][02]`）、`EnterScene`（`[00][03]`）、`OtherEntity`（`[00][04]`），最后触发 Lua `OnActorEvent(aeUserLogin=13)`。
+3. **回包顺序是关键**：真实客户端在收到 `ff05 result=1` 后才由 `RoleMgr.doEnterGame` 创建 `MainScene`。因此必须先发 `ff05` 成功包，再发四个场景包；否则 `GameLogic.postEnterMap` 会在 `this.gamescene` 尚未创建时访问 `this.gamescene.map`。
+4. `cmd/gateway/main.go`：所有 `cmd=5` 业务包回向均补会话 skey 4B。
+
+### 隔离端口真实浏览器验证
+
+- 服务：Go gateway `127.0.0.1:19002` → Go gameworld `127.0.0.1:16001`；C++ `9002/6001/5001/7001` 全程未改。
+- 客户端启动参数必须保留原始中文账号（不要 `encodeURIComponent`），否则 Egret 会把百分号编码串作为账号发送。
+- WebSocket 实测顺序：
+
+  ```text
+  [skey] ff 01 00
+  [skey] ff 04 ... status=1
+  [skey] ff 05 01
+  [skey] 00 01 ... ActorBaseData
+  [skey] 00 02 ... RoleData
+  [skey] 00 03 ... EnterScene
+  [skey] 00 04 ... OtherEntity
+  ```
+
+- 客户端运行日志明确出现 `[E2E] scene=MainScene`；`Actor.postInit`、`SubRoles.doSubRole`、`Role.parser`、`GameMap.parser`、`GameLogic.postEnterMap` 均进入并正常返回。
+- 首轮黑屏已定位并修复：`ActorBaseData` 多写了 `00 01`，导致客户端字段错位并在 `UIView2.expChange` 同步抛异常；`EnterScene` 的首个 int 是副本 ID，必须为 `0`，第二个 int 才是地图 ID；场景配置出生点是格子坐标，下发前必须乘客户端 `GameMap.CELL_SIZE=64` 转为像素。
+- 最终真实浏览器结果：`scene=MainScene`、`fubenID=0`、`mapID=41`、`mapX=4928`、`mapY=1408`、地图 `map010`，缩略图加载完成，24 张地图分块已挂载，镜头位于 `(-4638,-883)`；截图可见完整地图与 UI。约 12 秒内 `SystemTicker.update=3951`、`render=1980`，WebSocket 与资源加载无失败，CDP  Evaluate 和截图均成功。
+- 证据目录：`ltcq-go/reference/captures/browser_render_debug_20261124/`，`first_frame.png` 为最终地图画面，`first_frame_events.json` 记录渲染/ticker/资源证据，`gate_downstream.raw` 记录网关下行帧；此前 `browser_e2e_scene_20261124_2050/` 保留 `MainScene` 首次进入证据。
+- 唯一非致命异常是 headless 浏览器音频自动播放被策略拒绝，不影响地图与 UI 渲染。
+- **该阶段边界**：真实浏览器已证明登录、进入场景、主角色显示与点击移动闭环；AOI、其他玩家同步、怪物/AI/战斗、掉落/拾取、完整持久化及重连链路仍未接通。
+- 回归测试：`go test ./...` 全绿；`TestBuildActorBaseData_ClientParserLayout`、`TestBuildEnterScene_ClientParserLayout`、`TestBuildEnterScene_MineEntryCoordinates` 与 `TestPostLoginSendsFourPacketsBeforeLoginEvent` 固化包布局、出生坐标及回包顺序。
+
+### 验证后恢复
+
+已停止隔离 Go gateway/gameworld 与测试用 headless Edge，并将 `data/h5game/web/server_list/config.php` 的区服端口从 `19002` 恢复为 `9002`。C++ 网关继续监听 `9002`，无需重复启动。
+
+## 九、主角色显示与移动验证（2026-11-25）
+
+### 协议修复
+
+- `OtherEntity` 的 `type/handle` 只出现一次；`postCreateOtherEntity` 已消费该前缀，`Role.parserBase` 会再次消费对应的 10B，重复写入会导致后续字段整体错位。
+- 实体 handle 和属性值使用 IEEE-754 `float64` 位模式（`math.Float64bits`），不能直接写整数。至少发送 HP、MP、maxHP 三个属性，否则主角色无法通过 `getNoDieRole()`。
+- 主角色 `Role=1`、`masterHandle=Actor.handle`、`configID=0`，使其与已有主 SubRole 合并。
+- 移动上行 `[00][1f]`：`handle:f64, count:i32, count × (x:i32, y:i32)`；下行 `[00][0d]`：`handle:f64, mode:i16`，mode 0 带 `x:i32,y:i32`，mode 1 再带 `duration:i32`。Go 侧校验鉴权、Actor 绑定、handle 所有权、路径长度、精确包长和地图边界。
+
+### 真实浏览器验收
+
+- 隔离服务：gateway `127.0.0.1:19002` → gameworld `127.0.0.1:16001`；C++ 服务全程未改。
+- 主角色“有点有你”在 `MainScene` 创建、合并并挂载，handle/masterHandle 均为 1，HP/maxHP 为 100/100；前后截图均可见角色。
+- 点击地图后客户端调用 `sendFindPathToServer`，浏览器实收上行 `[00][1f]` 和下行 `[00][0d]`；角色坐标由 `(4928,1408)` 更新为 `(5044,1478)`，移动时长 46。
+- 客户端普通场景会屏蔽点击移动（`MoveCC.mapClick` 要求 `GameMap.sceneInMine()`）。为验证移动业务链，仅在临时测试页面临时设置 `GameMap.fubenID=GameMap.mapID`，未修改服务端、客户端文件或共享数据库。该覆盖记录在证明 JSON 中，不代表普通地图 41 的线上行为。
+- **普通地图 41 必须保持 `fubenID=0,mapID=41`**，与 C++ 抓包一致；采矿副本实际为 `fubenID=50000,mapID=7000`，不能把 41 伪装成采矿副本。
+- 证据目录：`ltcq-go/reference/captures/browser_role_move_20261124/`。`role_move_proof.json` 记录 `upstreamFindPath=1`、`otherEntity=1`、`syncPos=1`，`role_move_events.json` 保留浏览器 WebSocket 帧原文，`role_before_move.png` / `role_after_move.png` 为前后截图。捕获中仍有一条 Egret 音频自动播放策略异常，不影响场景和移动。
+
+### 验证后恢复
+
+已关闭临时 Edge（CDP `9223` 无响应），停止 Go gateway/gameworld（`19002/16001` 不再监听）。复查 C++ `9002/6001/5001/7001` 与门户 `80` 均在监听，区服配置仍为 `9002`。`go test ./...`、`go vet ./...` 和 `git diff --check` 通过。
+
+## 十、共享场景与 AOI 基础闭环（2026-11-25）
+
+### 已实现
+
+- `internal/scene.World` 作为 gameworld 进程级共享场景，所有网关连接共用同一份实体、观察者和地图配置；每个连接仍保留独立 Lua VM。
+- `config/instance/scene.config` 由 gopher-lua 预处理并执行，`sizeX/sizeY/enterX/enterY` 从格子单位换算为 64 像素单位；地图 41 出生点保持 `(77,22)` 格。
+- 默认视野为 576 像素方形范围。登录时双向发送视野内 `OtherEntity`，移动时广播 `[00][0d]`，离开/进入视野时发送 `[00][0a]` 或完整实体。
+- `NetRouter.CloseSession` 与网关连接 EOF 的 `CloseAll` 均触发共享场景移除和离场广播；路由锁在调用 AOI 观察者前释放。
+- 移动广播不持有 Actor 写锁，避免移动更新与 AOI 实体打包形成嵌套锁死。
+
+### 验证结果与边界
+
+- `TestAOISharedWorldAcrossConnections` 使用两个独立 Router/连接共享一个 World，验证登录互见、跨连接移动同步、离开/重新进入视野、场景隔离和断线移除。
+- `go test ./...` 与 `go vet ./...` 通过；`git diff --check` 通过。
+- `go test -race ./internal/scene ./internal/engineapi` 未运行成功：当前 Windows 环境 `CGO_ENABLED=0`，且未找到 gcc/clang；本机也没有可用 WSL 发行版。该检查仍需在具备 CGO/C 编译器的环境补做。
+- 本阶段是双连接协议集成验证，不是双浏览器真实客户端验收；尚未启动隔离服务，也未改动门户或共享 Actor 数据。复查 C++ `9002/6001/5001/7001` 仍在监听，`19002/16001` 未监听，区服端口仍为 `9002`。
+- 当前 AOI 使用矩形视野扫描，尚未做空间网格性能优化；已支持最小静态怪物生成与外观下发。怪物 AI、巡逻、攻击、伤害、死亡、掉落/拾取、完整持久化及重连仍未实现。
+
+## 十一、最小怪物生成与外观闭环（2026-11-25）
+
+### 已实现
+
+- `internal/scene.World` 新增静态怪物实体：登录和进入视野时下发 `OtherEntity(type=2)`，离开视野或移除时下发 `EntityDisapear`；怪物没有观察者，不会反向接收玩家事件。
+- `internal/engineapi/monsterconfig.go` 加载原版 `monsters.config` 与 `chaptermonster.config`，后者覆盖同 ID；`MonsterManager.SpawnAll` 先校验全部刷新点，再按格子坐标乘 64 生成怪物。
+- 怪物 handle 从 `1<<30` 开始分配；HP/maxHP 来自服务端配置。名称和外观由客户端按 `configID` 从自己的 `GlobalConfig.MonstersConfig` 读取，服务端包内不发送名称、avatar 或 scale。
+- 怪物 `OtherEntity` 负载固定为 63 字节：`type:u16, handle:f64, configID:i32, masterHandle:f64, x:i32, y:i32, attrCount:u16, HP/MP/maxHP:3×f64, extraIntCount:u16, lyMarkLv:u16, lySkillCount:u8`。
+- gameworld 新增可选 `-monster-spawns`；未指定时不刷怪。开发示例 `ltcq-go/config/monster_spawns.example.json` 在服务端场景 1 的 `(55,37)` 格生成一只基础怪物 `31001`（像素坐标 `3520,2368`），不是原版公开地图刷怪数据。
+- 原版公共地图没有自动刷怪事件，地图 41 刷怪表缺失；本阶段只提供显式静态刷新配置，不冒充原版刷怪逻辑。
+- 原版场景表存在边界非法条目（如 1002 的出生点越界、1005 的出生点等于宽度）。加载时记录警告并跳过这些不可用条目；若没有任何有效场景则拒绝启动，地图 41 配置保持不变。
+
+### 配置选择与协议边界
+
+- 服务端章节怪物 `10001` 不在客户端 `GlobalConfig.MonstersConfig` 中。真实浏览器按该 ID 创建模型时会在名称/avatar getter 处失败，因此开发示例改用客户端已加载的基础怪物 `31001`。
+- 原版基础怪物表没有显式 avatar/scale 字段，客户端配置由预处理补齐；服务端无需复制这些客户端外观字段，只需保证所选 configID 存在于客户端基础表且 HP 合法。
+- 本次真实浏览器进入普通地图时 `GameMap.mapID=1`、`fubenID=0`、`sceneInMine()=false`；怪物与玩家位于同一服务端场景 1。`afterCreateOtherEntity` 会在采矿副本状态隐藏怪物，不能用 mine-state override 伪造本阶段验收。
+
+### 测试与运行
+
+- `TestLoadOriginalMonsterCatalog` 验证原版目录可加载；`TestMonsterManagerSpawnsInPixelCoordinates` 与原子预校验测试覆盖坐标、数量和 handle。
+- `TestBuildMonsterEntityClientLayout` 固化 63 字节布局；`TestAOIMonsterVisibilityAcrossConnections` 覆盖双连接登录、视野离开/重进及断线后怪物保留。
+- `TestLoadOriginalSceneWorld` 覆盖原版场景资产加载与容错跳过。
+- 隔离启动示例：
+
+  ```bash
+  go run ./cmd/gameworld -listen 127.0.0.1:16001 \
+    -data ../data/server/s1/Debug/gameworld/data -ostype WIN \
+    -dsn 'root:123456@tcp(127.0.0.1:3306)/actor_s1?charset=utf8' \
+    -monster-spawns config/monster_spawns.example.json
+  go run ./cmd/gateway -listen 127.0.0.1:19002 \
+    -backend 127.0.0.1:16001 -gatename gateway_s1
+  ```
+
+- 当前仍未实现怪物 AI、巡逻、攻击、伤害、死亡、掉落/拾取及持久化；`go test -race` 仍受本机 CGO/编译器缺失限制。
+
+### 真实浏览器验收与恢复（2026-11-25）
+
+- 隔离服务使用 Go gateway `127.0.0.1:19002` → Go gameworld `127.0.0.1:16001`，门户临时指向 `19002`；C++ 基线端口未改。
+- 网关录制 `ltcq-go/reference/captures/browser_monster_20261125/gate_downstream.raw` 中有两条怪物实体帧（sid 552/553）：`type=2`、handle `1073741824`、configID `31001`、masterHandle `0`、坐标 `(3520,2368)`、属性 `[127738,0,127738]`；含 `[00][04]` 的实体负载为 63 字节。
+- 真实浏览器创建两个可见实体：玩家 handle `9502731`、坐标 `(3584,2368)`；怪物 handle `1073741824`、名称 `兽人统领`、avatar `10004`、客户端 level 20、HP/maxHP `127738`、血条值 `127738`，已挂载舞台且 `sceneInMine()=false`。
+- 最终截图 `ltcq-go/reference/captures/browser_monster_20261125/monster_31001_rendered.png` 可见兽人统领、玩家、怪物血条与红色脚底光环；结构化证据为同目录 `monster_31001_proof.json`。
+- 验收后将 `data/h5game/web/server_list/config.php` 恢复为 `9002`，停止隔离 gateway/gameworld 并关闭测试浏览器页；`19002/16001` 不再监听。C++ 服务链按 dbserver → gameworld → gateway → loggerserver 恢复，最终复查 `9002/6001/5001/7001` 与门户 `80`。
+
+## 十二、最小自动战斗与死亡消失闭环（2026-11-25）
+
+### 触发选择与实现
+
+- 客户端 `main.min.js` 中 `sendUseSkill` 没有调用点；点击怪物只走选中/寻路逻辑，没有独立的普通攻击上行。`[02][01]` 已确认是技能结果，不能冒充普通攻击请求。
+- 因此本阶段采用**服务端权威自动战斗**：玩家进入攻击范围后，由 gameworld 每 500ms 选择同场景、范围内最近的存活怪物攻击一次，不伪造客户端攻击包。
+- `internal/scene/world.go` 在同一把锁内校验攻击者、目标、场景和 Manhattan 距离，扣减 HP，并在死亡时删除怪物；最终伤害钳制为剩余 HP，重复攻击不能造成超额伤害。
+- 每次命中按固定顺序广播 `EventHP` → `EventDamage`；死亡追加 `EventLeave`。即使某个观察者发送失败，已生效的 HP 与死亡结果不回滚。
+- `internal/engineapi/combat.go` 的 ticker 由 `cmd/gameworld` 进程级启动一次，不随网关连接或 Lua VM 重复运行。
+- 默认参数：伤害 100、攻击距离 `2*64=128` 像素、攻击间隔 500ms。伤害数值和距离目前是开发常量，不是完整职业/装备公式。
+
+### 下行协议
+
+| 命令 | 负载（不含 `skey/sysid/cmdid`） |
+| --- | --- |
+| `[00][09]` HP 变化 | `handle:f64, currentHP:f64` |
+| `[00][20]` 飘字 | `attacker:f64, target:f64, damage:f64, damageType:u32` |
+| `[00][10]` 实体消失 | `handle:f64` |
+
+对应完整业务负载分别为 18、30、14 字节（含两字节命令头）。当前 `damageType=0`。
+
+### 开发刷新配置
+
+- `ltcq-go/config/monster_spawns.example.json` 显式在服务端场景 2 的 `(6,6)` 格生成一只 `31001` 兽人统领，像素坐标 `(384,384)`；测试角色位于 `(256,384)`，距离恰好 128。
+- 该配置增加开发专用 `hp` 覆盖，将原目录 HP `127738` 降为 `2000`，用于约 10 秒完成 20 次命中并死亡。负覆盖会在生成前被拒绝。
+- 场景、坐标和 HP 覆盖均**不是原版公开地图刷怪数据**，也没有修改共享 Actor 数据库来迁就测试。
+
+### 真实浏览器验收
+
+- 使用干净 Edge 配置，经真实公告关闭与开始按钮进入游戏；网关 `19002` → gameworld `16001`，门户仅临时指向 `19002`。
+- 浏览器状态：`GameSceneView`、`mapID=2`、`fubenID=0`、`sceneInMine()=false`；玩家 handle `65537`，怪物 handle `1073741824`、configID `31001`。
+- 实收 20 个 `[00][09]`，HP 从 1900 依次降至 0；20 个 `[00][20]` 均为攻击者 `65537` → 怪物 `1073741824`、伤害 100、类型 0。
+- 客户端捕获 20 次伤害回调，每次 `amount=-100,type=0`；死亡时收到一次消失回调和一个 `[00][10]`。
+- 最终 `EntityManager` 中只剩玩家，怪物不在实体表中，且已从 Egret 渲染舞台移除。`combat_browser_proof.json` 的 9 项验收全部为 `true`，共记录 46 个战斗帧、67 个 WebSocket 帧。
+- 证据目录：`ltcq-go/reference/captures/browser_attack_20261125/`。`combat_monster_initial.png` 显示怪物在场，`combat_monster_removed.png` 显示死亡动画结束后的最终画面；`combat_damage_visible.png` 为中途状态，飘字以结构化回调证据为准。`gate_downstream.raw`、`gateway.log`、`gameworld.log` 和 `verify_combat.mjs` 可复现抓包与浏览器断言。
+
+### 边界与回归
+
+- 已覆盖伤害与死亡顺序、多观察者、场景/距离/归属校验、并发死亡只结算一次、广播失败不回滚状态、最近目标选择和协议精确布局。
+- `go test ./...`、`go vet ./...`、`git diff --check` 通过。`go test -race` 仍受当前 Windows 环境 `CGO_ENABLED=0` 且无 C 编译器限制。
+- 本阶段尚未实现技能树、怪物反击/AI、掉落、经验、复活、副本结算、完整持久化和怪物重生；这些缺口由后续里程碑继续收敛。
+
+## 十三、击杀奖励、进度存档与怪物重生闭环（2026-11-25）
+
+### 已实现
+
+- `internal/scene/world.go` 的 `AttackMonsterResult` 只在本次攻击实际击杀怪物时返回 `Killed=true`；`CombatManager` 仅依据该结果结算奖励，并发命中同一怪物不会重复发奖。
+- `MonsterSpawn` 新增 `exp`、`gold`、`respawnSeconds`。开发示例每只 `31001` 提供 100 经验、1000 金币，死亡 3 秒后按原坐标、原句柄和满 HP 重生；`respawnSeconds<=0` 表示不重生。
+- `ProgressionManager` 先更新内存 Actor，再以绝对 level/exp/gold 写入 `actors` 表。存档失败会标记 dirty，在后续战斗 tick 和停机时重试；重试使用最新快照，不会重复累加奖励。
+- 经验阈值从原版 `config/actor/exp.config` 加载，支持升级扣减阈值和满级封顶；协议字段限制在 signed int32 范围内。
+- `cmd/gameworld` 每进程只启动一个战斗 ticker、一个共享怪物管理器和一个奖励存档管理器，不随网关连接重复创建。
+
+### 下行协议
+
+| 命令 | 负载（不含 `skey/sysid/cmdid`） |
+| --- | --- |
+| `[00][05]` 金币变化 | `moneyType:i16, absoluteGold:u64`；普通金币 `moneyType=1` |
+| `[00][07]` 经验变化 | `level:i32, exp:i32, addedExp:i32` |
+| `[00][04]` 怪物重生 | 重发完整 `OtherEntity`，无专门重生命令 |
+| `[00][10]` 死亡消失 | `handle:f64` |
+
+致命一击的广播顺序为 HP=0 → 伤害飘字 → 实体消失 → 金币 → 经验；奖励包只发给击杀者。
+
+### 隔离真实浏览器验收
+
+- 使用独立库 `actor_s1_m5d_20261125`，克隆账号 `haohaiyao` / Actor `65537`，初始重置为 51 级、0 经验、0 金币、场景 2；现网 `actor_s1` 未修改。
+- 隔离服务为 Go gateway `127.0.0.1:19002` → Go gameworld `127.0.0.1:16001`，门户仅临时指向 `19002`。真实 Edge 经公告关闭和开始按钮进入 `GameSceneView`。
+- 首轮 20 次命中后 HP 归零，实收一个 `[00][10]`、一个金币绝对值为 1000 的 `[00][05]` 和一个 `addedExp=100,exp=100` 的 `[00][07]`；客户端 Actor 同步为 100 经验、1000 金币。
+- 3 秒后重发同句柄 `1073741824` 的 `[00][04]`，HP/maxHP 均为 2000，客户端实体重新挂载舞台。第二轮再次死亡，奖励累计为 200 经验、2000 金币，没有重复发奖。
+- 显式关闭游戏 WebSocket 后重登，网关记录 sid `552` close、随后 sid `553` 鉴权；重登 `ActorBaseData` 和客户端 Actor 均为 51 级、200 经验、2000 金币，隔离库查询结果一致。
+- `reward_browser_proof.json` 的 17 项验收全部为 `true`：两轮共 40 次客户端伤害回调、两次 HP 归零、两次消失、两次金币/经验奖励；另有一条重登后的伤害帧。证据共记录 141 个 WebSocket 帧。
+- 证据目录：`ltcq-go/reference/captures/browser_reward_20261125/`。`reward_monster_initial.png`、`reward_first_kill.png`、`reward_monster_respawned.png`、`reward_second_kill.png`、`reward_relogin_persisted.png` 分别保存战前、首杀、重生、二杀和重登画面；`verify_reward.mjs`、`gameworld.log`、`gateway.log`、`verifier.log` 可复现验收。
+
+### 边界与恢复
+
+- 奖励数值、HP 覆盖和刷新坐标是开发示例，不是原版公开刷怪表或完整职业公式。当前只持久化 level/exp/gold，不代表背包、任务、技能等完整玩法存档。
+- 仍未实现掉落/拾取、怪物反击与巡逻 AI、技能树、复活和副本结算。
+- 回归覆盖奖励包布局、升级/封顶、非法奖励、存档失败重试、同句柄满血重生、致死攻击只发奖一次和完整战斗包顺序；`go test ./...`、`go vet ./...`、`git diff --check` 通过。`go test -race` 仍受当前 Windows 环境 `CGO_ENABLED=0` 且无 C 编译器限制。
+- 验收后已将门户恢复为 `9002`，停止 Go gateway/gameworld 与测试 Edge，复查 C++ `9002/6001/5001/7001` 和门户 `80` 正常监听；隔离库及临时二进制、浏览器配置均已清理。
+
+## 十四、怪物受击反击与玩家 HP（2026-11-25）
+
+### 已实现
+
+- `internal/scene/world.go` 新增 `AttackPlayerResult`，在怪物存活、目标玩家存活、同场景且位于攻击范围内时造成伤害；HP 最低钳制为 0，超量伤害不会变为负数。
+- `internal/engineapi/combat.go` 在每个 500 ms tick 中依次执行进度存档、玩家自动攻击、怪物反击、到期重生。只有成功命中怪物才记录仇恨；怪物只反击当前目标，不主动索敌或追逐。
+- 目标死亡、断线、离开场景或超出范围时清除仇恨。每只怪物使用独立攻击时间表，攻击伤害、范围、间隔由 `MonsterSpawn.attackDamage`、`attackRange`、`attackIntervalSeconds` 配置；无效组合在怪物生成前拒绝。
+- 怪物伤害写回 World 玩家实体和内存 Actor，移动会保留 HP/MaxHP。默认 HP/MaxHP 为 100；登录进场景前重置为 100，本阶段不持久化 HP 变化。
+- 客户端伤害回调、受害者 HP 包和其他可见玩家观察者使用同一组广播。玩家 HP 归零后实体仍保留，不触发死亡或复活流程。
+
+### 下行协议
+
+| 命令 | 负载（不含 `skey/sysid/cmdid`） | 语义 |
+| --- | --- | --- |
+| `[00][09]` HP 变化 | `handle:f64, currentHP:f64` | 玩家或怪物当前 HP |
+| `[00][20]` 飘字 | `attacker:f64, target:f64, damage:f64, damageType:u32` | 复用普通伤害包表示怪物反击，`damageType=0` |
+
+对玩家的每次反击先发送 HP 包，再发送伤害飘字；AOI 默认排除受害者，因此受害者需要显式投递，其他可见玩家仍接收战斗广播。开发示例配置为 HP 2000、伤害 10、距离 128、间隔 2 秒；玩家以每 500 ms 一次、伤害 100 攻击，共约 10 秒击杀。
+
+### 隔离真实浏览器验收
+
+- 使用隔离库 `actor_s1_m5e_20261125_01`、现有账号 `abc`、Actor `65537`，初始为 51 级、0 经验、0 金币、场景 2；未修改现网 `actor_s1` 或 `globaluser`，隔离库仅克隆既有表，最终登录使用现有账号 `abc`。
+- 真实 Edge 经公告关闭与开始按钮进入场景，只有一个 `ws://127.0.0.1:19002/` 连接和一条登录帧。验证脚本检查 socket/loading 状态，避免客户端自动登录后再次点击开始造成重复连接。
+- 实收 20 次玩家伤害、5 次怪物反击；玩家 HP 依次为 `90 → 80 → 70 → 60 → 50`，四次反击间隔约 `1.999–2.001` 秒。怪物 HP 归零一次，玩家仍以 50/100 HP 留在场景。
+- 击杀仍广播一次金币绝对值 1000、一次经验 `addedExp=100,exp=100` 和一次实体消失；客户端伤害回调共 25 次，无控制台错误。
+- `retaliation_browser_proof.json` 的 14 项验收全部为 `true`，记录 79 个 WebSocket 帧。证据目录为 `ltcq-go/reference/captures/browser_retaliation_20261125/`；`retaliation_monster_initial.png`、`retaliation_damage_visible.png`、`retaliation_first_kill.png` 保存战前、受击和击杀画面，`verify_retaliation.mjs`、`gameworld.log`、`gateway.log`、`verifier.log` 保留验收素材。
+
+### 边界、回归与恢复
+
+- 本阶段仅实现受击后的最小仇恨反击，不含巡逻、主动索敌、追击、技能、玩家死亡/复活、掉落/拾取和完整玩法持久化。
+- 单元测试覆盖无仇恨不反击、伤害与 HP 广播、范围/场景/存活校验、HP 钳制、零血玩家保留、断线与离开范围清仇恨、攻击间隔及 ticker 提前到达时的 50 ms 调度容差；`go test ./...`、`go vet ./...` 通过。`go test -race` 仍受当前 Windows 环境 `CGO_ENABLED=0` 且无 C 编译器限制。
+- 验收后已停止隔离 Go gateway/gameworld 和测试 Edge，删除隔离库及 `.tmp_m5e` 临时二进制、查询脚本和浏览器配置；门户恢复 `9002`，复查 `16001/19002/9223` 关闭，C++ `9002/6001/5001/7001` 与门户 `80` 正常监听。
+
+## 十五、玩家死亡冻结与安全复活闭环（2026-11-25）
+
+### 已实现
+
+- `internal/scene/world.go` 的 `MovePlayer` 拒绝 HP 为 0 的玩家；`internal/engineapi/movement.go` 在 Actor 锁内二次确认 HP，再提交 World 坐标，并在位置同步成功后才广播 AOI 变化，避免死亡与移动并发产生状态竞态。
+- `AttackPlayerResult.Killed` 标记致死反击。致命广播固定为 HP=0 → 伤害飘字 → 玩家实体消失；死亡玩家保留在 World 中供定时复活，但 AOI 对存活观察者隐藏。
+- `internal/engineapi/combat.go` 为死亡玩家登记 `ReviveAfter` 截止时间并清除所有指向该玩家的怪物仇恨。默认延迟为 3 秒，可通过 `CombatConfig.ReviveAfter` 配置；这是测试/开发约定，不代表原版数值配置。
+- 到期复活使用 `World.RevivePlayer`，保持场景、实体句柄和坐标不变，HP/MaxHP 恢复为满值。先同步 Actor HP，再向本人及可见存活观察者广播完整 `OtherEntity`；广播失败不回滚已生效的复活状态。
+- 断线或重新登录会移除过期的复活计时，不会把旧会话的复活任务带入新会话；登录仍按现有约定重置 HP 为 100。未新增数据表、数据库字段、死亡弹窗或复活客户端命令。
+
+### 下行协议
+
+| 命令 | 负载（不含 `skey/sysid/cmdid`） | 语义 |
+| --- | --- | --- |
+| `[00][09]` HP 变化 | `handle:f64, currentHP:f64` | 致死时发送 HP=0 |
+| `[00][20]` 飘字 | `attacker:f64, target:f64, damage:f64, damageType:u32` | 致死伤害 |
+| `[00][10]` 实体消失 | `handle:f64` | 死亡包序最后一项 |
+| `[00][04]` | 完整 `OtherEntity` | 同句柄、同场景、同坐标的满血复活实体 |
+
+### 隔离真实浏览器验收
+
+- 复用 `setup_m5e_db.go` 创建并最终删除隔离库 `actor_s1_m5e_20261125_f1`，仅克隆既有表；使用现有账号 `haohaiyao` / Actor `65537`，初始为 51 级、0 经验、0 金币、场景 2。现网 `actor_s1` 未修改，也没有新增业务表。
+- Go gateway `127.0.0.1:19002` → gameworld `127.0.0.1:16001`，门户仅临时指向 `19002`。真实 Edge 经公告关闭和开始按钮进入 `GameSceneView`，只有一个游戏 WebSocket 和一条登录帧。
+- 开发怪物配置位于场景 2 `(7,6)` 格，玩家从 `(256,384)` 实时移动到 `(384,384)` 后进入攻击范围。客户端先记录玩家 100/100 HP，再收到怪物 100 点致死伤害。
+- 实收死亡包序 `[00][09] handle=65537,HP=0` → `[00][20] attacker=1073741824,target=65537,damage=100` → `[00][10] handle=65537`；客户端记录死亡音效回调并从实体表与舞台移除玩家。
+- 死亡窗口内注入移动请求，服务端记录“玩家已死亡，不能移动”，没有位置同步或后续伤害包。约 `2999.932ms` 后重发 `[00][04]`，句柄仍为 `65537`，坐标为死亡前 `(384,384)`，HP/MaxHP 为 `100/100`；随后自动战斗恢复。
+- `death_browser_proof.json` 的 17 项断言全部为 `true`，共记录 40 个 WebSocket 帧；复活后的战斗允许玩家再次死亡，因此满血校验使用复活瞬间快照而非最终快照。经验和金币保持不变，无客户端脚本错误。
+- 证据目录：`ltcq-go/reference/captures/browser_death_20261125/`。`death_initial_full_hp.png`、`death_before_lethal_hit.png`、`death_player_removed.png`、`death_player_revived.png` 保存关键时刻；`verify_death.mjs`、`death_browser_proof.json`、`verifier.log`、`gameworld.log`、`gateway.log` 和 `monster_spawns.json` 保留可复现素材。
+
+### 边界、回归与恢复
+
+- 本阶段只实现同场景、同坐标、满 HP 的安全复活，不含回城复活、付费复活、完整职业属性、MP、技能、掉落/拾取、副本结算或完整玩法持久化。
+- 单元测试覆盖致死包序、死亡移动/攻击拒绝、并发致死只生效一次、复活后 AOI 可见、重复复活拒绝、死亡断线不重复广播、广播失败不回滚、断线重登清理旧计时、自定义复活延迟和复活后恢复战斗。
+- `go test ./...`、`go vet ./...`、`gofmt -l cmd internal`、`git diff --check` 和浏览器验证脚本语法检查通过。`go test -race` 仍受当前 Windows 环境 `CGO_ENABLED=0` 且无 C 编译器限制。
+- 验收后门户恢复 `9002`，停止 Go gateway/gameworld 与测试 Edge，删除隔离库及 `.tmp_m5f` 临时文件；复查 `16001/19002/9223` 关闭，C++ `9002/6001/5001/7001` 与门户 `80` 正常监听，门户返回 `9002`。
+
+## 十六、怪物最小主动索敌、追击与脱战归位（2026-11-25）
+
+### 已实现
+
+- 怪物生成配置新增 `aggroRange`、`chaseStep`、`leashRange`，均为像素。主动 AI 必须同时提供攻击伤害、攻击范围和攻击间隔，且 `leashRange >= aggroRange`；加载前原子校验，非法配置不会产生部分怪物。三个字段全为 0 时保持原有受击仇恨反击行为。
+- `internal/scene/world.go` 的 `MoveMonster` 提供服务端权威坐标更新，拒绝不存在、非怪物、已死亡或越界实体；可见玩家接收 `[00][0d]`，离开/进入 AOI 分别复用实体消失和完整实体包，不新增客户端命令。
+- `internal/engineapi/combat.go` 每个 AI tick 选择同场景、攻击配置有效、索敌范围内最近的存活玩家；超出攻击范围时按 `chaseStep` 追击，进入范围后按 `attackIntervalSeconds` 攻击。
+- 玩家死亡、断线、离开场景、目标失效或怪物越过 `leashRange` 时清除仇恨。脱战怪物进入 `returning` 状态，归位完成前禁止重新索敌，避免在 leash 边界反复横跳；到达出生点后的下一 tick 清除归位标记。
+- 怪物死亡和重生清理攻击冷却、仇恨与归位状态。未配置主动 AI 的怪物不会巡逻、索敌或追击。本阶段不含技能、寻路、群体仇恨、巡逻、掉落和完整职业数值。
+
+### 隔离真实浏览器验收
+
+- 复用 `setup_m5e_db.go` 创建并最终删除隔离库 `actor_s1_m5e_20261125_g1`，仅克隆既有表；使用现有账号 `haohaiyao` / Actor `65537`，初始为 51 级、0 经验、0 金币、场景 2。现网 `actor_s1` 未修改，也没有新增业务表或字段。
+- Go gateway `127.0.0.1:19002` → gameworld `127.0.0.1:16001`，门户仅临时指向 `19002`。真实 Edge 进入 `GameSceneView`，只有一个游戏 WebSocket 和一条登录帧。
+- 测试怪物出生点为场景 2 `(448,384)`，HP 2000；玩家从 `(256,384)` 进入 256 像素索敌范围。实收首个怪物移动包 `[00][0d] handle=1073741824, mode=1, x=384, y=384, duration=16`，先移动后攻击，玩家实体 HP 100→90。
+- 玩家实时移动到 `(1200,384)` 后，怪物追击到 `x=1024`，超过出生点 448 加 leash 512 的边界 960，随后转向归位。怪物离开 AOI 后不再发送移动包，因此验收让玩家移动到 `(1000,384)` 重新观察，通过 `[00][04]` 实体重入包确认怪物已回到 `(448,384)`，HP 1900/2000。
+- 归位后稳定观察 1.6 秒，没有怪物移动或攻击包；经验和金币保持 0。`monster_ai_browser_proof.json` 的 15 项断言全部为 `true`，共记录 51 个 WebSocket 帧，无客户端脚本错误。
+- 证据目录：`ltcq-go/reference/captures/browser_monster_ai_20261125/`。`monster_ai_initial.png`、`monster_ai_chased.png`、`monster_ai_leash.png`、`monster_ai_returned.png` 保存关键时刻；`verify_monster_ai.mjs`、`monster_ai_browser_proof.json`、`verifier.log`、`gameworld.log`、`gateway.log` 和 `monster_spawns.json` 保留可复现素材。
+
+### 回归与恢复
+
+- 单元测试覆盖主动追击与攻击包序、范围外/死亡玩家忽略、最近目标选择、断线归位、leash 归位期间目标仍在索敌半径内但不重新锁定、归位完成清状态，以及非法 AI 配置拒绝；场景测试覆盖怪物移动 AOI 的视野内、离开、重入和非法状态。
+- `go test ./...`、`go vet ./...`、`gofmt -l cmd internal`、`git diff --check` 和浏览器脚本语法检查通过。`go test -race` 仍待支持 CGO 的环境补做。
+- 验收后门户恢复 `9002`，停止 Go gateway/gameworld 与测试 Edge，删除隔离库及 `.tmp_m5g`；复查 `16001/19002/9223` 关闭，C++ `9002/6001/5001/7001` 与门户 `80` 正常监听，门户实际返回 `9002`。
+
+## 十七、登录进度条弹框 `fzRedShow` 读 `undefined.Lv`（2026-11-25）
+
+### 现象（排查入口，复发时先对号入座）
+- 登录进度条跑到**大半**、进游戏前弹出 egret 原生 alert 框（localhost 显示），原文：
+  - `错误信息: Uncaught TypeError: Cannot read properties of undefined (reading 'Lv')`
+  - `出错位置：93行15883列`　`出错函数：e.fzRedShow`
+  - `调用栈：main.min.js:93:15357 → 68:6564 → 68:6343 → 1:6171 → 1:5961 → egret.min.js:4:11822 → egret.web.min.js:2:15183`
+- 关键定性：这是**客户端 JS 自己抛的异常对话框**，不是服务端 alert、不是账号/密码错误、不是 WS 链路断开。`state.errors` 常为空、WebSocket 帧数正常，容易误判成"已经进场景"。
+
+### 根因（一句话）
+`RoleData`（`CMD_Base=0, sBaseCmd_RoleData=2`）包尾的**法阵（DemonCircle）数据段**子阵数量写成 `0`，客户端 `SubRoles.parser` 据此构造出空 `matrixInfo=[]`，随后红点刷新 `fzRedShow → getMatrixInfo → i.mbMatrixInfo[e-1].Lv` 读到 `undefined.Lv` 抛异常。
+
+定位链路（从弹框反查，逐层收敛）：
+1. `data/h5game/main.min.js` 第 93 行 `e.fzRedShow` → `var i=this.getMatrixInfo(t,e); if(0==i.Lv)`。
+2. `getMatrixInfo` → `i=SubRoles.ins().getSubRoleByIndex(t); return i.mbMatrixInfo[e-1]` → 数组为空返回 `undefined`。
+3. `mbMatrixInfo` 的**唯一初始化点**在角色数据解析（`SubRole.parser`，main.min.js 约 699200 处）：`var u=t.readShort()`（子阵数量）→ `for(c=0;u>c;c++){h=new MatrixInfo; h.index=t.readShort(); h.initParser(t); ...}`。它来自 `RoleData` 包，**不是** `CMD=79` 的 `PackageID.Matrix` 系统包（那个只做运行时增量更新 `parseUptateMatrix`）。
+4. Go 侧 `internal/engineapi/postlogin.go` 的 `buildRoleData` 末尾原写 `[2B huanhuaId][2B 子阵数=0]` → `u=0` → 空数组。
+
+### 修复（权威依据 + 代码位置）
+- 权威：`data/server/s1/Debug/gameworld/data/functions/systems/rolesystem/demoncircle/demoncircle.lua:1160` 的 `_G.packDemonCircleData`（C++ 组角色包时回调它）＋ `config/demoncir/demoncirbase.config`（6 子阵、每阵 5 潜能）、`demoncirskill.config`（4 特质）。
+- 改动：`postlogin.go` 的 `buildRoleData` 末尾改为调用 `appendDemonCircleData(p)`；新号全部填 0（未激活）。布局（小端）：
+  `[2B huanhuaId][2B 子阵数=6] ×6{[2B subId][2B Lv][2B WYLv][4B WYEXP][2B 特质数=4]×4{[2B id][2B lv]}[2B 领悟次数][2B 潜能数=5]×5{[2B id][2B 激活][4B 额外值]}}`
+  子阵段共 `4 + 6×72 = 436` B；`RoleData` 总长 `3677 → 4109`。
+- 单测：`postlogin_test.go` 的 `TestBuildRoleData_DemonCircleSegment` 逐字段校验子阵数=6、Lv=0、特质/潜能数量与 id；`TestBuildRoleData_MinimalClientLayout` 长度断言同步为 `3677-4+436`。
+
+### 验证证据
+- 真实验证：`node reference/captures/browser_bag_20261125/verify_bag.mjs --relogin` → `reference/captures/browser_bag_20261125/bag_relogin_browser_proof.json` 的 9 项断言全为 `true`（`sceneEntered`、`noClientErrors`、`bagTypesInitialized`、`persistedInitItem` 等），进度条弹框消失并成功进场景（map=2、51 级、背包 200013×1），共 29 个 WS 帧。修复前的失败快照 `bag_relogin_failure.json` 保留作对照（当时 `errors` 为空但卡在进度条）。
+- `go test ./...`、`go vet ./...`、`gofmt -l cmd internal`、`git diff --check` 全绿。
+
+### 复发速查清单（以后遇到"进游戏前弹框"按此顺序排）
+1. 先看弹框**函数名**：`fzRedShow` / `getMatrixInfo` / `ReadingState` → 基本都是某个 `RoleData`/系统包字段段空或长度不对，不是链路问题。
+2. 在 `main.min.js` 搜函数名，找到它读的字段（如 `.Lv`、`.mbMatrixInfo`），再搜该字段的**初始化点**（`xxx=t.readShort()` 循环）确定来自哪个包的哪一段。
+3. 对照服务端组包函数（本例 `demoncircle.lua` 的 `packDemonCircleData`）确认字段序与数量；Go 侧补同布局，用单测锁字节。
+4. 区分"系统包"与"角色内嵌段"：后者随 `RoleData` 一次下发，前者是独立 CMD（本例 79），不要改错地方。
+5. 服务端日志/帧数正常但客户端 `state.errors` 为空时，仍要查 JS 异常对话框——egret 的 alert 不走 CDP `Runtime.exceptionThrown`。
+6. 验证脚本卡 `loginLoading:true` 且网关 `10:53 ERROR gate 回向结束` → 多半是重启 gameworld 把网关连接打断导致网关退出，重启网关（参数只用 `-listen/-backend/-gatename`，**别传** `-data/-ostype`）再跑。
+
+### 法阵/红点深度排查（2026-11-25 同日追加，未发现新复发）
+用 agent-browser 真机登录 Go 隔离实例后逐项核对：
+- `MatrixInfoModel.getMatrixInfo(0, 1..6)` 全部返回 `{Lv:0, WYLv:0, qnLingwuCount:0, TZData:4项, QNData:42/52/62/72/82/92项}`——证明 `appendDemonCircleData` 填的潜能 id（1/11/21/31/41…）让客户端 `QNData[qnIndex]` 正确建索引；`totalRedShow(0)=false` 不抛异常。
+- 客户端含 `RedShow` 原型方法的类只有 `MatrixInfoModel` 与 `Ladder.checkRedShow`，后者各参数调用均返回 0，安全。
+- 用 `ViewManager.ins().open(Win类)` 走**正规 UI 流程**打开 `MatrixWin / RoleWin / BagWin / MatrixPotentialPanel / SkillWin / ForgeWin / RoleInfoPanel`，全部 OK；法阵面板截图显示 Lv0、6 阵眼、属性对比与"激活"按钮正常，`Commander errors` 无异常。
+- 排查陷阱：直接用 `new MatrixWin().open()` 或 `new RoleWin().open()` 会抛 `reading 'length'` / `reading 'index'` / `reading 'qianneng'`——这是**测试方式错误**（缺 stage/roleSelect 初始化与 open 参数），不是服务端数据缺失。判断面板是否真崩必须走 `ViewManager.open()`，不要直接 new。
+
+结论：法阵段修复后无同类空数据弹框；本轮无需再改服务端组包代码。
+
+## 十八、补齐 ClientConfig 客户端配置协议（2026-11-25）
+
+### 缺口来源
+IDE 预览实测时 gameworld 日志出现大量未响应上行帧，其中 `sysid=0 cmdid=19`（`cBaseCmd_ClientConfig`）是客户端配置更新请求。排查发现 Go 侧：
+- 登录时不下发 `sBaseCmd_ClientConfig(19)`（原版由 `clientconfig.lua:50` 在 `aeUserLogin` 事件里发）；
+- netroute 收到 cmdid=19 无特判，走 `OnNetMsg` 但业务系统 Lua 未加载 → 静默丢弃。
+
+### 实现（依据 clientconfig.lua）
+- `actorstore.go`：`Actor.ClientConfig map[int]int` + `ClientConfigSnapshot()`（按 key 升序稳定发包）+ `SetClientConfig(key,val)`（标脏待持久化）。
+- `postlogin.go`：`buildClientConfig(actor)` 组包 `[2B 数量][每项 4B key+4B val]`，登录包序列插入在 EnterScene/OtherEntity 之后、背包初始化之前（索引 4）；包级函数 `handleClientConfig` 处理 `cBaseCmd_ClientConfig(19)` 请求读 `[4B key][4B val]` 更新静态数据。
+- `netroute.go`：新增 `clientConfig` handler 字段 + `SetClientConfigHandler` + RouteUpstream 对 `[00][13]` 特判；`bootstrap.go` 安装 `newClientConfigHandler(store)`（A4 后由原 `handleClientConfig` 包装落库副作用）。
+- 单测：`TestBuildClientConfig`（字节布局）、`TestHandleClientConfig`（更新/标脏/错误输入）；因登录包序列 +1，同步修正 `login_test.go` / `postlogin_test.go` / `aoi_test.go` 的回包数与包头断言。
+
+### 验证
+- `go test ./...` / `go vet ./...` / `gofmt -l cmd internal` / `git diff --check` 全绿。
+- 重建 gameworld 隔离实例后 IDE 预览 + 独立浏览器实测：成功进场景（map=2、51 级），无 JS 异常/TYPEError（仅 headless autoplay 警告，无害），客户端正常消费 `00 13` 包。
+
+### 后续可选（未做，需 golden 依据）
+日志中还有 `sysid=10`(WorldBoss)、`76`(拍卖)、`17`(特戒)、`18`(排行)、`37`(公会)、`47`(好友) 等查询请求未响应。这些是 C++/Lua 业务系统，回包协议复杂且无 golden 参照，**未盲目实现**——若用户实测发现某功能"点了没反应"，再针对性抓 C++ golden 逆向后补。
+
+## 十九、A4 持久化最小闭环：ClientConfig 重登保留（2026-11-25）
+
+### 根因
+`Actor.Dirty`（含 ClientConfig、Static）之前只是内存标记，没有任何 Flush；`login.go` 仅保存 `level/exp/gold`，背包另存 `actorvariable.variable` 的 `LTGOBAG1` magic-tail。结果是客户端 `[00][13]` 更新 ClientConfig 后，只要重登就回到空值。
+
+### 实现
+- 新增 `persist.go`：
+  - `actorPersistData{Version, ClientConfig}` 以 JSON 存档，写入 `actorvariable.cs_variable`；
+  - 前缀 `LTGOPERS1` 标识 Go A4 数据，旧 blob/其他用途数据不匹配前缀时按空存档处理，避免误解析导致登录失败；
+  - `MySQLAccountStore.LoadActorPersist/SaveActorPersist` 负责读写，`INSERT ... ON DUPLICATE KEY UPDATE` 兼容无行角色；
+  - `restoreActorPersist()` 在 `postlogin.go` 组装 `sBaseCmd_ClientConfig(19)` 包之前还原，包序仍为 `ActorBaseData/RoleData/EnterScene/OtherEntity/ClientConfig/BagInit×3`；
+  - 初始 `flushDirty()` 只清 `ClientConfigDirty`；Static 序列化已在二十节补齐并改为统一 Flush，本节保留阶段记录。
+- `actorstore.go`：新增 `ClientConfigDirty`，`SetClientConfig()` 同时标脏；`bootstrap.go` 安装 `newClientConfigHandler(store)`（A4-2 后签名为 `newClientConfigHandler(store,codec)`），在 `[00][13]` 更新后立即落库。
+- 选列依据：`actorvariable.variable` 已被背包占用，`storedata/together_hit_equip` 语义属于商店/合击装备；`cs_variable` 是 staticVar 类 blob，Go 隔离库由本服务独占，不与背包 magic-tail 冲突。
+
+### 验证
+- 新增 `persist_test.go`：`TestFlushDirtyPersistsClientConfig`（落库/去重）、`TestClientConfigHandlerFlushesDirty`（路由即落库）、`TestPostLoginRestoresPersistedClientConfig`（重登还原且 ClientConfig 包携带旧值）。
+- `gofmt -w internal/engineapi` 后 `go test ./...`、`go vet ./...`、`git diff --check` 全绿。
+- 本轮按用户约定未开启 IDE 预览/隔离服务，因此未做浏览器重登实测；下一步若起隔离验证，重点观察 `[00][13]` 更新后重登仍保留同一 key/val。
+
+## 二十、A4-2：Static/法阵数据持久化与发包接入（2026-11-25）
+
+### 证据边界
+- 原版 `LActor.getStaticVar` 在 s1 有 169+ 处调用，是通用玩家持久化表；仓库没有 `docs/persistence-format.md`，ADR-006 明确不做 C++ 私有 blob 兼容。因此采用 **Go 自有 JSON 存档**，不声称兼容旧 C++ staticVar。
+- 法阵字段树与线格式有明确证据：`demoncircle.lua:5-32` 定义 `demoncircledata[roleId].subdemoncircleinfo[subId]`，`:1160-1195` 定义 436B 发包顺序；`demoncirqianneng.config` 给出潜能 `count`；激活规则见 `:382-393`（`arrayeyelv>0 && studycount>=count`）。
+
+### 实现
+- `luahost/tablecodec.go`：`TableNode/TablePair` 把 Lua table 编成可 JSON 化的宿主无关节点；保留字符串/整数键、整数/浮点/布尔/字符串/嵌套表；function/userdata 按 nil 落库；循环引用报错；键顺序 JSON 排序保证存档稳定。新增 `Field/Index/AsInt` 供业务读取。
+- `persist.go`：`actorPersistData` 增加 `Static *luahost.TableNode`；`restoreActorPersist()` 登录时先解码 Static 再组装回包；`flushDirty()` 一次保存 ClientConfig+Static 当前快照，`ClientConfigDirty/StaticDirty/Dirty` 成功后统一清除；`bootstrap.go` 在登录事件后、角色离场时刷新快照，避免 Lua 表字段写入无法被 Go setter 拦截。
+- `postlogin.go`：新增 `buildRoleDataWithDemon()`；`loadDemonCircleData()` 从 `staticVar.demoncircledata[0]` 读取 `huanhuaid/arrayeyelv/nutritionlv/nutritionexp/studycount/tezhiinfo/potentialpoint.extravalue`；`appendDemonCircleData()` 按原版 436B 布局写回 RoleData。无存档时仍全 0，保持此前客户端红点修复不回退。
+- 潜能激活不是独立存档字段：按原版从 `arrayeyelv` 与 `studycount` 派生，`demonQiannengStudyRequirements` 来自 `demoncirqianneng.config`。
+
+### 验证
+- 新增 `luahost/tablecodec_test.go`：覆盖字符串/数字键、嵌套表、数组、浮点、循环引用、function 跳过。
+- 扩展 `persist_test.go`：`TestStaticVarPersistsAcrossRelogin` 验证登录事件写 `demoncircledata` → 落库 → 新 Lua VM 重登读回。
+- 扩展 `postlogin_test.go`：`TestBuildRoleDataUsesStaticDemonCircleData` 校验法阵段写入 huanhuaId、阵眼/蕴养/特质/领悟次数/潜能激活/额外值。
+- `gofmt -w internal/engineapi internal/luahost` 后 `go test ./...`、`go vet ./...`、`git diff --check` 全绿。仍未开启 IDE 预览；浏览器实测留待下次短周期隔离验证。
+
+## 二十一、M5-H：单种可叠加物品背包闭环（2026-11-26）
+
+### 实现边界
+- 使用隔离库 `actor_s1_m5e_m5h_20261125`，克隆既有账号 `haohaiyao` / Actor `65537`；未修改现网 `actor_s1`，未新增表或字段。
+- `Actor.Items` 仅保存 `itemID -> count`，所有读写受 `Actor.mu` 保护；先持久化成功再提交内存并通知客户端。当前只有一种可叠加物品 `200013`，不含装备、品质或随机属性。
+- 背包写入 `actorvariable.variable`：保留 trailer 前的 C++ staticVar 前缀，末尾追加 `LTGOBAG1`（magic、payload 长度、按 itemID 排序的物品数据、CRC32）；magic 存在但 trailer 损坏时拒绝加载。
+- 登录发送普通/装备/寻宝三类 `[03][01]`；击杀奖励接入 `[03][04]` 发放与 `[03][05]` 叠加；使用复用客户端既有 `[03][06]`，下行结果 `0` 成功、`5` 数量不足。ItemData 固定 144B，客户端 handle 在发放、叠加、使用间保持稳定。
+
+### 真实浏览器验收
+- 隔离服务：Go gateway `127.0.0.1:19002` → Go gameworld `127.0.0.1:16001`；门户仅临时指向 `19002`。真实 Edge 进入 `GameSceneView`、map=2，无控制台错误。
+- mutate：`bag_mutate_browser_proof.json` 的 15 项断言全部通过，127 个 WS 帧；实证 `[03][04] count=1` → `[03][05] count=2` → 客户端 `sendUseItem` 发 `[03][06]` → 成功回包与 `[03][05] count=1`，最终背包 `200013×1`。
+- relogin：`bag_relogin_browser_proof.json` 的 9 项断言全部通过，30 个 WS 帧；重登恢复 `200013×1`，无额外背包变更包。
+- restart：停止并重新启动 Go gameworld/gateway 后，`bag_restart_browser_proof.json` 的 9 项断言全部通过，30 个 WS 帧；进程重启后仍恢复 `200013×1`。
+- 截图：`bag_mutate_initial.png`、`bag_mutate_stacked.png`、`bag_mutate_used.png`、`bag_relogin_initial.png`、`bag_restart_initial.png`。证据目录：`ltcq-go/reference/captures/browser_bag_20261125/`。
+- 验收脚本移动断言读取场景实体坐标，不读取静态 `Actor.x/y`；使用物品调用兼容 iframe 与直载两种页面形态。上述修改均在独立验收脚本中，未修改游戏前端 JS、HTML 或图片资源。
+- `go test ./...`、`go vet ./...`、`git diff --check`、`node --check verify_bag.mjs` 全绿；`go test -race` 仍待支持 CGO 的环境补做。
+
+### C++ 基线恢复
+- 隔离 Go gateway/gameworld、Edge、临时数据库及 `tcpcap` 代理均已停止或清理；门户恢复为 `9002`，`15001/19002/16001/9223` 均未监听。
+- `GameWorld.txt` 的 DbServer 已从诊断端口 `15001` 恢复为 `5001`；直连日志显示 `04:34:37 game client ... registe success (gameworld_s1)`，gateway 日志显示 `04:34:48 gateway client ... registe success (gateway_s1)`。
+- `wsprobe -addr 127.0.0.1:9002 -account 帅哥` 实测登录回包为 7B `skey + ff 01 00`，C++ 登录链路恢复；5001/6001/7001/9002/80 均正常监听。
+- 本次恢复只调整服务进程与临时诊断配置，未修改游戏前端 JS、HTML 或图片资源。
+
+## 二十二、A3 最小技能树与单目标释放（2026-11-26）
+
+### 实现边界
+- `skill.go` 从原版 `skills/skillsdesc/skillopen/skillsupgrade.config` 加载三职业五槽技能；校验 1–260 级共 3900 个角色技能配置存在且冷却有效，怪物技能不按角色冷却规则拒绝。
+- 五槽开启等级为 `1/5/15/25/35`。首次达到开启等级免费激活 1 级；已学习技能扣除 `SkillsUpgradeConfig[currentLevel].cost`，有效上限为 `min(actor.Level,80)+ZhuanSheng×10`，最高 260。
+- 技能存档复用 `actorvariable.cs_variable` 的 `LTGOPERS1` JSON，不新增表或字段。升级通过 MySQL 事务同时提交 `actors.gold` 与技能快照，提交成功后才改内存；事务失败不扣费、不升级。
+- 释放仅支持 `DamageRatio>0`、`FlatDamage>0`、`TargetType=2`、`CalcType=1`、`CastType=0`、`AffectCount<=1`、`Teleport=0` 的单目标直接伤害。AOE、buff、治疗、传送不在本轮范围。
+- 伤害为 `round(CombatConfig.Damage×DamageRatio+FlatDamage)` 的最小实现，不声称等价于 C++ 完整公式。冷却 key 为 `[actorID, baseSkillID]`，玩家之间隔离，升级不重置冷却。
+- `RoleData` 技能段是 5×int32 **等级**，不是配置 ID；客户端 `Role.parser` 用 `SkillData.getSkillByJob(job,slot,level)` 还原配置。首次真实浏览器检查曾把配置 ID 误作等级，导致客户端显示 `22001/24001/...`，已按解析器修正并固化测试。
+
+### 回归测试
+- `skill_test.go` 覆盖配置加载、五槽初始化、开启等级、免费激活、费用、金币不足、事务失败无副作用、转生上限、一键升级索引与费用、登录/重登还原、RoleData 等级布局、伤害、冷却、玩家隔离、范围/场景/存活/目标类型校验和 32B 结果包。
+- `TestNetRouterDispatchesSkillWithoutLua` 验证 `[02][01/04/05]` 显式进入 Go handler，不依赖 Lua dispatcher。
+- `go test ./...`、`go vet ./...`、`git diff --check` 已通过；本机 `CGO_ENABLED=0`，`go test -race` 仍待支持 CGO 的环境补做。
+
+### 隔离浏览器验收
+- 使用克隆库 `actor_s1_m5e_skill_20261126`、账号 `haohaiyao`、Actor `65537`，Go gateway/gameworld 分别监听 `19002/16001`；未修改现网 `actor_s1`，未修改游戏前端 JS/HTML/图片。
+- mutate 15 项断言全部通过：RoleData 完整 WS 帧 4113B，客户端正确解析五槽 `11001/12001/13001/14001/15001`；单技能升级扣 5000 金币，一键升级后首槽 13 级、金币 7000；技能结果帧 36B，两次伤害均为 250，怪物 HP `2000→1750→1200`，冷却期内没有重复结果，客户端无异常。
+- relogin 10 项、gameworld 进程 restart 10 项断言全部通过：重登后首槽仍为 13 级、金币仍为 7000，且没有额外技能变更包。证据见 `ltcq-go/reference/captures/browser_skill_20261126/skill_mutate_browser_proof.json`、`skill_relogin_browser_proof.json`、`skill_restart_browser_proof.json` 和 `skill_db_status.txt`。
+- 验收后已停止 Go gateway/gameworld/Edge，删除隔离库、临时二进制和 Edge profile；门户恢复 `9002`。`wsprobe` 实测 C++ 登录回包仍为 7B `skey + ff 01 00`，`5001/6001/7001/9002/80` 正常监听，`16001/19002/9223` 未监听。
+
+## 二十三、A5-1：定时器生产链路与 Actor 查询 API（2026-11-26）
+
+### 定时器修复
+- 原实现只有 `Due()`，生产主循环从未调用，Lua 投递的定时器不会执行。现由 `TimerDriver.Start()` 启动 10ms 到点扫描，并在有登录管理器的 Engine 启动时启用；`Engine.Close()` 先停定时器，再关闭数据库与 Lua VM。
+- L1 `OnGameTimer` 为分钟节拍，L2 `OnGamePrecisionTimer` 为 5 秒节拍；底层回调参数恢复为原版 `(actor, eid, ...)`。`System.getGlobalNpc` 提供原版 Lua 包装的 nil entity 回退值 0。
+- 取消会移除待执行任务；回调执行中取消会阻止周期任务重新入队。登出仍由原版 `postscripttimer.lua` 的 Actor 清理逻辑负责。
+
+### Actor 查询
+- `LActor.getZhuanShengLevel` 读取在线 Actor 的 `actors.zhuansheng_lv`，`LActor.getVipLevel` 读取 `actors.vip_level`；两者离线或空参数返回 0，并使用读锁。
+- `LActor.getJob/getSex/getSceneId/getExp` 同样读取登录时已加载的 `actors.job/sex/sceneid/exp`，离线或空参数返回 0，并使用读锁。
+- `LActor.getServerId/getAccountName/getAccountId/getActorPower` 读取登录会话 ServerID 与 `actors.accountname/accountid/totalpower`；账号名空/离线返回空串，其余返回 0。战力是登录快照，不声称属性变化后实时重算。
+- `LActor.getActorLevel/getActorZhuanShengLevel` 是已有等级/转生查询的原版别名。
+- `LActor.getActorById` 只返回在线 Actor 句柄，离线或空参数返回 `nil`，不创建伪实体；`LActor.getActorId` 空参数返回 0。
+
+### 奖励 API 核查结论
+- 原版 `actorawards.lua` 会把 `LActor.giveAward/giveAwards/canGiveAwards` 覆盖为 Lua 实现，奖励仅 Numeric/Item，`canGiveAwards` 只按装备占用格数检查 `getEquipBagSpace`。
+- Go 当前只有单种可叠加快照，没有装备背包实体与占用格模型；背包 `actorvariable.variable` 与 `actors.gold` 又是两条独立写入路径。直接批量调用现有 API 会产生部分发放，不能声称整批成功或原子回滚，因此本轮不实现奖励 API。
+
+### 验证与边界
+- 真实 Lua 包装回归覆盖一次性任务、Actor/业务参数、周期任务、普通取消、Actor 清理、回调内自取消及 `Start/Close` 生产驱动。
+- Actor 回归覆盖转生/VIP 已加载值、在线/离线/空参数边界，并确认离线查询不会创建 Actor。
+- `go test ./...`、`go vet ./...`、`git diff --check` 通过；`go test -race` 仍待 CGO 环境。
+- 本轮为源码与自动化回归验收，未启动隔离 Go 服务、未改前端、未新增表或字段、未修改共享数据库。奖励类 API 尚未实现，不将注册成功的 stub 计入覆盖门禁。
+
+## 二十四、A5-3：背包总数量与经验/VIP 查询别名（2026-11-26）
+
+### 实现依据
+- `LActor.getBagItemCount` 在原版 `test_npc_trade.lua`、`test_lottery.lua` 中用于交易/抽奖前后的背包数量变化断言，不是装备容量或占用格数。Go 返回在线 Actor `Items` 中各物品数量之和，空背包返回 0。
+- `LActor.getActorCurExp` 在 `actorlogout.lua` 中作为当前角色经验记录，直接复用 `getExp`；`LActor.getVIPLevel` 在 `test_lottery.lua` 中读取 VIP 等级，直接复用 `getVipLevel`。
+- 三个 API 均使用在线 Actor 查询和读锁；空参数或离线返回 0，不创建伪 Actor。
+
+### 写 API 核查结论
+- `actorexp.lua:confirmExp` 连续调用 `setLevel`、`setExp` 后由 Lua 发送 `UpdateExp`。Go 当前没有 `setLevel`，单独实现 `setExp` 不能形成完整经验升级链。
+- `actorvip.lua` 的 `setVipLevel` 后会调用 `updateVipAttr` 并发送 VIP 更新包。现有 `flushDirty` 只保存 ClientConfig/Skills/Static，不保存 `actors.vip_level`；仅改内存会在重登时丢失。
+- 因此本轮不注册内存假写实现。后续需分别补齐经验链的持久化顺序与 VIP 字段原子存档，并增加存档失败时不改内存的测试。
+
+### 验证与边界
+- `TestActor_QueryBagItemCountAndAliases` 覆盖多种物品数量求和、空背包、空参数、离线返回 0 和查询不创建 Actor。
+- 聚焦 Actor 查询测试、`go test ./...`、`go vet ./...`、`git diff --check` 通过；`go test -race` 仍待 CGO 环境。
+- 本轮只改 Go API/测试与本项目文档，未启动隔离服务，未修改前端、数据库 schema、共享数据库或 C++ 基线服务。
+
+## 二十五、A5-4/A5-5：登录元信息查询与 VIP 原子存档（2026-11-26）
+
+### 元信息查询
+- `LActor.getRecharge/getCreateTime/getAppid/getPf/getPfId` 读取在线 Actor 的登录快照，分别映射现有 `actors.recharge/createtime/appid/pfid` 字段；`getPfId` 与 `getPf` 共用平台字段实现。
+- `actors.createtime` 是 `datetime`，查询列使用 `COALESCE(UNIX_TIMESTAMP(createtime),0)` 直接扫描为 Unix 秒，不依赖 DSN 的 `parseTime` 设置。
+- 查询只使用 `ActorManager.Get` 和读锁；空参数或离线 Actor 返回 0/空串，不创建伪 Actor。未新增表或字段。
+
+### VIP 写入顺序
+- `LActor.setVipLevel` 通过独立可选接口 `VIPLevelStore` 调用 `MySQLAccountStore.SaveVIPLevel`，没有扩张通用 `AccountStore` 接口。
+- 写入持有 Actor 锁，先执行单字段 `UPDATE actors SET vip_level=?, updatetime=NOW()`；数据库成功后才更新内存。同等级调用幂等跳过，负等级、非整数等级、离线 Actor 和缺少存档器均返回错误。
+- `RowsAffected()==0` 时继续查询 Actor 是否存在，以区分“值未变化”和“角色不存在”；存档失败保持在线 VIP 不变。
+- 登录数据装配后、客户端回包和 `aeUserLogin` 前绑定存档器。`actorvip.lua` 登录事件中的首次 VIP 设置因此走真实落库路径；VIP 属性重算和协议包仍由原版 Lua 负责。
+
+### 验证与边界
+- `TestActor_QueryLoginMetadata` 覆盖五个 API 的在线值、空参、离线默认值和查询不创建 Actor。
+- `TestActor_SetVipLevelPersistsBeforeMemoryUpdate` 覆盖成功同步、存档失败不改内存、幂等写入、缺少存档器及非法参数。
+- `TestPostLoginSendsBaseRoleSceneAndBagPacketsBeforeLoginEvent` 增加登录元信息快照断言，并在 Lua 登录事件内实际调用 `setVipLevel`，验证事件触发前已绑定存档器。
+- `go test ./... -count=1`、`go vet ./...`、`git diff --check` 通过；`go test -race` 仍待 CGO 环境。
+- 端口复核：C++ 基线 `80/5001/6001/7001/9002` 均正常监听，隔离端口 `19002/16001` 关闭。本轮未启动隔离服务、未修改前端、schema 或共享数据库。
+- 仍暂缓：奖励 API 缺装备背包容量和跨表原子性；`setExp` 缺 `setLevel` 与完整经验升级链；`getLastLoginIp` 的整数 IP 编码尚未证实。
+
+## 二十六、A5-6：货币、玩法元信息与在线按名查询（2026-11-26）
+
+### 实现依据
+- `LActor.getMoneyCount` 与原版 `getCurrency` 共用在线货币查询。`_G.lua` 已确认 mtBindCoin=0、mtCoin=1、mtBindYuanbao=2、mtYuanbao=3；登录只把现有 `actors.gold/yuanbao` 装入类型 1/3，绑定货币和未知类型返回 0。
+- `getGuildId/getGuildName/getChapterLevel/getMonthCard/getReincarnateLv` 复用现有 `actors.guildid/guild_name/chapterlevel/monthcard/reincarnate_lv` 列，登录查询和扫描顺序同步扩展，未新增表或字段。
+- `isActor/getActorByName/getActorIdByName` 仅查询当前在线 Actor。按名查询遇到重名返回 nil/0，避免 map 遍历顺序造成不确定结果。
+- 所有新增查询使用 `ActorManager.Get` 和 Actor 读锁，空参或离线返回 0/空串/false/nil，不创建伪 Actor。`getCurrency/changeCurrency` 的货币表读写同时增加 Actor 锁。
+
+### 写入边界
+- A5-6 当批 `changeCurrency` 仍只修改在线内存；A5-8 已把金币/元宝接入现有字段持久化，详见第二十八节。
+- 奖励 API 继续暂缓：当前可叠加物品包与 `actors` 分表存储，且无装备背包容量模型，无法证明物品、货币和背包空间检查的整体原子性。
+
+### 验证与边界
+- `TestActor_QueryMoneyCount` 覆盖金币/元宝、绑定与未知类型、空参、离线、查询不创建 Actor，以及 `changeCurrency` 后的可见性。
+- `TestActor_QueryExistingActorMetadata` 覆盖公会、章节、月卡、轮回字段和离线默认值；`TestActor_OnlineNameLookupAndIsActor` 覆盖在线命中、空名、非字符串、离线和重名失败关闭。
+- `TestActor_CurrencyConcurrentAccess` 以 4 写 4 读、每路 250 次验证金币最终值为 1000；普通并发测试不等同于 `go test -race`。
+- `TestPostLoginSendsBaseRoleSceneAndBagPacketsBeforeLoginEvent` 验证五个登录快照字段在进场景回包和 Lua 登录事件前装配完成。
+- `go test ./... -count=1`、`go vet ./...`、`git diff --check` 通过；`go test -race` 仍待 CGO 环境。
+- 端口复核：C++ 基线 `80/5001/6001/7001/9002` 均正常监听，隔离端口 `19002/16001` 关闭。本轮未启动隔离服务、未修改前端、schema 或共享数据库。
+
+## 二十七、A5-7：职业性别别名与在线账号查询（2026-11-26）
+
+### 实现依据
+- `peakracesystem.lua:195-196` 在跨服 16 强名单中按 Actor 句柄读取职业、性别，确认 `getActorJob/getActorSex` 分别为现有 `getJob/getSex` 的别名。
+- `txvipaward.lua:543,558` 用 `getActorByAccountName` 判断账号是否在线，离线时转入全局队列；`gmhandler.lua:239` 用 `getActorIdByAccountName` 取得在线角色 ID。二者只复用当前在线 Actor 的登录账号快照。
+- 账号查询精确匹配；空账号、非字符串、未命中或同一账号多个在线 Actor 时，句柄查询返回 nil、ID 查询返回 0，避免 map 遍历顺序造成不确定结果。
+- 所有新增查询不创建 Actor，不访问离线数据库，也不扩张 `actors` 表字段。
+
+### 暂缓项
+- `getRealLevel` 的 22 个调用点只证明它参与等级门槛判断，尚未证明与 `getLevel` 完全同义，不能直接替换。
+- `getRealServerId` 仅出现在跨服路由，且无源码证明它与登录会话 `ServerID` 同义；跨服模型未接通前不猜测实现。
+
+### 验证与边界
+- `TestActor_QueryJobSexSceneAndExp` 扩展覆盖 `getActorJob/getActorSex` 的在线值、空参、离线和查询不创建 Actor。
+- `TestActor_OnlineAccountLookup` 覆盖两个账号查询的在线命中、空参、空账号、非字符串、未命中、账号重名失败关闭及不创建离线 Actor。
+- `go test ./... -count=1`、`go vet ./...`、`git diff --check` 通过；`go test -race` 仍待 CGO 环境。
+- 端口复核：C++ 基线 `80/5001/6001/7001/9002` 均正常监听，隔离端口 `19002/16001` 关闭。本轮未启动隔离服务、未修改前端、schema 或共享数据库。
+
+## 二十八、A5-8：金币/元宝写入持久化（2026-11-26）
+
+### 实现依据与边界
+- 新增独立可选接口 `CurrencyStore`，没有扩张通用 `AccountStore`。MySQL 仅白名单更新现有 `actors.gold/yuanbao` 单列及 `updatetime`，未新增表或字段。
+- `LActor.changeCurrency` 对 `type=1/3` 在 Actor 锁内校验严格整数、当前余额、负余额和整数溢出；先调用存档器，数据库成功后才更新内存。存档失败不改内存，离线 Actor 不创建伪实体。
+- `delta=0` 幂等成功，不要求存档器也不写库；绑定币种 `type=0/2` 和其他数值类型仍只改内存，不伪造持久化能力。
+- 登录数据装配后、场景回包和 `aeUserLogin` 前绑定或清空存档器；登录事件内的金币/元宝写入因此可落库。
+- 修复 `luahost` 数值转换：Lua 整数且可安全表示时仍转 Go `int`，小数、NaN/Inf 和超出宿主整数范围的值保留为 `float64`，避免在 Go 校验前被截断。
+
+### 验证与边界
+- `TestActor_ChangeCurrencyPersistsGoldAndYuanBao` 覆盖金币/元宝正负变更后的内存与 mock 存档同步，以及零变更不写库。
+- `TestActor_ChangeCurrencyRejectsInvalidAndInsufficient`、`TestActor_ChangeCurrencyRejectsOverflow`、`TestActor_ChangeCurrencyRequiresStoreAndRollsBackSaveFailure` 覆盖缺参、非整数、字符串、nil、非法/离线 Actor、余额不足、溢出、缺存档器和存档失败不改内存。
+- `TestActor_ChangeCurrencyMemoryOnlyTypesSkipStore` 覆盖绑定币种及未知数值类型不写库；`TestMySQLAccountStore_SaveCurrencyRejectsUnsupportedInput` 覆盖存档接口边界；`TestActor_CurrencyConcurrentAccess` 保留并发最终值校验。
+- `TestPostLoginSendsBaseRoleSceneAndBagPacketsBeforeLoginEvent` 在 Lua 登录事件内实际调用金币变更，验证事件前已绑定存档器；`TestGopherLua_NumberConversionPreservesFractionAndRange` 守住 Lua 数值转换边界。
+- `go test ./... -count=1`、`go vet ./...`、`git diff --check` 通过；`go test -race` 仍待 CGO 环境。
+- 端口复核：C++ 基线 `80/5001/6001/7001/9002` 均正常监听，隔离端口 `19002/16001` 关闭。本轮未启动隔离服务、未修改前端、schema 或共享数据库。
+- 奖励 API 仍暂缓：单币种持久化不等于跨物品、多币种和背包容量的整体原子事务；普通并发测试也不能替代 race 检测。
+
+## 二十九、A5-9：在线玩家解析与单主角色查询（2026-11-26）
+
+### 实现依据与边界
+- `worldboss.lua:939-946` 用 `LActor.getActor(attacker)` 把攻击者实体解析为玩家并设置首领归属；Go 当前玩家实体句柄即 actorID，只允许解析在线 Actor，怪物或未知句柄返回 nil。
+- `togetherhit.lua:123-127`、`actorrole.lua:75-79` 按 `0..getRoleCount(actor)-1` 遍历角色。Go 当前只有主角色，没有副角色或 `player.Roles[]` 模型，因此在线 `getRoleCount` 固定返回 1，`getRole(actor,0)` 返回同一 actorID，其他索引返回 nil。
+- 三个 API 都使用严格正整数句柄；`getRole` 的索引也必须是整数。空参、nil、字符串、小数、NaN/Inf、越界整数和离线 Actor 返回类型默认值，不创建 Actor。
+- `integerArgument` 由货币参数校验改为通用严格整数解析，`changeCurrency` 行为不变；没有新增表、字段、协议包或前端改动。
+
+### 验证与边界
+- `TestActor_GetActorAndRoleQueries` 覆盖在线玩家解析、整数与整数浮点句柄、单主角色 count/role、空参、非法句柄、怪物/离线句柄、非整数和越界索引，以及查询不创建 Actor。
+- `go test ./... -count=1`、`go vet ./...`、`git diff --check` 通过；`go test -race` 仍待 CGO 环境。
+- 端口复核：C++ 基线 `80/5001/6001/7001/9002` 均正常监听，隔离端口 `19002/16001` 关闭。本轮未启动隔离服务、未修改前端、schema 或共享数据库。
+- 多角色仍明确未实现：不能把 count=1 当作副角色、合击多角色属性或角色切换能力已经接通。
+
+## 三十、A5-10：技能等级与职业只读查询（2026-11-26）
+
+### 实现依据与边界
+- `skill.lua:14-24` 使用 `getRoleSkillLevel(actor, roleid, index)` 在技能升级前读取当前等级。Go 仅支持 `roleid=0` 与 `index=0..4`，通过 `skillBaseID(job, index+1)` 读取在线 Actor 已保存的五槽技能等级。
+- `zhanlingsystem.lua:318-323` 使用 `GetRoleByJob(actor, job)` 获取指定职业角色以挂被动技能。Go 仅支持职业 1..3，当前主角色职业匹配时返回 actorID，否则返回 nil。
+- 两个 API 都使用严格整数解析与 Actor 读锁；空参、小数、NaN/Inf、越界整数、非法槽位/职业、未学习和离线输入返回类型默认值，不创建 Actor。
+- 没有新增表、字段、协议包、实体接口或前端改动。`changeGold` 仍暂缓：现有 Lua 写入证据不足以确定其客户端金额通知语义。
+
+### 验证与边界
+- `TestActor_GetRoleSkillLevel` 覆盖五槽等级、未学习槽位、整数浮点、roleid/index 边界、非法职业、非法句柄、离线查询与不创建 Actor。
+- `TestActor_GetRoleByJob` 覆盖职业命中、整数浮点、职业不匹配、非法职业、非法句柄、空参与离线查询。
+- `go test ./... -count=1`、`go vet ./...` 通过；`go test -race` 仍待 CGO 环境。
+- 端口复核：C++ 基线 `80/5001/6001/7001/9002` 均正常监听，隔离端口 `19002/16001` 关闭。本轮未启动隔离服务、未修改前端、schema 或共享数据库。
+
+## 三十一、A5-11：场景实体解析查询（2026-11-26）
+
+### 实现依据与边界
+- `citysystem.lua:285-290` 使用 `getEntity(killerHdl)` 解析击杀者实体，再用 `getActorByEt(getAITarget(et))` 判断 AI 目标玩家；该链路也出现在 `worldboss.lua`、`campbattlefb.lua`、`crossarenafb.lua` 等系统。
+- Go 当前实体句柄用数字 ID 表示。`getEntity` 只读查询进程共享 `scene.World`，玩家和怪物均可解析；`getActorByEt` 额外要求 `EntityPlayer` 且 `DefaultActorManager` 中存在对应在线 Actor。
+- World 在 `bootstrapWithLogin` 启动时通过 `atomic.Pointer` 绑定，避免多网关连接重复写入共享指针产生数据竞争；未绑定 World 时两个 API 均返回 nil。
+- 两个 API 都使用严格正整数句柄。空参、nil、字符串、小数、NaN/Inf、越界整数、未知实体、怪物转 Actor 和只有 Actor 没有场景实体均返回 nil，不创建 Actor。
+- 没有新增表、字段、协议包、场景接口或前端改动。`isPet` 暂缓：当前 scene 只有 Player/Monster，不能把恒 false 占位当作宠物能力已实现。
+
+### 验证与边界
+- `TestActor_EntityResolutionQueries` 覆盖玩家/怪物实体命中、整数浮点句柄、玩家实体转在线 Actor、怪物拒绝、无场景 Actor、未知句柄、非法参数、空参、未绑定 World 和查询不创建 Actor。
+- `go test ./... -count=1`、`go vet ./...` 通过；`go test -race` 仍待 CGO 环境。
+- 端口复核：C++ 基线 `80/5001/6001/7001/9002` 均正常监听，隔离端口 `19002/16001` 关闭。本轮未启动隔离服务、未修改前端、schema 或共享数据库。
+
+## 三十二、A5-12：GM、镜像与副本状态失败关闭查询（2026-11-26）
+
+### 实现依据与边界
+- `gmsystem.lua:21` 要求 `getGmLevel(actor)==0` 时拒绝 GM 命令；当前没有 GM 权限模型，固定返回 0，避免普通玩家绕过权限检查。
+- `chapter.lua:490` 用 `isImage` 排除镜像 Actor；当前只有真实在线 Actor，固定返回 false。
+- `citysystem.lua:733`、`miscfunc.lua:202`、`campbattlefb.lua:627` 分别依赖副本句柄、副本 ID 与副本状态；当前没有副本实例模型，`getFubenHandle/getFubenId` 固定返回 0，`isInFuben` 固定返回 false。
+- 修正 `getFubenHandle` 原 `stubInt1` 实现：它会把 actorID 当副本句柄返回，可能让 `actorID == fbHandle` 的偶然比较成立。本批改为显式失败关闭函数。
+- 五个 API 对空参、在线/离线 Actor、非法句柄、小数、字符串和越界整数均返回相同默认值，不创建 Actor，不写数据库。该批只保证安全默认，不代表 GM、镜像或副本能力已经实现。
+
+### 验证与边界
+- `TestActor_FailClosedStatusQueries` 覆盖五个 API 的空参、在线/离线、非法句柄、小数、字符串和越界整数，并验证 `getFubenHandle(7)` 返回 0 而不是 7。
+- `go test ./... -count=1`、`go vet ./...` 通过；`go test -race` 仍待 CGO 环境。
+- 端口复核：C++ 基线 `80/5001/6001/7001/9002` 均正常监听，隔离端口 `19002/16001` 关闭。本轮未启动隔离服务、未修改前端、schema 或共享数据库。
+
+## 三十三、A5-13：实体句柄、坐标与属性只读查询（2026-11-26）
+
+### 实现依据与边界
+- `postscripttimer.lua:20` 使用 `getHandle(entity)` 作为实体级 Lua 表键。Go 只做严格正整数句柄身份提取，合法句柄原样返回；空参或非法参数返回 0，不查询 World、不创建 Actor。
+- `test_gathersystem.lua:47` 使用 `local x,y = getEntityPosition(actor)`；`rabbit.lua:242-246` 使用 `getIntProperty(monster, P_POS_X/P_POS_Y)`。坐标读取共享 `scene.World` 的实体快照，未命中或未绑定 World 返回 `(0,0)`。
+- 为保留 Lua 双返回值，`engineapi.Entry` 增加 `FnMulti`，`Interpreter`/`GopherLua` 增加 `RegisterMulti`；原单返回值 `Register` 语义保持不变。
+- `getIntProperty` 只映射 `_G.lua:1011-1124` 与现有数据对应的白名单：实体 ID/坐标/HP/MaxHP，以及 Actor 等级、性别、职业、经验、公会、四类 mt 货币、战力、充值、VIP。World 实体优先；`P_ID` 对玩家返回 actorID、对怪物返回 ConfigID；怪物 Actor 专有属性、未知属性和尚未证实的 `P_ROOT_EXP=86` 返回 0。
+- 查询使用严格整数参数和 Actor 读锁，不创建 Actor、不写数据库，没有新增表、字段、协议包或前端改动。
+
+### 验证与边界
+- `TestGopherLua_RegisterMulti` 验证 Go 多返回值经真实 gopher-lua 同时返回两个值。
+- `TestActor_EntityHandlePositionAndProperties` 覆盖玩家/怪物句柄、移动后的实时坐标、实体与 Actor 属性白名单、怪物受伤后的实时 HP、无场景 Actor、未绑定 World、非法/越界参数和查询不创建 Actor。
+- `go test ./... -count=1`、`go vet ./...`、目标文件 `git diff --check` 通过；`go test -race` 仍待 CGO 环境。
+- 用户要求关闭 Go 服务后，已停止 `19002/16001` 隔离进程，将门户恢复 C++ `9002`，删除隔离库 `actor_s1_m5e_live_20261126_a` 并清理 `.tmp_live`。端口复核：C++ `80/5001/6001/7001/9002` 正常监听，`19002/16001` 已关闭；本轮不把浏览器场景进入记为已验收。
+
+## 三十四、A5-14：血量、位置、死亡状态与实体 ID（2026-11-26）
+
+### 实现依据与边界
+- `ai_action.lua:88-92` 用 `getHp/getHpMax` 计算怪物血量百分比；`newworldboss.lua:541-542` 用 `getPosition` 获取复活坐标；`togetherhit.lua:121-127` 用 `isDeath` 筛选未死亡角色。
+- `bossinfo.lua:135-146` 用 `getId` 作为 boss 配置表键，`guardgodweaponfb.lua:186-202` 以 `MonstersConfig[monId]` 访问该 ID；玩家侧 `onRoleDie` 也使用 `getId(role)` 作为角色键。Go 对玩家返回 actorID、对怪物返回 ConfigID。
+- `getHp/getHpMax/getPosition/isDeath` 优先读取共享 `scene.World` 实体快照，World 未命中时回退在线 Actor 的 `HP/MaxHP/X/Y`；Actor 回退使用读锁。`getPosition` 经 `FnMulti` 保留 Lua `(x,y)` 双返回值，`isDeath` 按 HP<=0 判断。
+- 据 `monsteractionimpl.txt:92-94` 的 `P_ID` 模板匹配用法，修正 A5-13：怪物 `P_ID` 返回 ConfigID，不再返回运行时实体句柄。
+- 严格校验正整数句柄；空参、小数、NaN/Inf、字符串、越界整数和未知句柄返回 `0/0/(0,0)/false/0`。不创建 Actor、不写数据库，没有新增表、字段、协议包或前端改动。
+
+### 验证与边界
+- `TestActor_HealthPositionDeathAndEntityID` 覆盖玩家/怪物血量与最大血量、World 对 Actor 快照的优先级、移动后的坐标、怪物受伤、玩家死亡、Actor 坐标/HP 回退、玩家/怪物 ID、非法/离线句柄和查询不创建 Actor。
+- `TestActor_EntityHandlePositionAndProperties` 同步断言怪物 `P_ID=ConfigID`。
+- `go test ./... -count=1`、`go vet ./...`、目标文件 `git diff --check` 通过；`go test -race` 仍待 CGO 环境。
+- 本轮隔离服务保持关闭，门户继续使用 C++ `9002`；未修改游戏前端、schema 或共享数据库。
+
+## 三十五、A5-15：游戏渠道派生查询（2026-11-26）
+
+### 实现依据与边界
+- `utils/actorfunc.lua:103-112` 对 `LActor.getPf` 做 Lua 包装：字符串以 `union` 开头且包含 `*` 时，取首个 `*` 后的子串，否则原样返回。
+- Go 注册 `LActor.getGamePf`，在 Actor 读锁下读取 `PfID` 并执行同一派生规则；普通渠道、union 前缀、多个 `*`、大小写差异、无星号和空串均按原版行为处理。
+- 严格校验正整数 Actor 句柄；空参、小数、NaN/Inf、字符串、越界整数或离线 Actor 返回空字符串。查询不创建 Actor、不写数据库，没有新增表、字段、协议包或前端改动。
+- `getEntityType` 继续暂缓：虽然 `actorfunc.lua:93`、`actorrole.lua:98`、`test_gathersystem.lua:56`、`instance.lua:452-460` 有调用点，但当前仓库未找到 `EntityType_*` 数值定义，不能把 Go 内部 `EntityPlayer/EntityMonster` 枚举猜作原版常量。
+
+### 验证与边界
+- `TestActor_GetGamePf` 覆盖普通渠道、union 派生、首个星号、尾随星号、大小写、非 union 含星号、空串、整数浮点句柄、非法/离线输入、查询不创建 Actor 和并发只读。
+- `go test ./... -count=1`、`go vet ./...`、目标文件 `git diff --check` 通过；`go test -race` 仍待 CGO 环境。
+- Go 隔离服务保持关闭，门户继续使用 C++ `9002`；未修改游戏前端、schema 或共享数据库。
+
+## 三十六、定时器真实节拍链告警修复（2026-11-26）
+
+### 根因与修复
+- 隔离运行曾出现 `attempt to call a non-function object`：5 秒链依赖的 `System.getNowTime/getStaticVar/isSameDay` 和分钟链依赖的 `System.getNowTime/timeDecode` 未注册；supertimer 在任务触发及打印时间时直接调用这些 API。
+- `TimerDriver.Due` 原先传入 `(actorID, pid, args...)`，但 `postscripttimer.lua:108` 注册底层任务时已经把 Lua `eid` 作为额外参数；Go 再传自己的 `pid` 会挤占第一个业务参数。现在只传 `(actorID, args...)`，由 Lua 包装恢复 `onTimeEvent(actor, eid, ...)`。
+- 底层回调失败现在记录 `pid/callback/err`，不再静默吞错；任务清理、已触发次数扣减和周期重排仍继续，避免单个 Lua 错误遗留队列或阻止后续任务。
+- `System.getNowTime` 返回 Unix 秒；`timeDecode` 使用本地时区返回六个时间字段，非法输入返回六个 `0`；`isSameDay` 比较本地年份与年中日，非法输入返回 `false`。
+- `System.getStaticVar` 返回每个 Lua VM 安装时创建的唯一表，用于 `engineevent` 跨节拍保存状态；当前仅进程内共享，VM 关闭即释放，不声称持久化。它不同于按 Actor 存储的 `LActor.getStaticVar`。
+
+### 验证与运行边界
+- `TestTimer_RealLuaTickChain` 加载真实 engineevent/supertimer：5 秒链首次登记 NewDay、同日第二次不重复，分钟节拍执行零延迟 supertimer 任务。
+- `TestSystem_TimeAndStaticVar` 覆盖当前时间、同日/不同日、六返回值、非法时间输入和静态表引用稳定性；`TestTimer_PostScriptLiteWrapper` 先消耗一个底层任务编号，使 Lua `eid` 与 Go `pid` 不同，防止编号巧合掩盖参数错位。
+- 修复前定向测试曾分别出现 `newDayCount` 未更新、`System.getNowTime` 未定义和 Lite 回调未收到 `4242`；修复后定向测试及 `go test ./... -count=1`、`go vet ./...`、目标文件 `git diff --check` 全部通过。
+- 本轮未启动 Go 服务，门户继续使用 C++ `9002`；未修改游戏前端、schema、共享数据库或现网账号数据，也未提交或推送。
+
+## 三十七、A5-16：元宝变更别名（2026-11-26）
+
+### 实现依据与边界
+- 原版有 64 处 `LActor.changeYuanBao` 调用，参数为 `(actor, delta, reason, ...)`；`actorcost.lua:56`、`campbattlefb.lua:539`、`auctionsystem.lua:587/927` 均按元宝数量增减使用，拍卖处额外传入 `true`。
+- Go 将 `changeYuanBao` 固定映射为 `NumericType_YuanBao=3`，复用 `changeCurrency` 的 Actor 锁、严格整数、余额与溢出校验以及可选 `CurrencyStore`。保存现有 `actors.yuanbao` 成功后才更新内存，失败不改变余额。
+- `delta=0` 幂等成功且不写库；离线 Actor、非法输入、余额不足、溢出或缺少存档器返回错误。第四个及之后的业务参数不改变金额语义；不新增表、字段或协议包。
+
+### 验证与运行边界
+- 覆盖元宝增减与金币隔离、额外 `true` 参数、空参/小数/字符串/NaN/Inf/非法句柄、余额不足、整数溢出、缺存档器、存档失败回滚、离线写入不创建 Actor 和 8 路并发递增。
+- `go test ./... -count=1`、`go vet ./...`、目标文件 `git diff --check` 通过；`go test -race` 仍待 CGO 环境。
+- Go 隔离服务保持关闭，门户继续使用 C++ `9002`；未修改游戏前端、schema、共享数据库或现网账号数据，也未提交或推送。
+
+## 三十八、A5-17：玩家业务结构化日志（2026-11-26）
+
+### 实现依据与边界
+- 原版 `LActor.log(actor, ...)` 有 91 处调用，覆盖好友、副本、BOSS、商城等业务事件；当前 Go 注册项此前是空操作，事件会被静默丢弃。
+- 本轮改为本地 `slog.Info("LActor.log")`，输出 `actorID` 与字符串数组 `args`。Actor 句柄仅做严格正整数解析：非法输入记录为 0，离线正整数保留原 ID；不要求 Actor 在线，也不查询或创建 Actor。
+- 日志调用始终成功，不修改角色、货币、背包或数据库状态。`nil` 记录为 `nil`，布尔与数值按字符串保存；Lua 表仅按宿主默认字符串形式记录，不声称完整序列化。
+- 本轮没有实现 7001 协议转发或日志库写入，不能把本地 slog 输出当作原版 loggerserver 已联通。
+
+### 验证与运行边界
+- `TestActor_LogStructuredAndStateless` 验证 JSON 日志的消息、级别、Actor ID、标量与 nil 参数，以及不创建 Actor；`TestActor_LogHandlesInvalidAndOfflineActors` 覆盖空参、0、负数、小数、字符串、NaN、Inf 与离线正整数。
+- `go test ./... -count=1`、`go vet ./...`、目标文件 `git diff --check` 通过；`go test -race` 仍待 CGO 环境。
+- Go 隔离服务保持关闭，门户继续使用 C++ `9002`；未修改游戏前端、schema、共享数据库或现网账号数据，也未提交或推送。
+
+## 三十九、A5-18：共享战斗 AI 控制（2026-11-26）
+
+### 实现依据与边界
+- 原版 `actorrole.lua:89-110` 用 `setAITarget/setAIAttackMonster/stopAI` 控制切换目标、恢复自动打怪与停战；`citysystem.lua:282-293` 读取击杀者目标，`citysystem.lua:455` 调 `setAITargetNull` 清目标；`ai_action.lua:108-118`、`worldboss.lua:946` 允许怪物指定玩家。
+- 玩家停战标记与玩家显式目标由进程共享 `CombatManager` 锁保护，怪物仇恨复用 `aggro`。`installCombatAPI` 按每个 Lua VM 注册捕获各自 Combat 的闭包，删除包级全局 Combat，避免多连接状态串线。
+- `stopAI` 只停止在线存活玩家的自动战斗并保留目标；`setAITarget` 恢复玩家战斗并优先攻击显式目标，目标超出范围时不回退最近怪；`setAIAttackMonster` 清显式目标、解除停战并恢复最近怪索敌；`setAITargetNull` 只清玩家显式目标或怪物仇恨，保留停战状态。
+- 当前仅支持玩家→怪物、怪物→玩家且同场景存活的目标。PvP、怪物→怪物、跨场景、死亡/离场、非法句柄、镜像、副本和副角色均失败关闭；不创建 Actor、不新增表/字段/协议。
+- `getAITarget` 对失效目标返回 `nil` 并清理引用；击杀立即清理显式目标，断线与登录事件失败回滚均清理玩家 AI 和怪物仇恨。路由生命周期锁串行化旧连接离场与同号 `BindActor`；索敌重新读取 World 的实时 HP、位置与场景，跳过同 Tick 已死亡或已离场目标。`setAIPassivity/reCalcAttr/getGuildPtr` 仍因交互语义、属性管线或公会对象模型缺失而暂缓。
+
+### 验证与运行边界
+- 覆盖真实 gopher-lua 调用、显式目标优先、停战保留目标、清目标保留停战、恢复索敌、越界不回退、怪物指定玩家、死亡/离场/跨场景清理、PvP/非法配对、空参/小数/字符串/NaN/Inf/离线、未绑定 Combat、双 VM Combat 隔离、同号重连、登录回滚、同 Tick 死亡目标跳过与 8 路并发。
+- `go test ./... -count=1`、`go vet ./...`、目标文件空白检查和 `gofmt` 检查通过；`go test ./internal/engineapi -shuffle=on -count=3` 与全量 `go test ./... -shuffle=on -count=1` 通过，未发现共享全局状态顺序泄漏；`go test -race` 仍待 CGO 环境。
+- Go 隔离端口 `16001/19002` 未监听，C++ 基线 `9002/6001/5001/7001/80` 均在监听；未修改游戏前端、schema、共享数据库或现网账号数据，也未提交或推送。

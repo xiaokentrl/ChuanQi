@@ -58,17 +58,21 @@ WS 握手复刻 + 8192 会话池 + 6001 透明转发（不解包），双向字�
 |---|---|
 | 4.1 luahost | ✅ 已实现：Interpreter 接口 + gopher-lua 宿主 + `--#` 预处理器（include/once/pragma/ifndef/ifdef/if/define/endif/else）+ 500ms PCall 看门狗 + require loader（dataRoot/functions 解析）+ `_G.lua` 枚举注入（1214 常量 + SystemId/Protocol 占位，真实值待 Ghidra） |
 | 4.2 加载链冒烟 | **726 文件零错误——第 13 周前必须达成（最大风险关口）**；✅ 2026-11-23 已提前预研：446 个 .lua 编译 444/446（99.6%），见下方"冒烟预研结论" |
-| 4.3 engineapi | 🔶 进行中：registry 表驱动（声明式 Entry + CI 可校验）；LDataPack 包组（write*/read*/writeData/flush，golden 字节测试）；LActor T0 约 60 API 已注册，其中 getLevel/getName/getCurrency/changeCurrency/getItemCount/costItem/getStaticVar 已接内存实体；T1/T2 长尾待补 |
+| 4.3 engineapi | 🔶 A5 进行中：registry 表驱动（声明式 Entry + CI 可校验）；LDataPack 包组（write*/read*/writeData/flush，golden 字节测试）；A5-1/A5-3/A5-4/A5-5 已接通转生/VIP/职业/性别/场景/经验/在线 Actor/服务器/账号/战力/背包总数量/充值/创建时间/渠道元信息查询及原版别名，VIP 与金币/元宝单字段按先落库后改内存写入；新增金币/元宝查询、公会/章节/月卡/轮回登录快照、在线角色名/账号查询及货币锁，职业/性别别名已补齐；A5-9 接通在线玩家解析与单主角色 count/role 查询；A5-10 接通五槽技能等级只读查询与按职业返回主角色句柄；A5-11 接通场景实体解析与玩家实体到在线 Actor 的严格转换；A5-12 补齐 GM/镜像/副本状态查询并修正 getFubenHandle 错误回显 actorID 的失败关闭语义；A5-13 接通句柄提取、实体坐标双返回值与 World/Actor 属性白名单只读查询；A5-14 接通血量、最大血量、坐标、死亡状态与实体模板 ID 查询，并修正怪物 P_ID 应返回 ConfigID 的语义；A5-15 接通 getGamePf 渠道派生查询，getEntityType 因原版枚举值证据不足继续暂缓；A5-16 将 changeYuanBao 从空操作接入现有元宝单字段存档链路，覆盖增减、非法输入、余额/溢出、存档失败与并发；A5-17 将 LActor.log 从空操作接入本地 slog 结构化日志，明确尚未接 7001；A5-18 接通 stopAI/setAITarget/getAITarget/setAIAttackMonster/setAITargetNull，使用进程共享 CombatManager 的停战、显式目标与失效清理状态；AI API 按 Lua VM 闭包绑定 Combat，重连离场串行化，登录回滚清 AI，索敌实时重读 World 状态；奖励与经验写 API 因容量或依赖链不足暂缓，其余 T1/T2 长尾待补，不把 stub 计入覆盖门禁 |
 | 4.4 五大注册表 | ✅ 已实现：加载原版 5 个 Lua module + System stub + Go 触发入口（Fire/FirePCall），csmsg 按 ADR-005 stub；4 测试通过（真实 OnNetMsg/OnActorEvent 回调、超时） |
 | 4.5 网络路由 | ✅ 已实现：`netframe` 网关帧编解码下沉 + `NetRouter`（sid↔actor 映射、cmd=5 上行→OnNetMsg、LDataPack.flush→cmd=5 回包帧）+ `cmd/gameworld` 6001 骨架（80B 注册握手 + 帧 pump）；4 测试通过（帧→OnNetMsg→readInt→回包帧全链路、会话映射、未绑定 actor、短帧拒绝） |
-| 4.6 场景实体 | 🔶 骨架：内存 Actor（id/level/name/currency/items/staticVar + 脏标记）已接 T0 LActor API，3 测试通过；AOI/移动广播/怪物 AI（ADR-004 红线）待做 |
-| 4.7 定时器四层 | ✅ 骨架完成：Go 毫秒调度器（postScriptEvent/cancelScriptTimer）+ L1/L2 节拍（TickMinute/Tick5s）+ 加载 supertimer/postscripttimer Lua 模块；4 测试通过（一次性/周期/取消/节拍） |
+| 4.6 场景实体 | 🔶 进行中：进程级共享 World、矩形 AOI、登录/移动/断线生命周期、静态怪物、最小自动战斗与怪物主动 AI 已接通；真实浏览器已验证伤害/死亡/消失、经验/金币奖励、满血重生、存档重登、索敌/追击/脱战归位。技能、掉落/拾取与完整玩法持久化仍待做 |
+| 4.7 定时器四层 | ✅ 生产链路已接通：Go 10ms 调度器 + L1 分钟/L2 5 秒节拍 + 原版 supertimer/postscripttimer Lua 包装；Engine 启动/关闭驱动生命周期，Go 仅传 `(actor, ...)`，由 Lua 包装携带自身 `eid`，支持取消、周期与回调内自取消；2026-11-26 补齐 System 时间/VM 静态变量依赖、真实 Lua 节拍链和 `eid≠pid` 回归，回调错误记录日志且仍执行清理/重排 |
 
 验收：原客户端连 Go 全栈，登录→进场景→打怪→拾取→存盘重登不丢。
 
 > **M2 实测修订（2026-11-23）**：隔离端口对照证明 Go 网关协议正确（握手/skey/注册/cmd=5 上行均实证），探针打现网 C++ 网关能拿到登录成功回包 `ff 01 00`。Go 全栈无回包的根因在 **Go gameworld 缺引擎级登录状态机**（登录 `CMD_Login=255` 由 C++ `GameGate`/`Actor::Onlogin` 处理，非 Lua 协议），诊断日志实证帧已到达（`sid=552 sysid=1 cmdid=0 len=62`）。
 >
-> **✅ 已修复（同日）**：`internal/engineapi/login.go` 实现登录状态机（解析→MD5 校验→openuser→BindActor→回包），`NetRouter` 按 `CMD_Login` 分流；`cmd/gateway` 回向补 skey 回显。隔离端口实测回包 `71 a0 97 68 ff 01 00`（len=7）与 C++ 现网同构，真实 MySQL 校验通过。**M2 网关侧 + 登录鉴权已达字节对齐；剩余 M4 工作：登录后的完整业务逻辑（aeUserLogin 事件链、角色数据加载、进场景）**。详见 RUNBOOK §七.8。
+> **✅ 已修复（同日）**：`internal/engineapi/login.go` 实现登录状态机（解析→MD5 校验→openuser→BindActor→回包），`NetRouter` 按 `CMD_Login` 分流；`cmd/gateway` 回向补 skey 回显。隔离端口实测回包 `71 a0 97 68 ff 01 00`（len=7）与 C++ 现网同构，真实 MySQL 校验通过。**M2 网关侧 + 登录鉴权已达字节对齐**。详见 RUNBOOK §七.8。
+>
+> **✅ 登录后业务链已实测通过（2026-11-24 实现，11-25 回填状态）**：`internal/engineapi/postlogin.go` 编排登录成功后的业务链——① `AccountStore.LoadActorData` 从 actors 表加载角色数据并填充内存 Actor；② `AccountStore.EnsureActor` 幂等建号（等价存储过程 `createnewactor`，actorid 走 auto_increment）；③ 下发 `ActorBaseData`/`RoleData`/`EnterScene`/`OtherEntity`/背包初始化/ClientConfig；④ `FirePCall(OnActorEvent, aeUserLogin=13)` 触发 Lua 事件链。`cmd/gateway` 回向**所有业务包**补 skey。
+>
+> **golden 终验结论**：原"骨架推断、待抓包终验"已于 11-25 通过真实客户端实测关闭——`ActorBaseData`/`RoleData`/`EnterScene` 布局被客户端正确消费并成功进场景；`RoleData` 尾部法阵段 436B（6 子阵×4 特质×5 潜能，见 `demoncircle.lua:1160`）修复了 `fzRedShow` 读 `undefined.Lv` 弹框；`ClientConfig`(19) 协议补齐。详见 RUNBOOK §八/§十七/§十八 与 protocol-frame.md §五。
 
 #### 冒烟预研结论（2026-11-23，提前验证 4.2 风险关口）
 
@@ -190,4 +194,12 @@ WS 握手复刻 + 8192 会话池 + 6001 透明转发（不解包），双向字�
 | 里程碑 | 状态 | 备注 |
 |---|---|---|
 | M0 阶段0 逆向规格 | 🔄 进行中 | 0.3 v0.1 矩阵完成；0.1 Ghidra 工程导入中 |
-| M1-M6 | ⏳ 未开始 | — |
+| M2 网关+登录鉴权 | ✅ 字节对齐 | Go 网关协议逐字节同构；登录状态机回包 `ff 01 00` + skey 实证 |
+| M4 登录后业务链 | ✅ 实测通过 | postlogin.go 全链 + 背包 + 法阵段 + ClientConfig；真实浏览器进入场景、各面板无弹框；golden 以客户端消费终验 |
+| M4 4.6 场景实体/AOI/打怪 | 🔶 最小闭环 | 共享场景/AOI/移动/静态怪物/自动战斗已实现；真实浏览器验证伤害→死亡→消失→经验/金币奖励→满血重生→存档重登 |
+| M5-D 奖励与重生 | ✅ 隔离验收 | 致死攻击只结算一次；level/exp/gold 绝对值存档与失败重试；同句柄定时满血重生；17 项真实浏览器断言通过 |
+| M5-E 怪物反击与玩家 HP | ✅ 隔离验收 | 受击仇恨、范围/间隔/伤害配置、HP 钳制与协议广播；真实浏览器 14 项断言通过，玩家 HP 90→80→70→60→50；C++ 基线已恢复 |
+| M5-F 玩家死亡与安全复活 | ✅ 隔离验收 | 致死包序、死亡移动冻结、清除仇恨、同场景同坐标延迟满血复活与恢复战斗；真实浏览器 17 项断言通过，默认约 3 秒复活；C++ 基线已恢复 |
+| M5-G 怪物最小主动 AI | ✅ 隔离验收 | 主动索敌、最近目标、追击、配置间隔攻击、leash 脱战与归位中禁重新索敌；真实浏览器 15 项断言通过，AOI 重入确认出生点；C++ 基线已恢复 |
+| M5-H 单种物品背包闭环 | ✅ 隔离验收 | `200013` 叠加、`[03][04]` 发放、`[03][05]` 叠加、`[03][06]` 使用；`actorvariable.variable` blob 持久化；mutate 15 项、重登/重启各 9 项真实浏览器断言通过 |
+| A3 最小技能树与释放 | ✅ 隔离验收 | 五槽激活升级、一键升级、原子存档、玩家冷却、单目标伤害与 `[02]` 路由已实现；真实浏览器 mutate 15 项、重登/重启各 10 项断言通过，C++ 基线已恢复 |
