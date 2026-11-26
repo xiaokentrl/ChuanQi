@@ -1005,3 +1005,28 @@ go build -o .tmp_b1/gateway.exe ./cmd/gateway
 ### 边界与后续
 - C++ 基线 `80/5001/6001/7001/9002` 全程在线；未改前端文件、schema、共享库或 C++ 服务。
 - 隔离环境继续保持运行；B1 标记为已验收，下一阶段为 **B2 稳定性**（72h soak、同号重连、登录失败回滚）。
+
+## 四十八、B2 短周期稳定性：同号重连/失败回滚/soak（2026-11-26）
+
+### 探针修复
+- `cmd/wsprobe/main.go` 原把登录帧账号长度写死为 `0x0006`，只适用于默认账号“帅哥”（6 字节 UTF-8）；用 `haohaiyao` 或 `notexist_b2` 时 gameworld 报 `登录帧账号: UTF-8 字符串格式非法: len=6`，探针测试无效。
+- 已改为写入账号实际 UTF-8 字节数（小端 u16），`gofmt`/`go vet ./...`/`go test ./... -count=1` 全部通过。
+
+### 登录失败回滚
+- `wsprobe -addr 127.0.0.1:19002 -account notexist_b2`：登录回包 `ff 01 02`（失败），gameworld 未创建 Actor。
+- 隔离库 `globaluser=1 actors=1 roles=2 actorvariable=1 actorbinarydata=1`，角色 `level=51 exp=1400 gold=14000` 与背包 blob 长度/尾字节均不变。
+- 修复前用旧探针得到的 `ff 01 01` 是网关层回显，不能作为登录成功判据；以后以 gameworld 的 `账号鉴权通过` 日志与 DB 状态为准。
+
+### 同号并发登录
+- 两个 `wsprobe -account haohaiyao` 相隔 800ms 并发登录，均回 `ff 01 00`，gameworld 日志出现两次 `账号鉴权通过 sid=561/562 account=haohaiyao accountID=121103`。
+- DB 仍只有 1 个 actor，角色数值与背包 blob 不变，无重复建角或数据污染。
+
+### 短周期 soak
+- 连续执行 10 轮 `wsprobe -addr 127.0.0.1:19002 -account haohaiyao`，每轮观察 5s，约 50s。
+- gameworld 工作集 `31,100,928 → 31,088,640` B，gateway `13,594,624 → 14,528,512` B；无持续增长趋势。
+- gameworld 日志新增 21 行，均为常规帧记录；`WARN/ERROR/失败/panic` 过滤无命中。
+- DB 各表行数、角色等级/经验/金币/元宝、背包 blob 长度与尾字节在 soak 前后完全一致。
+
+### 边界与后续
+- 72h soak 尚未执行，本批只完成短周期代理验证；长时间内存趋势、连接泄漏与跨天 DB 一致性仍需单独安排。
+- 隔离环境 `16001/19002`、nginx `8080` 入口、隔离库继续保持运行；C++ 基线 `80/5001/6001/7001/9002` 未受影响，未改前端文件或共享库。
