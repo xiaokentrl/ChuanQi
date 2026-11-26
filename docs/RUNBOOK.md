@@ -984,3 +984,24 @@ go build -o .tmp_b1/gateway.exe ./cmd/gateway
 - 停止顺序：浏览器 → Go gateway（PID 见运行日志）→ Go gameworld；不要停止 C++ gateway/gameworld。
 - 若需撤掉 8080 入口：`nginx.exe -p D:/tools/EServer-data/childApp/server/nginx -s reload` 前删除 `demo.test_8080.conf`；80 站点 `demo.test` 不受影响。
 - 若需删除隔离库：在 `ltcq-go/reference/captures/browser_retaliation_20261125/` 执行 `setup_m5e_db.go -mode drop -database actor_s1_m5e_b1_20261126`（`M5E_DSN` 同上）。
+
+## 四十七、B1 剩余链路：打怪/背包/存盘重登（2026-11-26）
+
+### 打怪与奖励
+- 在同一隔离环境重新进入 `http://demo.test:8080/`，角色“追风尘世”51 级进入场景；场景配置有 1 只怪物（`gameworld.err.log:23:01:55 怪物生成完成 count=1`）。
+- 点击怪物后怪物从画面消失，画面顶部金币数字增长；以隔离库为准，`actors` 行由 `exp=1000/gold=10000` 变为 `exp=1300/gold=13000`，证明击杀奖励已通过 Go 服务端写入 DB。
+- `gameworld.err.log` 记录鉴权通过、角色加载帧以及持续上行帧，未见错误；战斗细节未逐帧记录，奖励落库以 DB 数值变化为准。
+
+### 背包一致性
+- 点击底部“背包”图标未展开面板，未产生新的上行帧；因此**不把背包 UI 交互记为通过**。
+- 改用存档层验证：`actorvariable.variable` 背包 blob 长度 `17329`，重登前后尾字节均为 `1c6de73351fea9000000000000f03f01438d27a5fa41548a0000000000000000`，说明背包数据未被战斗或重登破坏。
+- 背包协议初始化路径仍由 `postlogin.go:257-261` 的 `LoadBagBlob/decodeBagBlob` 承接；本批未新增或修改背包代码。
+
+### 存盘重登
+- 击杀后重新打开 `http://demo.test:8080/` 并再次点击“开始游戏”，角色仍为 51 级，怪物按配置重新刷新。
+- 重登后隔离库数值：`level=51 exp=1300 gold=13000 yuanbao=5140348`；与重登前击杀后的 DB 数值一致，经验/金币未回退。
+- 画面顶部金币数字在首次进入时曾与 DB 字段不同步，重登后画面与 DB 一致；验收以 DB 为准。
+
+### 边界与后续
+- C++ 基线 `80/5001/6001/7001/9002` 全程在线；未改前端文件、schema、共享库或 C++ 服务。
+- 隔离环境继续保持运行；B1 标记为已验收，下一阶段为 **B2 稳定性**（72h soak、同号重连、登录失败回滚）。
