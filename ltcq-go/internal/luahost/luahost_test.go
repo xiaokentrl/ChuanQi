@@ -1,6 +1,7 @@
 package luahost
 
 import (
+	"math"
 	"os"
 	"path/filepath"
 	"strings"
@@ -133,6 +134,24 @@ func TestGopherLua_LoadAndCall(t *testing.T) {
 	}
 }
 
+func TestGopherLua_NumberConversionPreservesFractionAndRange(t *testing.T) {
+	g := NewGopherLua(Config{OSType: "WIN"})
+	defer g.Close()
+	if err := g.Load("identity", "function identity(value) return value end\n"); err != nil {
+		t.Fatal(err)
+	}
+	for _, want := range []float64{1.5, math.Exp2(63)} {
+		got, err := g.Call("identity", want)
+		if err != nil {
+			t.Fatal(err)
+		}
+		value, ok := got.(float64)
+		if !ok || value != want {
+			t.Fatalf("identity(%g)=%#v want float64(%g)", want, got, want)
+		}
+	}
+}
+
 func TestGopherLua_RegisterNamespace(t *testing.T) {
 	g := NewGopherLua(Config{OSType: "WIN"})
 	defer g.Close()
@@ -146,6 +165,22 @@ func TestGopherLua_RegisterNamespace(t *testing.T) {
 	}
 	if v.(int) != 12345 {
 		t.Errorf("getActorId=%v want 12345", v)
+	}
+}
+
+func TestGopherLua_RegisterMulti(t *testing.T) {
+	g := NewGopherLua(Config{OSType: "WIN"})
+	defer g.Close()
+
+	g.RegisterMulti("Test.pair", func(args ...Value) ([]Value, error) {
+		return []Value{args[0], args[1]}, nil
+	})
+	v, err := g.DoString("(function() local a, b = Test.pair(3, 4); return a * 10 + b end)()")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if v.(int) != 34 {
+		t.Errorf("多返回值调用=%v want 34", v)
 	}
 }
 

@@ -29,6 +29,8 @@ type Interpreter interface {
 	PCall(timeout time.Duration, global string, args ...Value) (Value, error)
 	// Register 注册一个 Go 函数到 Lua 全局（global 可含点号表示命名空间，如 "LActor.getActorId"）。
 	Register(global string, fn func(...Value) (Value, error))
+	// RegisterMulti 注册具有多个返回值的 Go 函数到 Lua 全局。
+	RegisterMulti(global string, fn func(...Value) ([]Value, error))
 	// SetTimeout 设置默认调用超时（0=禁用）。
 	SetTimeout(timeout time.Duration)
 	// DoString 执行任意 Lua 表达式并返回第一个结果（用于表达式求值的 .config）。

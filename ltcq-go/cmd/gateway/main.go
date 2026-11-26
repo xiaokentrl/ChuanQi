@@ -191,15 +191,13 @@ func serve(listen, backend, gatename, recdir string) {
 					slog.Error("回向 sid 未匹配", "sid", sid, "known", fmt.Sprintf("%v", mgr.knownIDs()), "hex", hex.Dump(body[:min(32, len(body))]))
 					continue
 				}
-				// 登录结果回包（[ff][01][result]）需回显 skey 4B，对齐 C++ 现网
-				// 实测 0a bb 09 1c ff 01 00（skey = 登录帧前缀 1c09bb0a 的小端字节）。
-				// 其他业务回包保持原样（golden 记录回向零样本，避免破坏已验证协议）。
-				if len(data) >= 3 && data[0] == 0xff && data[1] == 0x01 {
-					if sk, ok := mgr.getSkey(sid); ok {
-						skBytes := make([]byte, 4)
-						binary.LittleEndian.PutUint32(skBytes, sk)
-						data = append(skBytes, data...)
-					}
+				// 回向所有业务包都回显 skey 4B（客户端每帧校验 skey，与上行对称）：
+				// 登录结果 [ff][01][result] 与进场景业务包（ActorBaseData 等）均前置 skey，
+				// 对齐 C++ gateway 透明代理行为（实测登录回包 0a bb 09 1c ff 01 00）。
+				if sk, ok := mgr.getSkey(sid); ok {
+					skBytes := make([]byte, 4)
+					binary.LittleEndian.PutUint32(skBytes, sk)
+					data = append(skBytes, data...)
 				}
 				if err := writeWSFrame(c, 0x2, data); err != nil {
 					slog.Error("WS 下发失败", "sid", sid, "err", err)

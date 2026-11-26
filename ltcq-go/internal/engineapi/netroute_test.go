@@ -9,6 +9,12 @@ import (
 	"github.com/xiaokentrl/ChuanQi/ltcq-go/internal/netframe"
 )
 
+func clientBusinessBody(sid uint16, sysid, cmdid byte, business []byte) []byte {
+	body := append(netframe.BuildNetID(sid), make([]byte, 4)...)
+	body = append(body, sysid, cmdid)
+	return append(body, business...)
+}
+
 // newRouteEngine 组装 netroute 测试所需的完整 Lua 环境（枚举 + API + 五大注册表）。
 // 调用方须 defer g.Close() 与 defer SetSendHook(nil)。
 func newRouteEngine(t *testing.T) *luahost.GopherLua {
@@ -70,8 +76,7 @@ func TestNetRoute_FullChain(t *testing.T) {
 	// 合成上行帧：body = NetId(8B) + [sysid][cmdid] + int32(777)
 	business := make([]byte, 4)
 	binary.LittleEndian.PutUint32(business, 777)
-	payload := append(netframe.BuildNetID(sid), 10, 20)
-	payload = append(payload, business...)
+	payload := clientBusinessBody(sid, 10, 20, business)
 	frame := netframe.BuildGateFrame(netframe.GateCmdUserData, payload)
 
 	// 模拟 6001 帧 pump
@@ -148,6 +153,46 @@ func TestNetRoute_SessionMapping(t *testing.T) {
 	}
 }
 
+func TestNetRouteCloseSerializesActorRebind(t *testing.T) {
+	g := luahost.NewGopherLua(luahost.Config{OSType: "WIN"})
+	defer g.Close()
+	defer SetSendHook(nil)
+	router := NewNetRouter(g)
+	router.OpenSession(1, "")
+	router.BindActor(1, 100)
+	entered := make(chan struct{})
+	release := make(chan struct{})
+	closed := make(chan struct{})
+	router.SetCloseHandler(func(uint16, int) {
+		close(entered)
+		<-release
+	})
+	go func() {
+		router.CloseSession(1)
+		close(closed)
+	}()
+	<-entered
+	lifecycleFree := router.lifecycleMu.TryLock()
+	if lifecycleFree {
+		router.lifecycleMu.Unlock()
+	}
+	router.OpenSession(2, "")
+	rebound := make(chan struct{})
+	go func() {
+		router.BindActor(2, 100)
+		close(rebound)
+	}()
+	close(release)
+	<-closed
+	<-rebound
+	if lifecycleFree {
+		t.Fatal("旧连接离场清理未持有生命周期锁")
+	}
+	if session := router.byActorGet(100); session == nil || session.SID != 2 {
+		t.Fatalf("同号重登会话被旧离场清理破坏: %+v", session)
+	}
+}
+
 // TestNetRoute_UnboundActor 验证未绑定 actor 的上行帧仍以 actor=0 触发 OnNetMsg。
 func TestNetRoute_UnboundActor(t *testing.T) {
 	g := newRouteEngine(t)
@@ -162,7 +207,7 @@ func TestNetRoute_UnboundActor(t *testing.T) {
 	`); err != nil {
 		t.Fatal(err)
 	}
-	body := append(netframe.BuildNetID(7), 11, 12, 0)
+	body := clientBusinessBody(7, 11, 12, []byte{0})
 	if err := router.RouteUpstream(body); err != nil {
 		t.Fatal(err)
 	}

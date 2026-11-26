@@ -2,8 +2,10 @@ package luahost
 
 import (
 	"fmt"
+	"math"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 
@@ -171,21 +173,34 @@ func (g *GopherLua) PCall(timeout time.Duration, global string, args ...Value) (
 }
 
 func (g *GopherLua) Register(global string, fn func(...Value) (Value, error)) {
+	g.registerValues(global, func(args ...Value) ([]Value, error) {
+		ret, err := fn(args...)
+		if err != nil || ret == nil {
+			return nil, err
+		}
+		return []Value{ret}, nil
+	})
+}
+
+func (g *GopherLua) RegisterMulti(global string, fn func(...Value) ([]Value, error)) {
+	g.registerValues(global, fn)
+}
+
+func (g *GopherLua) registerValues(global string, fn func(...Value) ([]Value, error)) {
 	wrapper := func(L *lua.LState) int {
 		args := make([]Value, 0, L.GetTop())
 		for i := 1; i <= L.GetTop(); i++ {
 			args = append(args, fromLValue(L.Get(i)))
 		}
-		ret, err := fn(args...)
+		rets, err := fn(args...)
 		if err != nil {
 			L.RaiseError("%v", err)
 			return 0
 		}
-		if ret == nil {
-			return 0
+		for _, ret := range rets {
+			L.Push(toLValue(L, ret))
 		}
-		L.Push(toLValue(L, ret))
-		return 1
+		return len(rets)
 	}
 	g.setGlobalPath(global, g.L.NewFunction(wrapper))
 }
@@ -266,7 +281,18 @@ func fromLValue(v lua.LValue) Value {
 	case lua.LBool:
 		return bool(x)
 	case lua.LNumber:
-		return int(x)
+		f := float64(x)
+		if math.IsNaN(f) || math.IsInf(f, 0) || math.Trunc(f) != f {
+			return f
+		}
+		if strconv.IntSize == 32 {
+			if f >= math.MinInt32 && f <= math.MaxInt32 {
+				return int(f)
+			}
+		} else if f >= -math.Exp2(63) && f < math.Exp2(63) {
+			return int(f)
+		}
+		return f
 	case lua.LString:
 		return string(x)
 	case *lua.LTable:

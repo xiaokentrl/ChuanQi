@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/xiaokentrl/ChuanQi/ltcq-go/internal/luahost"
+	"github.com/xiaokentrl/ChuanQi/ltcq-go/internal/scene"
 )
 
 func testDataRoot(t *testing.T) string {
@@ -44,6 +45,23 @@ func TestLoadRegistries(t *testing.T) {
 				t.Errorf("%s.%s type=%v want function", m.Name, gname, v)
 			}
 		}
+	}
+}
+
+func TestBootstrapWithLoginRuntimeBindsSharedCombat(t *testing.T) {
+	previousWorld := defaultWorld.Load()
+	t.Cleanup(func() {
+		setDefaultWorld(previousWorld)
+	})
+	world := scene.NewWorld()
+	combat := NewCombatManager(world)
+	engine, err := BootstrapWithLoginRuntime(testDataRoot(t), "WIN", "", world, combat, nil, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer engine.Close()
+	if engine.Combat != combat {
+		t.Fatal("Bootstrap 未绑定传入的 CombatManager")
 	}
 }
 

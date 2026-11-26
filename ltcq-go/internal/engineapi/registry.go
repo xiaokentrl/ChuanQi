@@ -14,8 +14,9 @@ import (
 
 // Entry 是一条 API 注册项。
 type Entry struct {
-	Name string // 全名，如 "LDataPack.writeInt"
-	Fn   func(...luahost.Value) (luahost.Value, error)
+	Name    string // 全名，如 "LDataPack.writeInt"
+	Fn      func(...luahost.Value) (luahost.Value, error)
+	FnMulti func(...luahost.Value) ([]luahost.Value, error)
 	// 语义注释格式（ONBOARDING.md:37）：
 	// 原版: <C++位置> | Lua调用: N处 | 规格: engine-api.md#节名
 	Meta string
@@ -58,7 +59,11 @@ func InstallAll(L luahost.Interpreter) error {
 	currentInterp = L
 	for _, e := range registry {
 		entry := e
-		L.Register(entry.Name, entry.Fn)
+		if entry.FnMulti != nil {
+			L.RegisterMulti(entry.Name, entry.FnMulti)
+		} else {
+			L.Register(entry.Name, entry.Fn)
+		}
 	}
 	return nil
 }
@@ -68,7 +73,11 @@ func Install(L luahost.Interpreter, prefix string) (int, error) {
 	n := 0
 	for _, e := range registry {
 		if len(prefix) > 0 && len(e.Name) >= len(prefix) && e.Name[:len(prefix)] == prefix {
-			L.Register(e.Name, e.Fn)
+			if e.FnMulti != nil {
+				L.RegisterMulti(e.Name, e.FnMulti)
+			} else {
+				L.Register(e.Name, e.Fn)
+			}
 			n++
 		}
 	}

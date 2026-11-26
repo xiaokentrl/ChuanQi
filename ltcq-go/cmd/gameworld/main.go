@@ -5,6 +5,7 @@ package main
 
 import (
 	"bufio"
+	"encoding/binary"
 	"flag"
 	"fmt"
 	"log/slog"
@@ -14,6 +15,7 @@ import (
 
 	"github.com/xiaokentrl/ChuanQi/ltcq-go/internal/engineapi"
 	"github.com/xiaokentrl/ChuanQi/ltcq-go/internal/netframe"
+	"github.com/xiaokentrl/ChuanQi/ltcq-go/internal/scene"
 )
 
 func main() {
@@ -21,12 +23,70 @@ func main() {
 	dataRoot := flag.String("data", "", "gameworld/data 目录路径")
 	ostype := flag.String("ostype", "WIN", "OSTYPE（条件编译用）")
 	dsn := flag.String("dsn", "", "MySQL DSN（引擎级登录校验；空则不启用登录，如 root:123456@tcp(127.0.0.1:3306)/actor_s1?charset=utf8）")
+	monsterSpawns := flag.String("monster-spawns", "", "可选怪物刷新配置 JSON；坐标单位为格子，未指定则不刷怪")
 	flag.Parse()
 
 	if *dataRoot == "" {
 		fmt.Fprintln(os.Stderr, "必须指定 -data <gameworld/data 目录>")
 		os.Exit(2)
 	}
+
+	world, err := engineapi.LoadSceneWorld(*dataRoot, *ostype)
+	if err != nil {
+		slog.Error("场景配置加载失败", "err", err)
+		os.Exit(1)
+	}
+	var monsterManager *engineapi.MonsterManager
+	var expThresholds map[int]int64
+	if *monsterSpawns != "" {
+		catalog, err := engineapi.LoadMonsterCatalog(*dataRoot, *ostype)
+		if err != nil {
+			slog.Error("怪物配置加载失败", "err", err)
+			os.Exit(1)
+		}
+		spawns, err := engineapi.LoadMonsterSpawns(*monsterSpawns)
+		if err != nil {
+			slog.Error("怪物刷新配置加载失败", "err", err)
+			os.Exit(1)
+		}
+		monsterManager = engineapi.NewMonsterManager(world, catalog)
+		count, err := monsterManager.SpawnAll(spawns)
+		if err != nil {
+			slog.Error("怪物生成失败", "err", err)
+			os.Exit(1)
+		}
+		for _, spawn := range spawns {
+			if spawn.Exp > 0 {
+				expThresholds, err = engineapi.LoadExpThresholds(*dataRoot, *ostype)
+				if err != nil {
+					slog.Error("经验配置加载失败", "err", err)
+					os.Exit(1)
+				}
+				break
+			}
+		}
+		slog.Info("怪物生成完成", "count", count, "profile", *monsterSpawns)
+	}
+
+	combat := engineapi.NewCombatManager(world)
+	defer combat.Close()
+	skillCatalog, err := engineapi.LoadSkillCatalog(*dataRoot, *ostype)
+	if err != nil {
+		slog.Error("技能配置加载失败", "err", err)
+		os.Exit(1)
+	}
+	skills := engineapi.NewSkillManager(skillCatalog, combat)
+	combat.SetMonsterManager(monsterManager)
+	if monsterManager != nil && *dsn != "" {
+		store, err := engineapi.NewMySQLAccountStore(*dsn)
+		if err != nil {
+			slog.Error("奖励存档连接失败", "err", err)
+			os.Exit(1)
+		}
+		defer store.Close()
+		combat.SetProgression(engineapi.NewProgressionManager(store, expThresholds))
+	}
+	go combat.Run()
 
 	ln, err := net.Listen("tcp", *addr)
 	if err != nil {
@@ -41,12 +101,12 @@ func main() {
 			slog.Error("accept 失败", "err", err)
 			continue
 		}
-		go handleGate(conn, *dataRoot, *ostype, *dsn)
+		go handleGate(conn, *dataRoot, *ostype, *dsn, world, combat, skills)
 	}
 }
 
 // handleGate 处理一个网关连接：读注册握手 → 帧 pump → 路由。
-func handleGate(conn net.Conn, dataRoot, ostype, dsn string) {
+func handleGate(conn net.Conn, dataRoot, ostype, dsn string, world *scene.World, combat *engineapi.CombatManager, skills *engineapi.SkillManager) {
 	defer conn.Close()
 	remote := conn.RemoteAddr().String()
 
@@ -63,7 +123,7 @@ func handleGate(conn net.Conn, dataRoot, ostype, dsn string) {
 	}
 	slog.Info("网关注册成功", "remote", remote, "name", h.Name, "serverId", h.ServerID)
 
-	// 2. 组装引擎（每个网关连接一个 VM；单网关场景适用）
+	// 2. 组装引擎（每个网关连接一个 VM，共享进程级场景与 AOI）
 	var writeMu sync.Mutex
 	var engine *engineapi.Engine
 	sender := func(frame []byte) error {
@@ -72,12 +132,13 @@ func handleGate(conn net.Conn, dataRoot, ostype, dsn string) {
 		_, err := conn.Write(frame)
 		return err
 	}
-	engine, err = engineapi.BootstrapWithLogin(dataRoot, ostype, dsn, sender)
+	engine, err = engineapi.BootstrapWithLoginRuntime(dataRoot, ostype, dsn, world, combat, skills, sender)
 	if err != nil {
 		slog.Error("引擎初始化失败", "err", err)
 		return
 	}
 	defer engine.Close()
+	defer engine.Router.CloseAll()
 
 	// 3. 帧 pump
 	r := bufio.NewReaderSize(conn, 1<<20)
@@ -111,9 +172,10 @@ func handleFrame(f netframe.GateFrame, engine *engineapi.Engine) {
 	case netframe.GateCmdUserData:
 		// cmd=5 UserData：上行路由到 OnNetMsg
 		// 诊断日志：NetId 之后的 [sysid][cmdid] 决定 Lua 分发目标（登录帧 sysid=0x01/cmdid=0x00）。
-		if len(f.Body) >= netframe.NetIDLen+2 {
+		if len(f.Body) >= netframe.NetIDLen+6 {
 			sid := netframe.NetIDSid(f.Body[:netframe.NetIDLen])
-			slog.Info("收到上行数据帧", "sid", sid, "sysid", f.Body[netframe.NetIDLen], "cmdid", f.Body[netframe.NetIDLen+1], "len", len(f.Body))
+			data := f.Body[netframe.NetIDLen:]
+			slog.Info("收到上行数据帧", "sid", sid, "seq", binary.LittleEndian.Uint32(data[:4]), "sysid", data[4], "cmdid", data[5], "len", len(f.Body))
 		}
 		if err := engine.Router.RouteUpstream(f.Body); err != nil {
 			slog.Error("上行路由失败", "err", err)

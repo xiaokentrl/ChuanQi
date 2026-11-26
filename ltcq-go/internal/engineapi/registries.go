@@ -46,10 +46,49 @@ func InstallSystemStubs(L luahost.Interpreter) {
 	}
 	// 通用 System API
 	L.Register("System.getServerId", func(a ...luahost.Value) (luahost.Value, error) { return 1, nil })
+	L.Register("System.getGlobalNpc", func(a ...luahost.Value) (luahost.Value, error) { return 0, nil })
+	L.Register("System.getNowTime", realGetNowTime)
+	L.RegisterMulti("System.timeDecode", realTimeDecode)
+	L.Register("System.isSameDay", realIsSameDay)
+	staticVar, staticErr := L.DoString("{}")
+	L.Register("System.getStaticVar", func(a ...luahost.Value) (luahost.Value, error) { return staticVar, staticErr })
 	L.Register("System.logCounter", noRet)
 	L.Register("System.SendToDb", noRet)
 	L.Register("System.allocDBPacket", func(a ...luahost.Value) (luahost.Value, error) { return 0, nil })
 	L.Register("System.flushDBPacket", noRet)
+}
+
+func realGetNowTime(a ...luahost.Value) (luahost.Value, error) {
+	return time.Now().Unix(), nil
+}
+
+func realTimeDecode(a ...luahost.Value) ([]luahost.Value, error) {
+	if len(a) == 0 {
+		return []luahost.Value{0, 0, 0, 0, 0, 0}, nil
+	}
+	timestamp, err := integerArgument(a[0])
+	if err != nil {
+		return []luahost.Value{0, 0, 0, 0, 0, 0}, nil
+	}
+	t := time.Unix(int64(timestamp), 0).In(time.Local)
+	return []luahost.Value{t.Year(), int(t.Month()), t.Day(), t.Hour(), t.Minute(), t.Second()}, nil
+}
+
+func realIsSameDay(a ...luahost.Value) (luahost.Value, error) {
+	if len(a) < 2 {
+		return false, nil
+	}
+	left, err := integerArgument(a[0])
+	if err != nil {
+		return false, nil
+	}
+	right, err := integerArgument(a[1])
+	if err != nil {
+		return false, nil
+	}
+	leftTime := time.Unix(int64(left), 0).In(time.Local)
+	rightTime := time.Unix(int64(right), 0).In(time.Local)
+	return leftTime.Year() == rightTime.Year() && leftTime.YearDay() == rightTime.YearDay(), nil
 }
 
 // LoadRegistries 加载五大注册表 Lua module 并返回加载结果。
