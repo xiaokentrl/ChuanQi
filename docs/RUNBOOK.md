@@ -1104,3 +1104,28 @@ go build -o .tmp_b1/gateway.exe ./cmd/gateway
 - 响应层替换：区服列表 URL → `http://demo.test:8081/web/server_list/Serverlist.php/`、端口 `9002` → `19003`、`loginType=0` 与默认 `userData`。
 - 已 `nginx -t` 与 reload 验证：`http://demo.test:8081/` 返回 200，区服 JSON 端口为 `19003`。
 - 待用户确认后执行：在 `ltcq-go` 目录运行 `go run ./cmd/tcpcap -listen 127.0.0.1:19003 -to 127.0.0.1:9002 -out reference/captures/a2_drop_pickup_20261126.raw`，打开 `http://demo.test:8081/`，在 C++ 试玩服做“击杀怪物→掉落物出现→拾取”，停止 tcpcap 后解析 raw。未确认前不启动抓包、不改 C++ 服务。
+
+## 五十二、A2 首次 C++ golden 捕获：部分成功（2026-11-26）
+
+### 操作
+- 用户以“继续”确认后，启动 `tcpcap.exe -listen 127.0.0.1:19003 -to 127.0.0.1:9002 -out reference/captures/a2_drop_pickup_20261126.raw`（PID 18252）。
+- 浏览器打开 `http://demo.test:8081/`，关闭“离线收益”弹窗后进入 C++ 场景，自动战斗产生多次击杀与候选掉落。
+- 抓包结束后关闭浏览器并 `Stop-Process` 停止 tcpcap；复查 19003 已关闭，C++ `9002/6001/5001/7001` 仍监听，72h soak PID 19184 仍运行。
+
+### 初步解析
+- raw 文件：`ltcq-go/reference/captures/a2_drop_pickup_20261126.raw`，128,554B。
+- 临时解析器 `.tmp_b1/parse_raw.go` 输出 `.tmp_b1/a2_frames.txt`。
+- 发现 3 帧候选掉落实体下行：
+  - `WS 11 S ... 4e21ae404e01020000000300000048030000712900000100000092ba000001000000`
+  - `WS 42 S ... 4e21ae404e0102000000030000000c030000712900000100000092ba000001000000`
+  - `WS 109 S ... 4e21ae404e010200000003000000d0020000712900000100000092ba000001000000`
+- 三帧差异集中在第 5 个 4B 字段（`48030000=840`、`0c030000=780`、`d0020000=720`），疑似掉落物实体/位置或序号；其余 `71290000=10545`、`92ba0000=47762`、`01000000` 在三次中一致，尚未确认语义。
+- 客户端帧出现 3 次 `4e21ae40 05 000000 0a 0a 01 000000`，但无法确定是拾取请求还是其他系统包；点击画面候选位置后未出现明确的拾取后下行包序。
+
+### 阻塞与下一步
+- `haohaiyao` 在 C++ 库 `actor_s1.globaluser` 中 `gmlevel=0`，不能用 `@dropbags 1` 在脚下稳定生成掉落物。
+- 未取得完整拾取 golden：缺“拾取上行请求 → 掉落物消失 → 背包 Add/Update → 提示”的连续包序，不能实现 A2 或对齐真实奖励数值。
+- 需用户二选一：
+  1. 授权临时把 `haohaiyao` 的 `gmlevel` 设为 1，抓完 `@dropbags` 拾取后立即恢复为 0；
+  2. 不做 GM 修改，由用户指认画面上的掉落物位置，再用 8081/tcpcap 抓一次明确拾取。
+- raw 与解析输出保留在 `.tmp_b1/` 与 `reference/captures/`，按既有约定抓包产物不纳入 git 提交。
