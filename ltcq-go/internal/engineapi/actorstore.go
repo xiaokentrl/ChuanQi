@@ -910,6 +910,22 @@ func realChangeYuanBao(a ...luahost.Value) (luahost.Value, error) {
 	return realChangeCurrency(currencyArgs...)
 }
 
+func realChangeMoney(a ...luahost.Value) (luahost.Value, error) {
+	if len(a) < 3 {
+		return nil, fmt.Errorf("changeMoney 缺少角色、类型或数量")
+	}
+	args := []luahost.Value{a[0], a[1], a[2]}
+	// 原版调用：changeMoney(actor, mtType, delta, 1, true, tips, ...)。
+	// 前三个参数与 changeCurrency 同构；第 6 参是日志 tip，其余业务扩展参数
+	// 不参与余额计算，避免把未证实的 phylum/classField 等当成扣款条件。
+	reason := ""
+	if len(a) > 5 {
+		reason = asString(a[5])
+	}
+	args = append(args, reason)
+	return realChangeCurrency(args...)
+}
+
 func realGetItemCount(a ...luahost.Value) (luahost.Value, error) {
 	if len(a) < 2 {
 		return 0, nil

@@ -75,6 +75,7 @@ func init() {
 	Register(Entry{Name: "LActor.getMoneyCount", Fn: realGetCurrency, Meta: "Lua调用: 36处 | mt* 货币查询，离线为 0"})
 	Register(Entry{Name: "LActor.changeCurrency", Fn: realChangeCurrency, Meta: "Lua调用: 69处 | 金币/元宝先落库后改内存，绑定币种仅内存"})
 	Register(Entry{Name: "LActor.changeYuanBao", Fn: realChangeYuanBao, Meta: "Lua调用: 64处 | 元宝 changeCurrency 别名，先写 actors.yuanbao 再改内存"})
+	Register(Entry{Name: "LActor.changeMoney", Fn: realChangeMoney, Meta: "Lua调用: 39处 | changeCurrency 兼容别名，忽略日志扩展参数"})
 
 	// === 物品（T0 #15,18）===
 	Register(Entry{Name: "LActor.getItemCount", Fn: realGetItemCount, Meta: "Lua调用: 134处 | Go原子读取 | 已接背包"})

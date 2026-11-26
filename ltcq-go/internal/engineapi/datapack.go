@@ -202,6 +202,17 @@ func init() {
 	Register(Entry{Name: "LDataPack.readWord", Fn: mkRead(2), Meta: "包组"})
 	Register(Entry{Name: "LDataPack.readInt", Fn: mkRead(4), Meta: "Lua调用: 361处"})
 	Register(Entry{Name: "LDataPack.readUInt", Fn: mkRead(4), Meta: "包组"})
+	Register(Entry{Name: "LDataPack.readInt64", Fn: func(args ...luahost.Value) (luahost.Value, error) {
+		p, err := getPack(args[0])
+		if err != nil {
+			return nil, err
+		}
+		b, err := readN(p, 8)
+		if err != nil {
+			return nil, err
+		}
+		return int64(binary.LittleEndian.Uint64(b)), nil
+	}, Meta: "Lua调用: 12处 | 与 writeInt64 对称的小端 64 位读取"})
 	Register(Entry{Name: "LDataPack.readString", Fn: func(args ...luahost.Value) (luahost.Value, error) {
 		p, err := getPack(args[0])
 		if err != nil {
@@ -220,6 +231,30 @@ func init() {
 		}
 		return string(b), nil
 	}, Meta: "Lua调用: 106处"})
+
+	// readData(pack, n, dt1, dt2, ...) —— 按 dt 常量返回 n 个值
+	Register(Entry{Name: "LDataPack.readData", FnMulti: func(args ...luahost.Value) ([]luahost.Value, error) {
+		p, err := getPack(args[0])
+		if err != nil {
+			return nil, err
+		}
+		if len(args) < 2 {
+			return nil, fmt.Errorf("readData 缺少字段数")
+		}
+		n := asInt(args[1])
+		if n < 0 || n > len(args)-2 {
+			return nil, fmt.Errorf("readData 字段数非法: n=%d args=%d", n, len(args))
+		}
+		out := make([]luahost.Value, 0, n)
+		for i := 0; i < n; i++ {
+			v, err := readTyped(p, asInt(args[2+i]))
+			if err != nil {
+				return nil, err
+			}
+			out = append(out, v)
+		}
+		return out, nil
+	}, Meta: "Lua调用: 26处 | 按 _G.lua dt* 常量读取变参"})
 
 	// 游标定位
 	Register(Entry{Name: "LDataPack.setPosition", Fn: func(args ...luahost.Value) (luahost.Value, error) {
@@ -348,4 +383,48 @@ func writeTyped(p *DataPack, typ int, val luahost.Value) error {
 		return fmt.Errorf("未知 dtType: %d", typ)
 	}
 	return nil
+}
+
+func readTyped(p *DataPack, typ int) (luahost.Value, error) {
+	switch typ {
+	case dtByte, dtChar:
+		b, err := readN(p, 1)
+		if err != nil {
+			return nil, err
+		}
+		return int(b[0]), nil
+	case dtWord, dtShort:
+		b, err := readN(p, 2)
+		if err != nil {
+			return nil, err
+		}
+		return int(binary.LittleEndian.Uint16(b)), nil
+	case dtInt, dtUint:
+		b, err := readN(p, 4)
+		if err != nil {
+			return nil, err
+		}
+		return int(binary.LittleEndian.Uint32(b)), nil
+	case dtInt64, dtUint64:
+		b, err := readN(p, 8)
+		if err != nil {
+			return nil, err
+		}
+		return int64(binary.LittleEndian.Uint64(b)), nil
+	case dtString:
+		var b []byte
+		for {
+			c, err := readN(p, 1)
+			if err != nil {
+				return nil, err
+			}
+			if c[0] == 0 {
+				break
+			}
+			b = append(b, c[0])
+		}
+		return string(b), nil
+	default:
+		return nil, fmt.Errorf("未知 dtType: %d", typ)
+	}
 }

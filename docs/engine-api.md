@@ -133,6 +133,7 @@ T0 分组（实现批次）：
 - `getCurrency` 与 `getMoneyCount` 共用在线 Actor 查询实现：`actors.gold/yuanbao` 登录时装入货币表 1/3；绑定货币 0/2 及未知类型当前返回 0。空参、缺类型或离线返回 0，不创建 Actor。
 - `changeCurrency` 对金币 `type=1` 和元宝 `type=3` 使用可选 `CurrencyStore` 单字段写入现有 `actors.gold/yuanbao`；Actor 锁内完成严格整数、余额和溢出校验，数据库成功后才更新内存，失败保持原余额。`delta=0` 幂等成功且不写库，离线 Actor、非法参数和缺少存档器均返回错误。绑定币种 `type=0/2` 与其他数值类型暂保持纯内存语义；仍不能充当跨物品、多币种奖励事务的原子入口。
 - `changeYuanBao(actor, delta, reason, ...)` 是元宝专用别名，固定走 `type=3` 的同一存档路径；第四个及以后的业务参数不改变金额语义，也不影响余额校验。原版调用见 `actorcost.lua:56`、`campbattlefb.lua:539`、`auctionsystem.lua:587/927`。
+- `changeMoney(actor, mtType, delta, 1, true, tips, ...)`（39 处）桥接到 `changeCurrency`：前三个参数同构，第 6 参日志 tip 作为 reason；`phylum/classField/family/genus` 等扩展参数不参与扣款，也不作为余额条件。与已暂缓的 `changeGold` 不同，这里有明确 `mt*` 类型证据。三参短调用同样支持。
 
 ### LActor.getGuildId/getGuildName/getChapterLevel/getMonthCard/getReincarnateLv(actor)
 - 读取登录快照中的现有 `actors.guildid/guild_name/chapterlevel/monthcard/reincarnate_lv` 字段，不新增表或列。
@@ -201,6 +202,11 @@ T0 分组（实现批次）：
 - 调用 91 处。玩家级业务日志，原版最终走 loggerserver 通道。
 - Go 当前实现本地 `slog.Info("LActor.log")`，字段为严格正整数 `actorID` 与字符串化 `args`；非法句柄按 `actorID=0` 记录，离线正整数按原 ID 记录。日志不查 Actor、不创建实体、不修改业务状态，也不再静默丢弃。
 - 当前未接 7001 协议、未写日志库；Lua 表参数仅按宿主默认字符串形式记录，不声称已实现完整序列化。
+
+### LDataPack.readInt64(12 处) / readData(26 处)
+- `readInt64` 与 `writeInt64` 对称，按小端读取 8 字节并返回 64 位整数，避免 32 位截断；越界返回错误。
+- `readData(pack, n, dt1, dt2, ...)` 按 `_G.lua:407-419` 的 `dt*` 常量返回 n 个值，类型覆盖 byte/char/word/short/int/uint/int64/uint64/string；与 `writeData` 变参布局对称。
+- 字段数不足、未知 dt 类型或读取越界一律返回错误，不推进游标到不可知位置；不发送协议、不修改业务状态。
 
 ### LDataPack.test_allocPack(72 处) 【待确认】
 - 名称带 test 前缀但调用 72 次——疑似调试期遗留的高频用法，Ghidra 确认与 allocPacket 的差异后再定实现策略。

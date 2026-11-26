@@ -870,3 +870,50 @@ IDE 预览实测时 gameworld 日志出现大量未响应上行帧，其中 `sys
 - `camp_test.go` 覆盖 0/1/2/100/200/大整数/负数的 Lua 写入回读、float64 整数值接受、空参/非整数/离线/不存在句柄的失败关闭，以及写入后 `Dirty` 仍为 false。
 - `P_CAMP=94` 仅见原版 DC 日志读取，未见 `setIntProperty(P_CAMP, ...)`；本批不把阵营并入 `setIntProperty` 白名单。
 - 未新增数据库表/字段、未改协议或前端资源，也未触碰共享数据库或现网服务。
+
+## 四十二、新前端接入本机 C++ 环境试玩（2026-11-26）
+
+### 目的
+让用户提供的一套“本来就能玩”的前端包（`E:/雷霆传奇Linux版/雷霆传奇_Linux版前端_game.yyzzu.com/game.yyzzu.com`）通过 `http://demo.test/` 直连本机 C++ 服务端，先做一次原版前端 + 原版 C++ 的全链路试玩验证。该任务是**原版基线验收**，不是 Go 重写工作；验收标准是能出现登录框、点“开始游戏”后真实进入游戏场景。
+
+### 手段（不改前端业务代码）
+- `hosts` 已有 `127.0.0.1 demo.test`；EServer nginx 站点 `D:/tools/EServer-data/etc/nginx/conf/vhosts/demo.test_80.conf` 原本已把 `demo.test` 指向该前端目录，本次只在该 vhost 内新增 `sub_filter`，在 HTTP 响应层替换三处本地化值，不落盘修改 JS 文件：
+  - `window.loginType = 1` → `0`（关闭渠道 SDK 模式，显示 egret 登录框）
+  - 区服列表 URL → `http://demo.test/web/server_list/Serverlist.php/`
+  - `window['userData'] = null;` → 默认 `uid/user_id/openId/sdkloginmodel/channelExt/game_appid/pid` 字段（缺字段会导致登录包被 gameworld 拒绝）
+- 只改前端目录下两个 **PHP 配置文件**：
+  - `web/server_list/config.php`：白名单加 `127.0.0.1`，区服 IP `182.61.136.28` → `127.0.0.1`，端口 `9001` → `9002`，登录 URL → `http://demo.test/web/s10001/Login.php/`
+  - 根目录 `config.php`：`$url` → `http://demo.test/`
+- 未改 `index.js`、`login.min.js`、`main.min.js`、HTML 或任何游戏资源；工作区 `www/` 的 git 状态为空。
+
+### C++ 启动要点
+- 启动顺序：`dbserver → gameworld → gateway → loggerserver`。
+- 实测有效方式：
+  - `dbserver.exe`：工作目录设为 `data/server/s1/Debug/dbserver`，**不做 stdout/stderr 重定向**；重定向启动时曾出现 gameworld 持续 `wait for db client` / `connect server time out`。
+  - `gameworld.exe`：工作目录设为 `data/server/s1/Debug/gameworld`，可用输出重定向捕获日志，等待 `all game config load complete!`。
+  - `gateway.exe` / `loggerserver.exe`：工作目录分别设为各自目录。
+- 验收时端口：`80`（nginx）、`3306`（MySQL）、`5001/6001/7001/9002`（C++ 四件套）均监听；链路为 `gameworld→dbserver:5001`、`gateway→gameworld:6001`、`gameworld→loggerserver:7001`。
+- 验收后 C++ 服务保持运行，便于用户继续试玩。
+
+### 验证结果
+- `http://demo.test/` 打开后显示登录框；输入账号 `haohaiyao`（角色“追风尘世”，82 级）点击“开始游戏”。
+- 浏览器控制台输出 `进入游戏 {"actorid":65537,"actorname":"追风尘世","userlevel":82,...}`；截图确认已渲染游戏场景、怪物与 UI。
+- `agent-browser network requests` 确认区服列表、`Login.php` 均请求 `demo.test`；系统层面确认客户端与 `9002` 建立 ESTABLISHED 连接。
+- 验证截图与日志留在 `.tmp_cpp_logs/`（安全删除拒绝清理，可手动删除）。
+
+### 回滚
+- nginx 配置原始备份：`nginx_demo.test_80.conf.bak`（工作区根目录）。恢复时把该文件覆盖回 `D:/tools/EServer-data/etc/nginx/conf/vhosts/demo.test_80.conf`，再执行 `nginx.exe -p <EServer nginx 目录> -s reload`。
+- 前端两个 PHP 配置按上文逆向改回原值即可；JS/HTML/资源从未改动，无需还原。
+
+## 四十三、A5-21：DataPack 读取补齐与 changeMoney 别名（2026-11-26）
+
+### 实现依据与边界
+- 从 `engine-api-matrix.tsv` 前 120 名重新盘点未注册 API，选出三项有明确写侧/调用点证据的高频缺口：`LDataPack.readInt64`(12)、`LDataPack.readData`(26)、`LActor.changeMoney`(39)。
+- `readInt64` 与 `writeInt64` 对称，按小端读取 8 字节并返回 64 位整数；`readData(pack,n,dt1,dt2,...)` 按 `_G.lua:407-419` 的 dt 常量与 `writeData` 对称读取变参，覆盖 byte/char/word/short/int/uint/int64/uint64/string。
+- `changeMoney(actor, mtType, delta, 1, true, tips, ...)` 桥接到 `changeCurrency`：前三个参数同构，第 6 参日志 tip 作为 reason；`phylum/classField/family/genus` 等扩展参数不参与扣款。三参短调用同样支持。
+- 越界、未知 dt 类型、非法字段数、离线/非法参数均失败关闭，不创建 Actor，不新增协议或数据库字段。
+
+### 验证与运行边界
+- 新增 `datapack_read_test.go`：覆盖 writeData→readData 往返（含 int64/string）、readInt64 大整数、越界/未知类型/非法字段数。
+- 新增 `changemoney_test.go`：覆盖元宝扩展参数调用的三参桥接、金币三参短调用、余额与存档器调用、离线/非法参数/余额不足失败关闭。
+- 未改前端、schema、共享数据库或现网服务；C++ 基线试玩服务保持运行，Go 隔离服务未启动。
