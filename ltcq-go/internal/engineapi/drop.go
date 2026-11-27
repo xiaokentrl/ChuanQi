@@ -73,6 +73,7 @@ func (m *DropManager) CreateDrop(sceneID, itemID, count, x, y int, master uint64
 	}
 	// map 键必须与 Handle 字段一致（handle64 位模式），否则按句柄拾取永远 miss。
 	m.drops[d.Handle] = d
+	slog.Info("掉落生成", "handle", d.Handle, "item", itemID, "count", count, "scene", sceneID, "x", x, "y", y, "master", master)
 	return h, buildOtherEntityFrame(d)
 }
 
@@ -134,12 +135,12 @@ func handle64(idx uint64) uint64 {
 	return idx<<32 | 0x00010000
 }
 
-// buildOtherEntityFrame 构造 sBaseCmd_OtherEntity(0,4) 下行：
-// [u16 count][count × {type:u32=6, f64 handle, u32 configID, f64 masterHandle, u32 x, u32 y, RewardData{type,id,count}}]。
+// buildOtherEntityFrame 构造 sBaseCmd_OtherEntity(0,4) 下行（布局依据客户端 parserBase/main.min.js
+// 实测权威：type:short + handle:f64 + configID:i32 + masterHandle:f64 + x/y:i32，
+// type=6(DropItem) 后直接接 RewardData{type,id,count}——无 count 字段，Go 怪物/玩家帧同构验证）：
 func buildOtherEntityFrame(d *DropBag) []byte {
-	p := binary.LittleEndian.AppendUint16(nil, 1) // count=1
-	p = binary.LittleEndian.AppendUint32(p, entityTypeDropItem)
-	p = binary.LittleEndian.AppendUint64(p, d.Handle)
+	p := binary.LittleEndian.AppendUint16(nil, entityTypeDropItem) // type=DropItem(6)，readShort
+	p = binary.LittleEndian.AppendUint64(p, d.Handle)              // readDouble 不透明句柄
 	p = binary.LittleEndian.AppendUint32(p, d.ConfigID)
 	p = binary.LittleEndian.AppendUint64(p, d.MasterHandle)
 	p = binary.LittleEndian.AppendUint32(p, uint32(d.X))

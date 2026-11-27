@@ -10,7 +10,7 @@ import (
 func TestDropNearDropsRadiusAndTake(t *testing.T) {
 	m := NewDropManager()
 	_, frame := m.CreateDrop(1, 200013, 1, 384, 384, 1)
-	if len(frame) == 0 || frame[0] != cmdBase || frame[1] != sBaseCmdOtherEntity || binary.LittleEndian.Uint32(frame[4:]) != 6 {
+	if len(frame) == 0 || frame[0] != cmdBase || frame[1] != sBaseCmdOtherEntity || binary.LittleEndian.Uint16(frame[2:]) != 6 {
 		t.Fatalf("CreateDrop 应返回 type=6 的 OtherEntity 帧: %x", frame)
 	}
 	// 半径外不返回；半径内按近先序返回

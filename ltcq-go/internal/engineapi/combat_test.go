@@ -403,7 +403,7 @@ func TestCombatKillGrantsRewardOnceAndRespawns(t *testing.T) {
 		}
 	}
 	dropFrame := packets[3]
-	if dropFrame[0] != cmdBase || dropFrame[1] != sBaseCmdOtherEntity || dropFrame[2] != 1 || binary.LittleEndian.Uint32(dropFrame[4:]) != 6 {
+	if dropFrame[0] != cmdBase || dropFrame[1] != sBaseCmdOtherEntity || binary.LittleEndian.Uint16(dropFrame[2:]) != 6 {
 		t.Fatalf("击杀第4包非掉落 OtherEntity(type=6): %x", dropFrame)
 	}
 	pending := combat.Drops().NearDrops(1, 0, 0, 1<<30)
