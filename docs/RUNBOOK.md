@@ -1194,3 +1194,23 @@ go build -o .tmp_b1/gateway.exe ./cmd/gateway
 ### 72h soak 重跑
 - 改造 `.tmp_b1/soak_72h.ps1`：按端口动态查 PID（不再硬编码 17832/19400），DB/WS 检查加 try/catch 防止环境重启时再次中断；旧日志备份为 `soak_72h.log.prev_20261127`。
 - 新 soak PID 5652，`SOAK_START end=2026-11-30 22:51:50`；首轮采样 MEM gameworld(pid=17076)/gateway(pid=7720)、DB actorid/level/exp/gold/bag_tail、WS `ff 01 00` 回包均正常。计划满 72h 后判读。
+
+## 五十六、A2 物品进包 golden 与 Go BagAdd 布局差异（2026-11-27）
+
+### 抓取
+- 沿用五十五的服务栈/CDP 方案，临时 GM（enable→restore 已核对 `gmlevel=0 closed=0`），tcpcap 19003→9002，CDP 脚本 `.tmp_b1/a2_bag_golden.mjs`。
+- 进场景后从 EntityManager 的 `CharRole` 取到真实坐标 `(1729.77, 510.23)`（此前用旧抓包兜底坐标 10545/47762 导致掉落不在脚下）。
+- 先后发 `@additem 101001 1`（装备"雷霆战甲"类，101001）与 `@dropbag 1310001 1729 510`（100% 掉装备 dropgroup）。
+- 产物：`reference/captures/a2_bag_golden_20261127.raw`（79,595B）、`a2_bag_golden_20261127.json`（183,635B，CDP hook 43 上行/数百下行帧解析）。抓包产物按约定不入库。测试 Edge/tcpcap 已停止，9223/19003 关闭。
+
+### 决定性 golden：`@additem` → `[03][04]` BagAdd
+- `@additem` 上行 `[00][00]`：`7b448037 12000000 0000 1100 406164646974656d203130313030312031 00` = `@additem 101001 1`。
+- 77ms 后下行 `[03][04]`（去掉 4B skey 后 payload 148B）：`03 04 01 dc cf cc 1f 00 00 01 00 89 8a 01 00 01 00 00 00 04 ...`，其中 `898a0100`=itemID 101001、`01000000`=count 1，确认**物品进包走 `CMD_Bag(3)/sBagCmd_AddItem(4)`**。
+- `[00][06]` `sBaseCmd_GetItem` 全程 0 帧；全仓 Lua 也无 `sBaseCmd_GetItem` 发包点（仅 `protocol.lua:108` 常量），故该常量不是 `giveItem` 的必发下行，不能据此做实现判据。
+- `@dropbag 1310001` 后本次仍只见自动战斗击杀串扰的 EXP/MONEY，装备掉落拾取未稳定复现（drops 检测为 0），但"物品进包"下行包已由 `@additem` 对照拿到。
+
+### C++ golden 与 Go `buildBagAddItem` 的布局差异（待校准，不改代码）
+- C++ payload 148B 布局：`[0..1]=03 04`、`[2]=01`(bagTab)、`[3..10]=handle(8B, 浮点样式 dccfcc1f00000100)`、`[11..14]=itemID`、`[15..18]=count`、`[19/23/27/31]` 四个非 0 u32（如 04/01/02/01）、`[147]=01`。
+- Go `bag.go:240-244 buildBagAddItem` = `{3,4,bagTypeOther=0}` + `appendBagItem`（`bagItemHandle=itemID<<32|actorID` 再按 u64 写、后接 itemID/count 与 16 组 8B 零）+ 尾 `0`：长度同为 148B，但 `[2]=0`（C++ 为 1）、handle 编码与末尾u32组/尾字节不同。
+- 注意：M5-H 背包此前已用真实浏览器断言通过（客户端能消费 Go 包），本次差异只说明 **C++ golden 的 BagAdd 字节布局与 Go 现有实现不一致**，不能据此断言 Go 包错误；要对齐须另立 golden 校准项，本轮遵守"不猜协议/不改核心实现"边界，未改 `bag.go`。
+- A2 边界更新：拾取上行 `[01][01]`、掉落物消失 `[00][0a]`、物品进包 `[03][04]` 三类 golden 均已实测取得；但 `[01][01]` 是通用 `sendGetReward`（非指定 handle 拾取），且 BagAdd 布局有差异，A2 保持暂缓、仅作为对齐依据。
