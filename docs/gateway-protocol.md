@@ -152,3 +152,9 @@ ItemData (144B = 0x90, memcpy 整体拷贝):
 - golden 实证：uid=不透明、id/count 一致、attr_data 非零对 [4,1][2,1]、ex_attr 全零
 - **A2 校准剩余 = 字段值填充**：装备物品 AddItem 时按 EquipConfig 填 attr_data 属性对（key 语义待 C++ CreateItem 确认）+ tipFlag=showTip
 - **布局本身已 100% 对齐——无结构差异**
+
+## 十二、attr 填充源结论（2026-11-28）
+
+- Item::SetConf/Init 均为空壳（只设 config_ 指针/校验非空）——attr_data 填充不在 Item 基类
+- golden attr 对 [4,1][2,1]（item 101001 装备，@additem GM 路径）来自 **GM 命令处理器的 ItemData 构造**——非 EquipConfig 直填
+- A2 实现方向：Go 侧掉落/GM 发放时按 ItemInfoGet 构造 attr_data（装备类填 EquipConfig hp/atk 对，普通类全零）——**key 语义以 golden 对照校准**（golden 已入库 golden_bagadd_152.bin）
