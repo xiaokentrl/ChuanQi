@@ -143,3 +143,4 @@
 - 说明：A2 的 P1 不是"改一个 bagType 字节"，而是配置加载→参数保留→存档模型→全协议链的完整工程项，缺证据宁可暂缓；handle 编码差异已确认无需处理，不要在此浪费工时。
 - 2026-11-27 M6 数值对齐边界查证（RUNBOOK 五十八）：C++ 31001 的 exp/gold 固化在二进制无文本配置；服务端权威自动战斗 + chapter 挂机定时器前端无法停止，EXP/MONEY 串扰不可区分，当前试玩服拿不到可信纯击杀 golden。未抓污染数据、未改 Go 占位值；P2 暂缓，需 dev 单怪环境或反编译常量。P4 soak 16 样本 gameworld 稳定、gateway +1MB、登录失败 0。
 - 2026-11-27 三项复核（RUNBOOK 五十九）：① ghidra 产物仅函数符号表无伪代码，反编译取 31001 exp/gold 不可行；② A5 giveAwards 新 golden 只补协议认知，枚举/Lua表解码/跨表原子性/容量模型/邮件补发仍缺，canGiveAwards 保持恒 false、不实现；③ soak 23 样本 PID 稳定，内存 62→23MB(gameworld)/44→12MB(gateway) 为启动后 GC 回落健康模式，登录失败 0，gateway 泄漏观察项降级。
+- 2026-11-27 engine-api 文档漂移修订（7 处，纯文档）：giveAwards 元素结构 {type,id,count,job} 且 Go 未实现/无回滚（原误写 {id,count[,bind]}+已实现）；getEquipBagSpace 未实现；getStaticVar 断线 flush 无周期序列化；postScriptEventLite 实为 Lua 包装覆盖 Go stub；costItem 同步落库非脏标记；getCurrency 的 0/2 会返回内存中 changeCurrency 写入值；reCalcAttr/enterFuBen/exitFuben/sendTipmsg 均为 stubNoop（原写已实现）。依 Go/Lua 源码证据，不改代码。
