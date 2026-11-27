@@ -1,6 +1,7 @@
 package engineapi
 
 import (
+	"os"
 	"bytes"
 	"encoding/binary"
 	"errors"
@@ -274,4 +275,32 @@ func TestBagCapacityUnlimited(t *testing.T) {
 	if len(a.Items) != 5 {
 		t.Fatalf("不限容量下物品数不符: %d", len(a.Items))
 	}
+}
+
+func TestBagAddGoldenDiff(t *testing.T) {
+	gold, err := os.ReadFile("../../reference/captures/golden_bagadd_152.bin")
+	if err != nil {
+		gold, err = os.ReadFile("../../reference/captures/golden_bagadd_152.bin")
+	}
+	if err != nil {
+		t.Skip("golden 文件不可达")
+	}
+	// golden = [4B 会话前缀][148B BagAdd]
+	body := gold[4:]
+	mine := buildBagAddItem(1, 101001, 1)
+	t.Logf("golden 长度=%d 我的长度=%d", len(body), len(mine))
+	n := len(body)
+	if len(mine) < n {
+		n = len(mine)
+	}
+	for i := 0; i < n; i++ {
+		if i >= len(mine) || i >= len(body) {
+			break
+		}
+		if mine[i] != body[i] {
+			t.Logf("差异 @%02x: mine=%02x gold=%02x", i, mine[i], body[i])
+		}
+	}
+	t.Logf("mine 首尾: %x", mine[:min(24, len(mine))])
+	t.Logf("gold 首尾: %x", body[:min(24, len(body))])
 }
