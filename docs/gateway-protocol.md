@@ -108,3 +108,9 @@ Load:   sysVarCount_ = -1; curSysVarCount_ = 0;
 - s1/Debug/gameworld/boot.log 由一个竞争的僵尸 C++ gameworld 实例写入（wait-for-db 卡住、反复重启）——非当前栈成员（当前 Go gameworld=596/6001，C++ 基线=17076/16001），清理时注意区分
 - EServer AutoStartAndRestartService 会自动拉起被杀的服务——实验杀进程前先确认 EServer 的自动重启行为
 - soak 断点：11-28 00:21:50 为上一段最后采样（机器休眠停滞），判读口径改为累计运行时长
+
+## 八、A2 BagAdd golden 提取方法（下会话开局）
+
+a2_bag_golden_20261127.raw 含 tcpcap 段标记文本（"@time [C] len=N"行），需先剥离元数据重组字节流再搜 CCEE 帧：
+perl 剥离法参考 frame_analyze2.pl（正则提取 hex 列还原原始字节），重组后按 [CCEE][len][CDCDCDCD][cmd=3][sub=4][body 144B] 遍历，
+目标帧候选 @71757 附近（`03 04 01 dc cf cc...`），对照 RUNBOOK 五十七字段语义（[2]=bagTab/att 对/[147]=tipFlag/148B）校准 buildBagAddItem。
