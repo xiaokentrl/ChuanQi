@@ -124,3 +124,16 @@ payload: `7b448037 | 0304 | 01dccfcc 1f000001 00898a01 00010000 0004...`
 
 **下一步**：以 @70128 帧（152B）为 golden 逐字节对照校准 buildBagAddItem
 （对照脚本=本轮 WS 遍历器，a2_s_ws.bin 已存 Temp）。校准后 A2 掉落拾取实现即无协议障碍。
+
+## 十、★ BagAdd 148B 构造点破译（2026-11-28 深夜）
+
+**ItemBag::NotifyAdd(item, showTip) 反编译（equipbag_decomp.c）**：
+```c
+msg.bag_type = GetType(this);          // [2] bagTab = 容器类型（ItemBag/EquipBag 各异）
+Item::WriteData(item, &msg.item);      // [3-146] = Item 结构序列化（148B 主体）
+msg.show_tip = showTip;                // [147] tipFlag = AddItem 第三参
+Actor::SendData<BagAddItemProto>(...)
+```
+- **三个遗留差异定案**：①bagTab=容器类型 ✓ Go 已路由 ②att 区域=Item::WriteData 序列化（非 EquipConfig 直映）③tipFlag=showTip 参数
+- **最后目标**：反编译 `Item::WriteData` → 精确字段序（Item 结构：handle/strong/level/att 等）→ buildBagAddItem 校准完成
+- equipbag_decomp.c（1682 行，EquipBag 18 方法 + ItemBag 全方法）已入库 reference/ghidra/
