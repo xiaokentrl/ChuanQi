@@ -1246,3 +1246,24 @@ payload 148B = `u8 sysid(3)` + `u8 subcmd(4)` + `u8 bagType` + `ItemData(144B)` 
 - 本轮未启动 CDP/tcpcap（19003/9223 均空闲），未改 Go 占位配置，未动 C++ 服务；GM 仍为 0。
 - M6 数值对齐的**新前置条件**：需要"可控击杀 + 无挂机串扰"的环境（如 dev 模式单场景单怪、或服务端提供停 chapter 定时器的 GM/协议），或 C++ 二进制反编译给出 31001 的 exp/gold 常量；在此之前 `exp=100/gold=1000` 保留为占位，不得当作原版值。
 - P4 内存观察：soak PID 5652（16 样本，约 15 分钟）gameworld 62.02→62.04MB 稳定、gateway 44.15→45.2MB（+1MB，继续观察），登录失败 0；未见泄漏证据，待 72h 满期判读。
+## 五十九、反编译/A5/soak 三项复核（2026-11-27）
+
+### 1. 反编译查 31001 exp/gold 常量：不可行
+- `ltcq-go/reference/ghidra/` 只有 2 个文件：`functions.tsv`（2.13MB，4 列：地址/符号/命名空间/参数个数）与 `loggerserver_structs.txt`（3KB DWARF 结构体）；**无任何反编译伪代码/函数体/常量表/字符串表**（`*.c`/`*.java` 0 命中）。
+- `Monster::OnKilledByEntity`(0062ffa4)、`Actor::AddExp`(00605a68)、`Actor::ChangeGold`(00605b68)、`MonsterConfigPool::Load/Get` 等只有符号与 arity，无实现；二进制中搜不到 C++ 符号串，无法把 PE 地址直接映射到 27MB ELF 二进制。
+- 结论：现有反编译产物拿不到可信 31001 exp/gold；M6 仍需可控单怪击杀 golden 或真正的 Ghidra 伪代码导出。本轮未改 Go 占位值。
+
+### 2. A5 giveAwards/canGiveAwards 复核：新 golden 补协议认知，但仍不可安全实现
+- 新 golden（BagAdd 148B 布局、EXP/MONEY/Disapear）确认了"发什么包"，但 `giveAwards` 的暂缓理由中**协议**一项之外的缺口仍在：
+  - `AwardType_Numeric=0/AwardType_Item=1` 未注入 Go VM（`enums.go:41-78`），Lua 包装层在 Go 侧静默失效；
+  - `giveAwards(actor, rewards, log)` 的 rewards 是 Lua 数组表（`ipairs`），engineapi 无 Lua table→奖励列表解码（只处理标量）；
+  - 背包写 `actorvariable.variable` 与货币写 `actors.gold/yuanbao` 是两条独立存档路径，批量发放无原子性/回滚；
+  - `canGiveAwards` 需 `getEquipBagSpace`（剩余格数）与 ItemConfig/isEquip，Go 只有 `Items map[int]int` 单背包无容量概念，两者均缺；
+  - 无邮件补发链路（`mailsystem.sendMailById` 仅 Ghidra 符号），guarded 调用方走 else 分支时奖励无处可去；
+  - `docs/engine-api.md:123-125` 写 awardTable={id,count[,bind]} 与真实 Lua {type,id,count,job} 漂移，不能照文档实现。
+- 结论：`canGiveAwards` 保持 stubBool 恒 false（失败关闭）；`giveAwards` 不实现。即使 best-effort 窄语义也有 6 项前置条件，不满足则不落地，不把 stub 计入覆盖门禁。
+
+### 3. soak 完整趋势判读（修正此前只取前段的不完整结论）
+- 新 soak（PID 5652，`SOAK_START end=2026-11-30 22:51:50`）日志为追加模式，统计须从 `SOAK_START end=2026-11-30` 行起算（第 447 行），此前误把旧段计入。
+- 23 个样本、PID 稳定（gameworld 17076/gateway 7720，未重启）：gameworld 62.02→22.97MB（min 22.93/max 62.04），gateway 44.15→12.19MB（min 10.95/max 45.33），登录失败 0。
+- 判读：峰值在启动初期（加载配置/首次登录），随后稳定回落到 23/12MB，是 Go GC/工作集回收的**健康模式**，未见单调增长或泄漏；M6 burst 后 gateway 工作集未回落的旧观察项，在本轮长周期里已回落，可降级为"继续常规观察"。待 72h 满期做最终判读。

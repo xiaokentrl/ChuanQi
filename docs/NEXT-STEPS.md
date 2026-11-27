@@ -136,9 +136,10 @@
 |---|---|---|---|
 | P0 进行中 | 72h soak（PID 5652）满期判读 | 等 2026-11-30 22:51:50 | `soak_72h.log` 满 72h，内存无单调增长、DB 一致、登录回包正常 |
 | P1 | A2 装备背包闭环 | ① item/equip config loader + `isEquip`；② `LActor.addItem` 保留 quality/属性；③ 分背包存档；④ InitData/Add/Delete/Update bagType 联动；⑤ att[] 生成 | 真浏览器 `@additem 101001` 装备进 `bagModel[1]`、属性与 C++ golden 对齐、提示正常 |
-| P2 暂缓 | M6 数值对齐 | 当前 C++ 试玩服不可行（31001 数值在二进制、挂机串扰无法前端根除）；需 dev 单怪环境/停 chapter 定时器 GM/反编译常量 | 拿到可信单杀 golden 后才替换 Go `exp=100/gold=1000` |
+| P2 暂缓 | M6 数值对齐 | 当前不可行：31001 数值在二进制、挂机串扰无法前端根除；反编译路径也已排除（ghidra 目录仅函数符号表无伪代码，RUNBOOK 五十九） | 需 dev 单怪环境/停 chapter 定时器 GM/真正 Ghidra 伪代码导出，拿到可信单杀值后才替换 Go 占位 |
 | P3 | A5 暂缓项 | `relive/AddSkill/writePacket/giveAwards` 各自补枚举/容量模型/byte golden | 有证据才恢复，不猜协议 |
 | P4 | gateway 工作集观察 | 5000 路 burst 后未回落，结合 soak 内存趋势 | 判定是否连接泄漏，必要时专项排查 |
 
 - 说明：A2 的 P1 不是"改一个 bagType 字节"，而是配置加载→参数保留→存档模型→全协议链的完整工程项，缺证据宁可暂缓；handle 编码差异已确认无需处理，不要在此浪费工时。
 - 2026-11-27 M6 数值对齐边界查证（RUNBOOK 五十八）：C++ 31001 的 exp/gold 固化在二进制无文本配置；服务端权威自动战斗 + chapter 挂机定时器前端无法停止，EXP/MONEY 串扰不可区分，当前试玩服拿不到可信纯击杀 golden。未抓污染数据、未改 Go 占位值；P2 暂缓，需 dev 单怪环境或反编译常量。P4 soak 16 样本 gameworld 稳定、gateway +1MB、登录失败 0。
+- 2026-11-27 三项复核（RUNBOOK 五十九）：① ghidra 产物仅函数符号表无伪代码，反编译取 31001 exp/gold 不可行；② A5 giveAwards 新 golden 只补协议认知，枚举/Lua表解码/跨表原子性/容量模型/邮件补发仍缺，canGiveAwards 保持恒 false、不实现；③ soak 23 样本 PID 稳定，内存 62→23MB(gameworld)/44→12MB(gateway) 为启动后 GC 回落健康模式，登录失败 0，gateway 泄漏观察项降级。
