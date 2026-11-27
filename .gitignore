@@ -12,3 +12,8 @@ data/server/*/Debug/gameworld/runtime/rank/
 data/server/*/Debug/gameworld/runtime/*.bin
 ltcq-go/reference/captures/go_test/
 ltcq-go/reference/captures/go_login_test/
+.tmp_cpp_logs/
+data/server/log/
+data/server/s1/memory.txt
+ltcq-go/.tmp_b1/
+nginx_*.bak
