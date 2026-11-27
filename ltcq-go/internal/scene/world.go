@@ -47,6 +47,7 @@ const (
 	EventDamage
 	EventMoney
 	EventExp
+	EventRaw // 不透明原始下行帧透传（掉落等 AOI 之外的下发，见 RawSceneBroadcast）
 )
 
 type Event struct {
@@ -60,6 +61,7 @@ type Event struct {
 	ExpAdded  int64
 	Gold      int64
 	GoldAdded int64
+	Payload   []byte // EventRaw 专用：协议层已编码好的下行帧，观察者原样转发
 }
 
 type AttackResult struct {
@@ -356,6 +358,22 @@ func (w *World) Dispatch(deliveries []Delivery) error {
 		}
 	}
 	return errors.Join(errs...)
+}
+
+// RawSceneBroadcast 把不透明原始下行帧投递给场景内全部玩家观察者，
+// 返回待 Dispatch 的 Delivery 列表（与 AOI 事件同一条观察者通路）。
+func (w *World) RawSceneBroadcast(sceneID int, payload []byte) []Delivery {
+	w.mu.Lock()
+	defer w.mu.Unlock()
+	deliveries := make([]Delivery, 0, len(w.observers))
+	for id := range w.observers {
+		entity, ok := w.entities[id]
+		if !ok || entity.SceneID != sceneID || entity.Kind != EntityPlayer {
+			continue
+		}
+		deliveries = append(deliveries, Delivery{ObserverID: id, Event: Event{Kind: EventRaw, Payload: payload}})
+	}
+	return deliveries
 }
 
 func (w *World) Entity(id int) (Entity, bool) {

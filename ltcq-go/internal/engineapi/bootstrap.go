@@ -96,6 +96,10 @@ func bootstrapWithLogin(dataRoot, ostype, dsn string, world *scene.World, combat
 	movement := NewMovementManager(e.Router, world)
 	e.Router.SetMovementHandler(movement.HandleMove)
 	e.Router.SetBagHandler(newBagUseHandler(e.Router))
+	if combat != nil {
+		// 地面掉落拾取上行（[01][01] flag=0）；combat 为 nil 时无掉落源，不安装。
+		e.Router.SetDropPickupHandler(newDropPickupHandler(combat, world))
+	}
 	codec := tableCodecOf(e.Lua)
 	e.Router.SetClientConfigHandler(newClientConfigHandler(store, codec))
 	if skills != nil {

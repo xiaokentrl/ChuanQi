@@ -667,6 +667,9 @@ func buildNotifyFlyHp(attackerID, targetID, damage int) []byte {
 
 func (m *postLoginManager) buildWorldPacket(event scene.Event) ([]byte, error) {
 	entity := event.Entity
+	if event.Kind == scene.EventRaw {
+		return event.Payload, nil
+	}
 	if event.Kind == scene.EventLeave {
 		packet := []byte{cmdBase, sBaseCmdRemoveEntity}
 		return binary.LittleEndian.AppendUint64(packet, math.Float64bits(float64(entity.ID))), nil

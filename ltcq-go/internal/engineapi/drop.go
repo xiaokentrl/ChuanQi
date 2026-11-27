@@ -3,17 +3,29 @@ package engineapi
 import (
 	"encoding/binary"
 	"fmt"
+	"log/slog"
+	"sort"
 	"sync"
 	"time"
+
+	"github.com/xiaokentrl/ChuanQi/ltcq-go/internal/scene"
 )
 
-// 掉落拾取链路（A2，协议依据 RUNBOOK 五十七/golden 三类抓包）：
-// 击杀 → OtherEntity 下发（type=6 地面掉落）→ 客户端拾取上行 → RemoveEntity + BagAdd。
+// 掉落拾取链路（A2，golden 依据 RUNBOOK 五十五/五十六/五十七）：
+// 击杀 → OtherEntity 下发（type=6 地面掉落）→ 客户端 UserFb.sendGetReward 拾取上行 → 消失包 + BagAdd。
 const (
-	sBaseCmdGetReward    = 1  // 拾取上行（客户端 [00][01][flag]）
-	entityTypeDropItem   = 6  // EntityType.DropItem（A2 逆向）
-	dropRewardTypeItem   = 1  // RewardData.type：物品
+	// 拾取上行（golden 实测，五十五）：客户端不回传掉落 handle，只发
+	// [sysid=1 CMD_Fuben/Guanqia][cmdid=1][flag]，普通地图 flag=fubenID=0、自动寻路贴近后多次发出；
+	// 服务端按距离判定归属并结算（golden 一次触发伴随多帧消失包）。
+	cmdFuben           = 1 // CMD_Fuben/Guanqia（_G.lua SystemId）
+	sFubenCmdGetReward = 1 // UserFb.sendGetReward
+	entityTypeDropItem = 6 // EntityType.DropItem（A2 逆向）
+	dropRewardTypeItem = 1 // RewardData.type：物品
 )
+
+// dropPickupRadius 拾取判定半径：客户端贴掉落物后发 sendGetReward（flag=0），
+// 服务端按曼哈顿距离归属，取 2 格。
+const dropPickupRadius = 2 * scene.CellSize
 
 // DropBag 一份地面掉落（A2 布局：handle/configID/masterHandle/x/y/RewardData）。
 type DropBag struct {
@@ -59,42 +71,62 @@ func (m *DropManager) CreateDrop(sceneID, itemID, count, x, y int, master uint64
 		Count:        count,
 		ExpireAt:     time.Now().Add(60 * time.Second),
 	}
-	m.drops[h] = d
+	// map 键必须与 Handle 字段一致（handle64 位模式），否则按句柄拾取永远 miss。
+	m.drops[d.Handle] = d
 	return h, buildOtherEntityFrame(d)
 }
 
-// Pickup 处理拾取上行：移除掉落并返回物品数据（供 BagAdd）。
-func (m *DropManager) Pickup(handle uint64) (itemID, count, sceneID int, ok bool) {
-	m.mu.Lock()
-	defer m.mu.Unlock()
-	d, ok := m.drops[handle]
-	if !ok {
-		return 0, 0, 0, false
-	}
-	itemID, count, sceneID = d.ItemID, d.Count, d.SceneID
-	delete(m.drops, handle)
-	return itemID, count, sceneID, true
-}
-
-// RemovePacket 构造实体消失包（[00][0a] + handle 8B）。
-func (m *DropManager) RemovePacket(handle uint64) []byte {
-	p := []byte{cmdBase, sBaseCmdRemoveEntity}
-	p = binary.LittleEndian.AppendUint64(p, handle)
-	return p
-}
-
-// Pending 返回场景内未过期掉落（OtherEntity 重发用）。
-func (m *DropManager) Pending(sceneID int) []*DropBag {
+// NearDrops 返回拾取点周围半径内的未过期掉落（近先序），供拾取上行结算。
+func (m *DropManager) NearDrops(sceneID, x, y, radius int) []*DropBag {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 	now := time.Now()
 	var out []*DropBag
 	for _, d := range m.drops {
-		if d.SceneID == sceneID && now.Before(d.ExpireAt) {
+		if d.SceneID != sceneID || !now.Before(d.ExpireAt) {
+			continue
+		}
+		if absInt(d.X-x)+absInt(d.Y-y) <= radius {
 			out = append(out, d)
 		}
 	}
+	sort.Slice(out, func(i, j int) bool {
+		return absInt(out[i].X-x)+absInt(out[i].Y-y) < absInt(out[j].X-x)+absInt(out[j].Y-y)
+	})
 	return out
+}
+
+// Take 移除并返回指定掉落（拾取入包成功后调用）。
+func (m *DropManager) Take(handle uint64) (*DropBag, bool) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	d, ok := m.drops[handle]
+	if !ok {
+		return nil, false
+	}
+	delete(m.drops, handle)
+	return d, true
+}
+
+// SweepExpired 移除并返回已过期掉落（清扫方负责广播消失包）。
+func (m *DropManager) SweepExpired(now time.Time) []*DropBag {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	var out []*DropBag
+	for h, d := range m.drops {
+		if !now.Before(d.ExpireAt) {
+			out = append(out, d)
+			delete(m.drops, h)
+		}
+	}
+	return out
+}
+
+// RemovePacket 构造实体消失包（[00][0a] + handle 8B，golden 五十五：掉落物消失下行）。
+func (m *DropManager) RemovePacket(handle uint64) []byte {
+	p := []byte{cmdBase, sBaseCmdRemoveEntity}
+	p = binary.LittleEndian.AppendUint64(p, handle)
+	return p
 }
 
 // handle64 构造不透明掉落句柄（低 4B=索引，次 4B=栈标记；f64 位模式）。
@@ -118,9 +150,35 @@ func buildOtherEntityFrame(d *DropBag) []byte {
 	return append([]byte{cmdBase, sBaseCmdOtherEntity}, p...)
 }
 
-// buildDropRemoveFrame 构造实体消失包 [00][0a] + handle 8B。
-func buildDropRemoveFrame(handle uint64) []byte {
-	p := []byte{cmdBase, sBaseCmdRemoveEntity}
-	p = binary.LittleEndian.AppendUint64(p, handle)
-	return p
+// newDropPickupHandler 拾取上行处理器（[01][01] flag=0，UserFb.sendGetReward）：
+// 半径内掉落逐个结算——AddItem（BagAdd golden 布局经 BagNotifier 下发）成功后
+// 移除掉落并广播消失包；入包失败（背包满等）时掉落留在地面等下次拾取。
+func newDropPickupHandler(combat *CombatManager, world *scene.World) func(sid uint16, actorID int, body []byte) error {
+	return func(_ uint16, actorID int, body []byte) error {
+		if combat == nil || combat.drops == nil || world == nil || len(body) == 0 || body[0] != 0 {
+			return nil
+		}
+		actor := DefaultActorManager.Get(actorID)
+		if actor == nil {
+			return nil
+		}
+		entity, ok := world.Entity(actorID)
+		if !ok || entity.HP <= 0 {
+			return nil
+		}
+		for _, d := range combat.drops.NearDrops(entity.SceneID, entity.X, entity.Y, dropPickupRadius) {
+			got, err := actor.AddItem(d.ItemID, d.Count)
+			if err != nil {
+				slog.Warn("拾取入包失败", "actor", actorID, "drop", d, "err", err)
+				continue
+			}
+			if !got {
+				continue
+			}
+			if taken, ok := combat.drops.Take(d.Handle); ok {
+				combat.deliverToScene(taken.SceneID, combat.drops.RemovePacket(taken.Handle))
+			}
+		}
+		return nil
+	}
 }

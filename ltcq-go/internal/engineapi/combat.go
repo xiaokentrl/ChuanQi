@@ -3,6 +3,7 @@ package engineapi
 import (
 	"fmt"
 	"log/slog"
+	"math"
 	"sort"
 	"sync"
 	"time"
@@ -29,6 +30,7 @@ type CombatManager struct {
 	config        CombatConfig
 	monsters      *MonsterManager
 	progression   *ProgressionManager
+	drops         *DropManager
 	stop          chan struct{}
 	once          sync.Once
 	wg            sync.WaitGroup
@@ -49,7 +51,7 @@ func NewCombatManager(world *scene.World, configs ...CombatConfig) *CombatManage
 			config.ReviveAfter = DefaultCombatConfig().ReviveAfter
 		}
 	}
-	manager := &CombatManager{world: world, config: config, stop: make(chan struct{}), attackAt: map[int]time.Time{}, aggro: map[int]int{}, playerTargets: map[int]int{}, stopped: map[int]bool{}, returning: map[int]bool{}, reviveAt: map[int]time.Time{}}
+	manager := &CombatManager{world: world, config: config, drops: NewDropManager(), stop: make(chan struct{}), attackAt: map[int]time.Time{}, aggro: map[int]int{}, playerTargets: map[int]int{}, stopped: map[int]bool{}, returning: map[int]bool{}, reviveAt: map[int]time.Time{}}
 	manager.wg.Add(1)
 	return manager
 }
@@ -84,6 +86,7 @@ func (m *CombatManager) TickAt(now time.Time) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 	m.tickAt(now)
+	m.sweepExpiredDrops()
 }
 
 func (m *CombatManager) StopPlayerAI(actorID int) error {
@@ -451,6 +454,32 @@ func (m *CombatManager) reviveDue(now time.Time) {
 	}
 }
 
+// deliverToScene 向场景内全部玩家观察者广播原始下行帧（掉落 OtherEntity/消失包，
+// 走 EventRaw 透传，与 AOI 事件共用观察者通路）。
+func (m *CombatManager) deliverToScene(sceneID int, payload []byte) {
+	if m.world == nil || len(payload) == 0 {
+		return
+	}
+	if err := m.world.Dispatch(m.world.RawSceneBroadcast(sceneID, payload)); err != nil {
+		slog.Warn("场景原始帧广播失败", "scene", sceneID, "err", err)
+	}
+}
+
+// Drops 掉落管理器访问器（拾取上行处理用）。
+func (m *CombatManager) Drops() *DropManager {
+	return m.drops
+}
+
+// sweepExpiredDrops 过期地面掉落清扫：广播消失包后移除（需在 m.mu 持锁下调用）。
+func (m *CombatManager) sweepExpiredDrops() {
+	if m.drops == nil {
+		return
+	}
+	for _, d := range m.drops.SweepExpired(time.Now()) {
+		m.deliverToScene(d.SceneID, m.drops.RemovePacket(d.Handle))
+	}
+}
+
 func (m *CombatManager) handleKill(result scene.AttackResult, now time.Time) {
 	var rule MonsterSpawn
 	var hasRule bool
@@ -461,14 +490,14 @@ func (m *CombatManager) handleKill(result scene.AttackResult, now time.Time) {
 		delete(m.aggro, result.Target.ID)
 		delete(m.returning, result.Target.ID)
 	}
-	if hasRule && rule.ItemID > 0 {
-		actor := DefaultActorManager.Get(result.Attacker.ID)
-		if actor == nil {
-			slog.Warn("击杀物品奖励角色不存在", "actor", result.Attacker.ID, "monster", result.Target.ID)
-		} else if ok, err := actor.AddItem(rule.ItemID, rule.ItemCount); err != nil {
-			slog.Warn("击杀物品奖励结算失败", "actor", result.Attacker.ID, "monster", result.Target.ID, "err", err)
-		} else if !ok {
-			slog.Warn("击杀物品奖励参数非法", "actor", result.Attacker.ID, "monster", result.Target.ID, "item", rule.ItemID, "count", rule.ItemCount)
+	// 物品奖励走地面掉落（A2：击杀 → OtherEntity type=6 下发 → 客户端 sendGetReward 拾取 → BagAdd，
+	// golden 依据 RUNBOOK 五十五/五十六），不再直接进背包。位置取攻击瞬间的实体快照
+	// （致死时目标已从 world 移除，不能再查 Entity）。
+	if hasRule && rule.ItemID > 0 && m.drops != nil {
+		master := math.Float64bits(float64(result.Attacker.ID))
+		sceneID := result.Target.SceneID
+		if _, frame := m.drops.CreateDrop(sceneID, rule.ItemID, rule.ItemCount, result.Target.X, result.Target.Y, master); frame != nil {
+			m.deliverToScene(sceneID, frame)
 		}
 	}
 	if !hasRule || m.progression == nil {

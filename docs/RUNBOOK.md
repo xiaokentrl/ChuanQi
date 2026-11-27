@@ -1297,3 +1297,26 @@ payload 148B = `u8 sysid(3)` + `u8 subcmd(4)` + `u8 bagType` + `ItemData(144B)` 
 
 ### 边界
 - 这是 giveAwards 前置条件的第 2 项（Lua table 解码）。剩余缺口：跨表原子性（背包写 actorvariable + 货币写 actors）、容量模型（getEquipBagSpace）、邮件补发链路；`giveAwards` 本体继续不实现，stub 不计入覆盖门禁。
+
+## 六十二、A2 掉落拾取链路接入战斗与路由：击杀→地面掉落→拾取→BagAdd/消失包（2026-11-28）
+
+### 实现内容
+- **击杀钩子改造**（`combat.go` handleKill）：物品奖励不再直接 `AddItem` 进包，改为 `DropManager.CreateDrop` 在攻击瞬间目标位置（`result.Target.X/Y` 快照——致死时目标已从 world 移除，不能回查 Entity）生成地面掉落，经新增 `deliverToScene` 向场景内全部玩家观察者广播 OtherEntity(type=6) 下行帧。经验/金币链路不变（`[00][07]/[00][05]`）。
+- **scene 包原始帧通道**：`EventRaw` 事件类 + `Event.Payload []byte` + `World.RawSceneBroadcast(sceneID, payload)`——不透明下行帧复用 AOI 观察者通路透传（`postlogin.go buildWorldPacket` 对 EventRaw 原样返回 Payload），scene 包不引入协议知识。
+- **掉落生命周期**：`DropManager` 补齐 `NearDrops`（曼哈顿距离半径内未过期掉落，近先序）/`Take`（按句柄移除）/`SweepExpired`（过期清扫）；`CombatManager.TickAt` 每 tick 清扫过期掉落并广播消失包 `[00][0a]`；掉落 60s 过期为 Go 侧选定值（C++ 原值未证实）。
+- **拾取上行接入**（golden 五十五）：`RouteUpstream` 分流 `[sysid=1 CMD_Fuben][cmdid=1] flag=0`（`UserFb.sendGetReward`，客户端不回传 handle）→ `newDropPickupHandler`：角色半径内（`dropPickupRadius=2*CellSize`）掉落逐个 `AddItem`（BagAdd `[03][04]` golden 布局经 BagNotifier 下发，背包满则留地面）成功后移除掉落并广播消失包。flag≠0 的副本领奖仍走 Lua OnNetMsg。
+- **接线**：`bootstrap.go` 在 combat 非空时安装 `SetDropPickupHandler`；`NetRouter` 加 `dropPickup` 处理器槽位。
+
+### 修复的既有缺陷
+- `CreateDrop` 以裸索引做 map 键而 `Handle` 字段是 `handle64(idx)` 位模式——按句柄拾取永远 miss（旧 `Pickup` 为死代码未暴露）。改为键=Handle 一致。
+- `drop.go` 旧常量 `sBaseCmdGetReward`（注释"客户端 [00][01]"）与 golden 不符：拾取上行实为 `[01][01]`（CMD_Fuben），更名 `cmdFuben/sFubenCmdGetReward` 并修注释。
+
+### 验证
+- `drop_test.go` 新增：半径内外/跨场景判定、Take 幂等、过期清扫。
+- `combat_test.go TestCombatKillGrantsRewardOnceAndRespawns` 改造为全链路断言：击杀包序（HP/飞血/怪物消失/掉落 OtherEntity(type=6)/金币/经验）→ 物品不入包 → 拾取上行（flag=0）→ BagAdd(200013×1) + 消失包(handle 一致) → 物品落盘 → 重生后二次击杀/拾取 → items=2。
+- `go test ./...`（含 `TestBagAddGoldenDiff` 回归）、`go vet` 全通过；未改前端、schema 或共享数据库。
+
+### 边界与推断声明
+- golden 已锚定：拾取触发上行 `[01][01]` flag=0、消失包 `[00][0a]`、BagAdd `[03][04]` 布局、EXP/MONEY 下行。
+- Go 侧推断（待后续 golden 校准）：① 服务端按距离归属掉落（客户端不回传 handle，服务端必然自行判定；半径 2 格为选定值）；② 60s 过期时长；③ 一次触发结算半径内全部掉落（golden 一次触发伴随多帧消失包）。
+- 装备掉落进装备背包（bagTab=1）走 `AddItem` 现有 resolver 路由，装备容量/att[] 生成仍属 NEXT-STEPS P1 装备背包闭环，不在本轮。

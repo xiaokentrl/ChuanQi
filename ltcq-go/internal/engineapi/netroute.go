@@ -50,6 +50,7 @@ type NetRouter struct {
 	bag          func(sid uint16, actorID int, body []byte) error
 	skill        func(sid uint16, actorID int, cmdid uint16, body []byte) error
 	clientConfig func(sid uint16, actorID int, body []byte) error
+	dropPickup   func(sid uint16, actorID int, body []byte) error
 	close        func(sid uint16, actorID int)
 }
 
@@ -110,6 +111,14 @@ func (r *NetRouter) SetClientConfigHandler(fn func(sid uint16, actorID int, body
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	r.clientConfig = fn
+}
+
+// SetDropPickupHandler 安装地面掉落拾取上行处理器（[01][01] flag=0，UserFb.sendGetReward，
+// golden RUNBOOK 五十五）。flag≠0 的副本领奖不在此分流，仍走 OnNetMsg。
+func (r *NetRouter) SetDropPickupHandler(fn func(sid uint16, actorID int, body []byte) error) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	r.dropPickup = fn
 }
 
 func (r *NetRouter) SetCloseHandler(fn func(sid uint16, actorID int)) {
@@ -288,6 +297,14 @@ func (r *NetRouter) RouteUpstream(body []byte) error {
 		r.mu.RUnlock()
 		if skill != nil {
 			return skill(sid, actorID, uint16(cmdid), business)
+		}
+	}
+	if sysid == cmdFuben && cmdid == sFubenCmdGetReward && len(business) > 0 && business[0] == 0 {
+		r.mu.RLock()
+		drop := r.dropPickup
+		r.mu.RUnlock()
+		if drop != nil {
+			return drop(sid, actorID, business)
 		}
 	}
 	if sysid == cmdBase && cmdid == sBaseCmdClientConfig {

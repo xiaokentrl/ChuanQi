@@ -387,38 +387,70 @@ func TestCombatKillGrantsRewardOnceAndRespawns(t *testing.T) {
 	combat.SetProgression(NewProgressionManager(store, map[int]int64{51: 1000, 52: 1200}))
 	now := time.Unix(1000, 0)
 	combat.TickAt(now)
+	// A2：击杀物品奖励改走地面掉落——击杀包 = HP/飞血/怪物消失 + 掉落 OtherEntity + 金币/经验。
 	want := [][]byte{
 		buildHpChange(1<<30, 0),
 		buildNotifyFlyHp(1, 1<<30, 100),
 		{cmdBase, sBaseCmdRemoveEntity},
-		buildBagAddItem(1, 200013, 1, 0, nil, 0),
-		buildGoldChange(currencyGold, 2000),
-		buildExpChange(51, 600, 100),
 	}
 	want[2] = binary.LittleEndian.AppendUint64(want[2], math.Float64bits(float64(1<<30)))
-	if len(packets) != len(want) {
-		t.Fatalf("击杀包数量=%d want=%d", len(packets), len(want))
+	if len(packets) != len(want)+3 { // want 3 帧 + 掉落 OtherEntity + 金币 + 经验
+		t.Fatalf("击杀包数量=%d want=%d", len(packets), len(want)+3)
 	}
 	for i := range want {
 		if !bytes.Equal(packets[i], want[i]) {
 			t.Fatalf("击杀包%d=%x want=%x", i, packets[i], want[i])
 		}
 	}
-	if store.actors[1].Exp != 600 || store.actors[1].Gold != 2000 || actor.Items[200013] != 1 || bagStore.saves != 1 {
-		t.Fatalf("击杀奖励未落盘: actor=%+v items=%v bagSaves=%d", store.actors[1], actor.Items, bagStore.saves)
+	dropFrame := packets[3]
+	if dropFrame[0] != cmdBase || dropFrame[1] != sBaseCmdOtherEntity || dropFrame[2] != 1 || binary.LittleEndian.Uint32(dropFrame[4:]) != 6 {
+		t.Fatalf("击杀第4包非掉落 OtherEntity(type=6): %x", dropFrame)
+	}
+	pending := combat.Drops().NearDrops(1, 0, 0, 1<<30)
+	if len(pending) != 1 || pending[0].ItemID != 200013 || pending[0].Count != 1 {
+		t.Fatalf("击杀后应恰好 1 份待拾掉落(200013×1): %v", pending)
+	}
+	// 物品不再直接进包：经验/金币照常落盘，物品等拾取结算
+	if store.actors[1].Exp != 600 || store.actors[1].Gold != 2000 || actor.Items[200013] != 0 || bagStore.saves != 0 {
+		t.Fatalf("击杀奖励落盘异常: actor=%+v items=%v bagSaves=%d", store.actors[1], actor.Items, bagStore.saves)
 	}
 	combat.TickAt(now.Add(time.Second))
-	if len(packets) != len(want) || store.actors[1].Exp != 600 {
+	if len(packets) != len(want)+3 || store.actors[1].Exp != 600 {
 		t.Fatal("非致死 tick 重复发放了奖励")
 	}
+	// 拾取上行（[01][01] flag=0，玩家距击杀点 128=拾取半径内）：BagAdd + 掉落消失包广播
+	if err := newDropPickupHandler(combat, world)(0, 1, []byte{0}); err != nil {
+		t.Fatal(err)
+	}
+	if actor.Items[200013] != 1 || bagStore.saves != 1 || len(combat.Drops().NearDrops(1, 0, 0, 1<<30)) != 0 {
+		t.Fatalf("拾取后物品未进包: items=%v bagSaves=%d", actor.Items, bagStore.saves)
+	}
+	if len(packets) != len(want)+5 || !bytes.Equal(packets[6], buildBagAddItem(1, 200013, 1, 0, nil, 0)) {
+		t.Fatalf("拾取包序异常: %d 帧 / 包6=%x", len(packets), packets[6])
+	}
+	removeDrop := packets[7]
+	if removeDrop[0] != cmdBase || removeDrop[1] != sBaseCmdRemoveEntity || binary.LittleEndian.Uint64(removeDrop[2:]) != pending[0].Handle {
+		t.Fatalf("拾取后消失包异常: %x want handle=%x", removeDrop, pending[0].Handle)
+	}
+	basePackets := len(packets)
 	combat.TickAt(now.Add(3 * time.Second))
 	entity, ok := world.Entity(1 << 30)
-	if !ok || entity.HP != 100 || len(packets) != len(want)+1 || packets[len(packets)-1][1] != sBaseCmdOtherEntity {
+	if !ok || entity.HP != 100 || len(packets) != basePackets+1 || packets[len(packets)-1][1] != sBaseCmdOtherEntity {
 		t.Fatalf("重生结果=%+v ok=%v packets=%d", entity, ok, len(packets))
 	}
 	combat.TickAt(now.Add(3500 * time.Millisecond))
-	if store.actors[1].Exp != 700 || store.actors[1].Gold != 3000 || actor.Items[200013] != 2 || bagStore.saves != 2 {
-		t.Fatalf("第二次击杀奖励错误: actor=%+v items=%v bagSaves=%d", store.actors[1], actor.Items, bagStore.saves)
+	if store.actors[1].Exp != 700 || store.actors[1].Gold != 3000 {
+		t.Fatalf("第二次击杀奖励错误: actor=%+v", store.actors[1])
+	}
+	second := combat.Drops().NearDrops(1, 0, 0, 1<<30)
+	if len(second) != 1 || second[0].ItemID != 200013 || actor.Items[200013] != 1 || bagStore.saves != 1 {
+		t.Fatalf("第二次击杀应生成待拾掉落: %v items=%v saves=%d", second, actor.Items, bagStore.saves)
+	}
+	if err := newDropPickupHandler(combat, world)(0, 1, []byte{0}); err != nil {
+		t.Fatal(err)
+	}
+	if actor.Items[200013] != 2 || bagStore.saves != 2 || len(combat.Drops().NearDrops(1, 0, 0, 1<<30)) != 0 {
+		t.Fatalf("第二次拾取错误: items=%v bagSaves=%d", actor.Items, bagStore.saves)
 	}
 }
 
