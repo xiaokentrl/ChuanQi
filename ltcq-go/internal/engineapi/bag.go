@@ -180,7 +180,7 @@ func (a *Actor) AddItem(itemID, count int) (bool, error) {
 			bagTab = info.BagTab
 		}
 	}
-	packet := buildBagAddItem(a.ID, itemID, next[itemID], bagTab)
+	packet := buildBagAddItem(a.ID, itemID, next[itemID], bagTab, nil, 0)
 	if old > 0 {
 		packet = buildBagUpdateItem(a.ID, itemID, next[itemID])
 	}
@@ -243,21 +243,26 @@ func bagItemHandle(actorID, itemID int) uint64 {
 	return uint64(uint32(itemID))<<32 | uint64(uint32(actorID))
 }
 
-func appendBagItem(p []byte, actorID, itemID, count int) []byte {
+func appendBagItem(p []byte, actorID, itemID, count int, attrs [][2]int) []byte {
 	p = binary.LittleEndian.AppendUint64(p, math.Float64bits(math.Float64frombits(bagItemHandle(actorID, itemID))))
 	p = binary.LittleEndian.AppendUint32(p, uint32(itemID))
 	p = binary.LittleEndian.AppendUint32(p, uint32(count))
-	for range 16 {
-		p = binary.LittleEndian.AppendUint32(p, 0)
-		p = binary.LittleEndian.AppendUint32(p, 0)
+	// attr_data(64B)+ex_attr_data(64B) = 16 组 [key,value]（ItemData 布局，docs/gateway-protocol.md §十一）
+	for i := 0; i < 16; i++ {
+		var k, v int
+		if i < len(attrs) {
+			k, v = attrs[i][0], attrs[i][1]
+		}
+		p = binary.LittleEndian.AppendUint32(p, uint32(k))
+		p = binary.LittleEndian.AppendUint32(p, uint32(v))
 	}
 	return p
 }
 
-func buildBagAddItem(actorID, itemID, count, bagTab int) []byte {
+func buildBagAddItem(actorID, itemID, count, bagTab int, attrs [][2]int, tip int) []byte {
 	p := []byte{cmdBag, sBagCmdAddItem, byte(bagTab)}
-	p = appendBagItem(p, actorID, itemID, count)
-	return append(p, 0)
+	p = appendBagItem(p, actorID, itemID, count, attrs)
+	return append(p, byte(tip))
 }
 
 func buildBagUpdateItem(actorID, itemID, count int) []byte {
@@ -288,7 +293,7 @@ func buildBagInitPackets(actorID int, items map[int]int) [][]byte {
 		p = binary.LittleEndian.AppendUint32(p, uint32(count))
 		if bagType == bagTypeOther {
 			for _, itemID := range ids {
-				p = appendBagItem(p, actorID, itemID, items[itemID])
+				p = appendBagItem(p, actorID, itemID, items[itemID], nil)
 			}
 		}
 		packets = append(packets, p)
