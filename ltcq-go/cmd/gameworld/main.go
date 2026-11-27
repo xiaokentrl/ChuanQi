@@ -10,6 +10,8 @@ import (
 	"fmt"
 	"log/slog"
 	"net"
+	"net/http"
+	_ "net/http/pprof" // 诊断端点 :6060（内存/goroutine 剖析）
 	"os"
 	"sync"
 
@@ -24,6 +26,7 @@ func main() {
 	ostype := flag.String("ostype", "WIN", "OSTYPE（条件编译用）")
 	dsn := flag.String("dsn", "", "MySQL DSN（引擎级登录校验；空则不启用登录，如 root:123456@tcp(127.0.0.1:3306)/actor_s1?charset=utf8）")
 	monsterSpawns := flag.String("monster-spawns", "", "可选怪物刷新配置 JSON；坐标单位为格子，未指定则不刷怪")
+	pprofAddr := flag.String("pprof", "127.0.0.1:6060", "pprof 诊断端点（空=关闭）")
 	flag.Parse()
 
 	if *dataRoot == "" {
@@ -87,6 +90,18 @@ func main() {
 		combat.SetProgression(engineapi.NewProgressionManager(store, expThresholds))
 	}
 	go combat.Run()
+
+	// 诊断端点：/debug/pprof/（heap/goroutine/profile），仅本机访问
+	go func() {
+		paddr := *pprofAddr
+		if paddr == "" {
+			return
+		}
+		slog.Info("pprof 诊断端点", "addr", "http://"+paddr+"/debug/pprof/")
+		if err := http.ListenAndServe(paddr, nil); err != nil {
+			slog.Error("pprof 监听失败", "err", err)
+		}
+	}()
 
 	ln, err := net.Listen("tcp", *addr)
 	if err != nil {
