@@ -220,6 +220,10 @@ func TestGopherLua_InjectEnums(t *testing.T) {
 		{"dtByte", 0},
 		{"dtString", 8},
 		{"qatYuanbao", 15},
+		{"AwardType_Numeric", 0},
+		{"AwardType_Item", 1},
+		{"NumericType_Gold", 1},
+		{"NumericType_YuanBao", 3},
 	}
 	for _, tt := range tests {
 		v, err := g.EnumValue(tt.name)
@@ -235,6 +239,18 @@ func TestGopherLua_InjectEnums(t *testing.T) {
 	v, err := g.DoString("SystemId.enCommonSystemID")
 	if err != nil || v == nil || v.(int) == 0 {
 		t.Errorf("SystemId.enCommonSystemID=%v err=%v", v, err)
+	}
+	// 注入前 AwardType_* 为 nil，actorawards.lua:9/16 的分支对数字 0/1 恒 false
+	// （奖励静默丢失）。验证注入后分支能命中：与 droptable.config 的 type=0/1 对齐。
+	branch, err := g.DoString(`(function()
+		local numericHit = (0 == AwardType_Numeric)
+		local itemHit = (1 == AwardType_Item)
+		local goldHit = (1 == NumericType_Gold and 1 == mtCoin)
+		local yuanbaoHit = (3 == NumericType_YuanBao and 3 == mtYuanbao)
+		return numericHit and itemHit and goldHit and yuanbaoHit
+	end)()`)
+	if err != nil || branch != true {
+		t.Errorf("AwardType/NumericType 分支未命中: branch=%v err=%v", branch, err)
 	}
 }
 

@@ -1267,3 +1267,20 @@ payload 148B = `u8 sysid(3)` + `u8 subcmd(4)` + `u8 bagType` + `ItemData(144B)` 
 - 新 soak（PID 5652，`SOAK_START end=2026-11-30 22:51:50`）日志为追加模式，统计须从 `SOAK_START end=2026-11-30` 行起算（第 447 行），此前误把旧段计入。
 - 23 个样本、PID 稳定（gameworld 17076/gateway 7720，未重启）：gameworld 62.02→22.97MB（min 22.93/max 62.04），gateway 44.15→12.19MB（min 10.95/max 45.33），登录失败 0。
 - 判读：峰值在启动初期（加载配置/首次登录），随后稳定回落到 23/12MB，是 Go GC/工作集回收的**健康模式**，未见单调增长或泄漏；M6 burst 后 gateway 工作集未回落的旧观察项，在本轮长周期里已回落，可降级为"继续常规观察"。待 72h 满期做最终判读。
+## 六十、A5 基础能力：注入 AwardType/NumericType 确证常量（2026-11-27）
+
+### 证据（闭合推导，非猜测）
+- `_G.lua` 全文无 `AwardType_*` / `NumericType_Gold/YuanBao`，是 C++ `lua_pushinteger` 注册的全局标量，不在快照里。
+- `AwardType_Numeric=0`：`drop.lua:9` 用 `item.type == AwardType_Numeric and item.id == NumericType_Gold` 判定金币；`droptable.config:296` 等大量配置金币条目写 `type=0`，故 AwardType_Numeric 只能是 0。
+- `AwardType_Item=1`：`actorawards.lua:16-17` 的 Item 分支走 `giveItem`；`vipgift.config:7/13/20/27` 等大量配置物品条目写 `type=1`（id=200156 等物品ID），故只能是 1。
+- `NumericType_Gold=1` / `NumericType_YuanBao=3`：与 `_G.lua:171-176` 的 `mtCoin=1/mtYuanbao=3` 同空间，`postlogin.go:32-33` 的 `currencyGold/currencyYuanBao` 已用 1/3；`storesystem.lua:143` 等大量调用把 NumericType_YuanBao 直接传给 getCurrency。
+
+### 改动
+- `ltcq-go/internal/luahost/enums.go`：新增 `cppGlobalTables` 条目 `AwardTypeAndCurrency`，用 `if X == nil then X = n end` 注入 4 个标量常量；保留现有 `NumericType` 占位表不动（其 Chips=1/GuildContrib=2/GuildFund=3 与 mt* 重号是未证实占位，标注 TODO，本轮不碰以免破坏加载期行为）。
+- 未注入无法证实的 `NumericType_Achieve/Chips/GuildContrib/GuildFund/GodWeaponExp/ShenShouExp`（RUNBOOK 五十八/五十九：ghidra 无伪代码）。
+- `luahost_test.go` 的 `TestGopherLua_InjectEnums` 增加 4 个常量断言 + 分支命中测试（`0==AwardType_Numeric`、`1==AwardType_Item`、`NumericType_Gold==mtCoin==1`、`NumericType_YuanBao==mtYuanbao==3`），直击"注入前奖励静默丢失"的根因。
+
+### 验证与边界
+- `go test ./...` 全通过、`go vet ./...` 通过、`git diff --check` 通过。
+- 这是 A5 giveAwards 的**前置基础能力之一**，不是 giveAwards 本身；Lua table→奖励列表解码、跨表原子性、容量模型、邮件补发仍缺（RUNBOOK 五十九），giveAwards 继续不实现。
+- 注入值只影响 Lua VM 常量可见性，不改变 Go 侧任何业务 API 或协议；无需重启服务栈（当次测试 VM 验证即可）。

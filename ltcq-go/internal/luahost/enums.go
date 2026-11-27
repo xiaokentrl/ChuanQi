@@ -75,6 +75,16 @@ NumericType = {
 }
 end
 `},
+	// AwardType_* 与 NumericType_Gold/YuanBao 是 C++ lua_pushinteger 注册的全局标量，
+	// 不在 _G.lua 快照。数值由 droptable.config(type=0/1) + drop.lua:9 +
+	// actorawards.lua:9/16 + _G.lua mtCoin=1/mtYuanbao=3 闭合推导，证据见 RUNBOOK 六十。
+	// 其余 NumericType_Achieve/Chips/... 缺证据，保持上面旧占位不动（仅加载期防 nil）。
+	{"AwardTypeAndCurrency", `
+if AwardType_Numeric == nil then AwardType_Numeric = 0 end
+if AwardType_Item == nil then AwardType_Item = 1 end
+if NumericType_Gold == nil then NumericType_Gold = 1 end
+if NumericType_YuanBao == nil then NumericType_YuanBao = 3 end
+`},
 }
 
 // EnumValue 读取一个已注入的常量（测试/CI 校验用）。
