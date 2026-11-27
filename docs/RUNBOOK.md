@@ -1129,3 +1129,26 @@ go build -o .tmp_b1/gateway.exe ./cmd/gateway
   1. 授权临时把 `haohaiyao` 的 `gmlevel` 设为 1，抓完 `@dropbags` 拾取后立即恢复为 0；
   2. 不做 GM 修改，由用户指认画面上的掉落物位置，再用 8081/tcpcap 抓一次明确拾取。
 - raw 与解析输出保留在 `.tmp_b1/` 与 `reference/captures/`，按既有约定抓包产物不纳入 git 提交。
+
+## 五十三、A2 临时 GM 抓包与包序复核：仍缺拾取 golden（2026-11-27）
+
+### GM 权限处置
+- 用户选择方案：临时把 `actor_s1.globaluser` 中 `haohaiyao` 的 `gmlevel` 设为 1，用 `@dropbags` 造掉落，抓完拾取后立即恢复为 0。
+- 复核发现：续接会话开始时 `gmlevel` **仍为 1**（上轮抓包后未恢复），已用 `.tmp_b1/a2_gm_toggle.php restore` 立即恢复，并二次 `status` 核对：`userid=121103 account=haohaiyao gmlevel=0 closed=0`。该脚本带 `enable` 要求 `gmlevel=0/closed=0`、`restore` 要求 `gmlevel=1` 的前置守卫，避免误改。
+- 结论：GM 权限已回到原值 0，未遗留提权。
+
+### 抓包产物与解析
+- 第二轮 GM 抓包已完成（日志 `a2_gm_tcpcap.err.log`：`23:48:41` 起 `19003→9002`，`00:02:20` 链路结束），raw：`reference/captures/a2_drop_pickup_gm_20261126.raw`。
+- 解析输出 `.tmp_b1/a2_gm_live_frames.txt`（约 1155 行 WS 帧）。抓包产物按既有约定不纳入 git。
+
+### 关键帧统计（下行 sysid/cmdid 取 payload byte4-5，上行取 byte8-9）
+- 掉落实体下行 `4e01`（`CMD_Base`/候选 drop entity）共 **8 帧**，负载固定形态 `4e01 02000000 03000000 <entity> 71290000 01000000 92ba0000 01000000`，entity 依次：`d0020000=720`、`94020000=660`、`58020000=600`、`1c020000=540`、`e0010000=480`、`a4010000=420`、`68010000=360`、`2c010000=300`——每次 -60，符合 `@dropbags` 连续造掉落，与上一轮 `480/780/840` 同族。
+- 拾取/奖励相关下行：`0006` = `sBaseCmd_GetItem` **0 帧**；`000a` = `sBaseCmd_EntityDisapear` **0 帧**。即**没有**“物品进包提示 + 掉落物消失”的下行证据。
+- 背包下行 `0304` = `sBagCmd_AddItem` 共 9 帧，但均成组出现在登录/换线初始化（`0005 0100` 金额同步之后，如 WS58/145/221/281 带 `a38acb1f/fd8acb1f/328bcb1f/6b8bcb1f` 时间戳与 `8a8a0100/728e0100/...` 多个物品），是 **InitData 批量**，不是拾取单件增量。
+- 上行 cmd 分布：`0101`×105、`00ff`×11（心跳）、`050a`×8、`0a0a`×7、`4c01`×2，其余各 1。`050a`（`85541164 <seq> 050a02000000`）内容固定、无拾取目标字段，前后无 GetItem/Disapear/AddItem 配对；`0a0a` 为登录期系统包族。协议表 `protocol.lua` 中 base 上行只有 `cBaseCmd_GmCmd=0/CreateRole=2/ReqTime=14/GetActorInfo=16/ClientConfig=19/ChangeName=22/SwitchTarget=25/.../HeartBeat=255`，无“地面拾取”专用 cmd；`cBagCmd_DepotPickUp=4` 是仓库取物，非地面掉落拾取。
+
+### 结论与边界
+- 本轮 GM 抓包**成功造出掉落**（8 帧 `4e01`），但**仍未捕获完整拾取 golden**：缺“拾取上行请求 → `000a` 掉落物消失 → `0003/0304` 背包增量 → `0006` 获得物品提示”的连续包序。
+- 因此 A2 继续暂缓，不猜协议；M6 真实击杀/奖励数值对齐同样仍需 golden。
+- 项目无 C++ 源码，协议权威仅来自 `protocol.lua` 常量 + golden 抓包；`85541164` 前缀在源码零匹配（属抓包帧头，非业务 cmd）。
+- 下一步：如需继续 A2，应先解决“浏览器点击如何真正命中脚下掉落物并产生拾取上行”，再抓一次明确拾取会话；在此之前不改 Go 侧拾取实现。
