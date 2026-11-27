@@ -174,7 +174,13 @@ func (a *Actor) AddItem(itemID, count int) (bool, error) {
 		return false, err
 	}
 	a.Items = next
-	packet := buildBagAddItem(a.ID, itemID, next[itemID])
+	bagTab := 0
+	if a.itemResolver != nil {
+		if info, ok := a.itemResolver(itemID); ok {
+			bagTab = info.BagTab
+		}
+	}
+	packet := buildBagAddItem(a.ID, itemID, next[itemID], bagTab)
 	if old > 0 {
 		packet = buildBagUpdateItem(a.ID, itemID, next[itemID])
 	}
@@ -248,8 +254,8 @@ func appendBagItem(p []byte, actorID, itemID, count int) []byte {
 	return p
 }
 
-func buildBagAddItem(actorID, itemID, count int) []byte {
-	p := []byte{cmdBag, sBagCmdAddItem, bagTypeOther}
+func buildBagAddItem(actorID, itemID, count, bagTab int) []byte {
+	p := []byte{cmdBag, sBagCmdAddItem, byte(bagTab)}
 	p = appendBagItem(p, actorID, itemID, count)
 	return append(p, 0)
 }

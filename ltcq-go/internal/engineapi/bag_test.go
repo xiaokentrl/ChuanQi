@@ -142,7 +142,7 @@ func TestBagPacketLayouts(t *testing.T) {
 		t.Fatalf("物品字段错误: %x", item[:16])
 	}
 
-	add := buildBagAddItem(actorID, itemID, count)
+	add := buildBagAddItem(actorID, itemID, count, 0)
 	update := buildBagUpdateItem(actorID, itemID, count-1)
 	remove := buildBagDeleteItem(actorID, itemID)
 	if len(add) != 148 || len(update) != 16 || len(remove) != 11 {
@@ -287,7 +287,7 @@ func TestBagAddGoldenDiff(t *testing.T) {
 	}
 	// golden = [4B 会话前缀][148B BagAdd]
 	body := gold[4:]
-	mine := buildBagAddItem(1, 101001, 1)
+	mine := buildBagAddItem(1, 101001, 1, 1)
 	t.Logf("golden 长度=%d 我的长度=%d", len(body), len(mine))
 	n := len(body)
 	if len(mine) < n {
