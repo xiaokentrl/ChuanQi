@@ -137,3 +137,18 @@ Actor::SendData<BagAddItemProto>(...)
 - **三个遗留差异定案**：①bagTab=容器类型 ✓ Go 已路由 ②att 区域=Item::WriteData 序列化（非 EquipConfig 直映）③tipFlag=showTip 参数
 - **最后目标**：反编译 `Item::WriteData` → 精确字段序（Item 结构：handle/strong/level/att 等）→ buildBagAddItem 校准完成
 - equipbag_decomp.c（1682 行，EquipBag 18 方法 + ItemBag 全方法）已入库 reference/ghidra/
+
+## 十一、★ ItemData 权威布局（2026-11-28，DWARF item_data.h）
+
+```c
+ItemData (144B = 0x90, memcpy 整体拷贝):
++0   int64_t       uid           [8]    ← 不透明句柄（Go: NetId f64 对应）
++8   int32_t       id            [4]    ← itemID
++12  int32_t       count         [4]
++16  ItemAttrData  attr_data     [64]   ← 属性对 ×8（每组 8B = [4B key][4B value]）
++80  ItemAttrData  ex_attr_data  [64]   ← 扩展属性对 ×8
+```
+- **我的 buildBagAddItem 布局与 C++ 一一对应**（NetId f64↔uid、16 组 att 对↔attr_data+ex_attr_data）
+- golden 实证：uid=不透明、id/count 一致、attr_data 非零对 [4,1][2,1]、ex_attr 全零
+- **A2 校准剩余 = 字段值填充**：装备物品 AddItem 时按 EquipConfig 填 attr_data 属性对（key 语义待 C++ CreateItem 确认）+ tipFlag=showTip
+- **布局本身已 100% 对齐——无结构差异**
