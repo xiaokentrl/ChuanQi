@@ -1,0 +1,85 @@
+{
+  "verifiedAt": "2026-11-25T04:33:00+08:00",
+  "milestone": "M5-B",
+  "result": "passed",
+  "services": {
+    "portal": "http://localhost/?trace=1795553070",
+    "gateway": "127.0.0.1:19002",
+    "gameworld": "127.0.0.1:16001",
+    "spawnProfile": "config/monster_spawns.example.json"
+  },
+  "spawnFixture": {
+    "sceneID": 1,
+    "configID": 31001,
+    "cellX": 55,
+    "cellY": 37,
+    "pixelX": 3520,
+    "pixelY": 2368,
+    "count": 1,
+    "note": "开发用静态刷新点，不是原版公开地图刷怪数据"
+  },
+  "gatewayRecording": {
+    "file": "gate_downstream.raw",
+    "frameCount": 16,
+    "monsterPacketCount": 2,
+    "sessionSIDs": [552, 553],
+    "entityBodyBytesExcludingCommand": 61,
+    "entityBodyBytesIncludingCommand": 63,
+    "type": 2,
+    "handle": 1073741824,
+    "configID": 31001,
+    "masterHandle": 0,
+    "x": 3520,
+    "y": 2368,
+    "attributeCount": 3,
+    "attributes": [127738, 0, 127738],
+    "extraIntCount": 0
+  },
+  "browserRuntime": {
+    "sceneClass": "MainScene",
+    "mapID": 1,
+    "fubenID": 0,
+    "sceneInMine": false,
+    "entityCount": 2,
+    "player": {
+      "handle": 9502731,
+      "x": 3584,
+      "y": 2368
+    },
+    "monster": {
+      "type": 2,
+      "handle": 1073741824,
+      "configID": 31001,
+      "masterHandle": 0,
+      "x": 3520,
+      "y": 2368,
+      "visible": true,
+      "onStage": true,
+      "name": "兽人统领",
+      "avatar": 10004,
+      "clientLevel": 20,
+      "clientScale": 100,
+      "attributeData": [127738, 0, 127738],
+      "hpBarValue": 127738,
+      "screenX": 226,
+      "screenY": 525
+    },
+    "consoleErrors": []
+  },
+  "screenshot": "monster_31001_rendered.png",
+  "visualProof": "截图同时显示兽人统领、玩家、怪物血条和红色脚底光环",
+  "restoration": {
+    "portalConfigPort": 9002,
+    "isolatedGatewayStopped": true,
+    "isolatedGameworldStopped": true,
+    "browserPageClosed": true,
+    "cppListeners": [9002, 6001, 5001, 7001],
+    "portalListener": 80,
+    "cppGatewayProbe": "HTTP 101 + 7B ff0100 登录成功回包",
+    "regression": {
+      "goTest": "passed",
+      "goVet": "passed",
+      "gitDiffCheck": "passed"
+    }
+  }
+}

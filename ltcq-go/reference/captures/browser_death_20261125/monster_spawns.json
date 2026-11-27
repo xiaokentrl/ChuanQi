@@ -1,0 +1,16 @@
+[
+  {
+    "sceneID": 2,
+    "configID": 31001,
+    "x": 7,
+    "y": 6,
+    "count": 1,
+    "hp": 2000,
+    "exp": 100,
+    "gold": 1000,
+    "respawnSeconds": 60,
+    "attackDamage": 100,
+    "attackRange": 128,
+    "attackIntervalSeconds": 2
+  }
+]

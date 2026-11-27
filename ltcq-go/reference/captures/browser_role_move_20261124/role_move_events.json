@@ -1,0 +1,771 @@
+{
+  "logs": [
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":9.5,\"label\":\"earlyTrace\",\"phase\":\"installed\"}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":20.19999999552965,\"label\":\"earlyTrace\",\"phase\":\"installed\"}"
+    },
+    {
+      "type": "log",
+      "text": "资源加载成功！！"
+    },
+    {
+      "type": "log",
+      "text": "解压成功！！"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1867,\"label\":\"GameSocket.onSocketRead\",\"phase\":\"enter\",\"detail\":[null,null]}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1867.5,\"label\":\"GameSocket.onSocketRead\",\"phase\":\"exit\"}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1868.2000000029802,\"label\":\"GameSocket.onSocketRead\",\"phase\":\"enter\",\"detail\":[null,null]}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1868.2999999970198,\"label\":\"GameSocket.processRecvPacket\",\"phase\":\"enter\",\"detail\":[4,7]}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1868.3999999985099,\"label\":\"GameSocket.dispatch\",\"phase\":\"enter\",\"detail\":[255,1,7]}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1868.5,\"label\":\"GameSocket.dispatch\",\"phase\":\"exit\"}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1868.5,\"label\":\"GameSocket.processRecvPacket\",\"phase\":\"exit\"}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1868.5,\"label\":\"GameSocket.onSocketRead\",\"phase\":\"exit\"}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1869,\"label\":\"GameSocket.onSocketRead\",\"phase\":\"enter\",\"detail\":[null,null]}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1869.1000000014901,\"label\":\"GameSocket.processRecvPacket\",\"phase\":\"enter\",\"detail\":[4,62]}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1869.1000000014901,\"label\":\"GameSocket.dispatch\",\"phase\":\"enter\",\"detail\":[255,4,62]}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1869.2999999970198,\"label\":\"GameSocket.dispatch\",\"phase\":\"exit\"}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1869.2999999970198,\"label\":\"GameSocket.processRecvPacket\",\"phase\":\"exit\"}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1869.3999999985099,\"label\":\"GameSocket.onSocketRead\",\"phase\":\"exit\"}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1870,\"label\":\"GameSocket.onSocketRead\",\"phase\":\"enter\",\"detail\":[null,null]}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1870.1000000014901,\"label\":\"GameSocket.processRecvPacket\",\"phase\":\"enter\",\"detail\":[4,7]}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1870.1000000014901,\"label\":\"GameSocket.dispatch\",\"phase\":\"enter\",\"detail\":[255,5,7]}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1880,\"label\":\"GameSocket.dispatch\",\"phase\":\"exit\"}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1880.2000000029802,\"label\":\"GameSocket.processRecvPacket\",\"phase\":\"exit\"}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1880.2000000029802,\"label\":\"GameSocket.onSocketRead\",\"phase\":\"exit\"}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1913,\"label\":\"GameSocket.onSocketRead\",\"phase\":\"enter\",\"detail\":[null,null]}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1913.2999999970198,\"label\":\"GameSocket.processRecvPacket\",\"phase\":\"enter\",\"detail\":[4,147]}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1913.3999999985099,\"label\":\"GameSocket.dispatch\",\"phase\":\"enter\",\"detail\":[0,1,147]}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1913.8999999985099,\"label\":\"GameSocket.dispatch\",\"phase\":\"exit\"}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1914,\"label\":\"GameSocket.processRecvPacket\",\"phase\":\"exit\"}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1914.1000000014901,\"label\":\"GameSocket.onSocketRead\",\"phase\":\"exit\"}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1914.2999999970198,\"label\":\"GameSocket.onSocketRead\",\"phase\":\"enter\",\"detail\":[null,null]}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1914.5,\"label\":\"GameSocket.processRecvPacket\",\"phase\":\"enter\",\"detail\":[4,3681]}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1914.5,\"label\":\"GameSocket.dispatch\",\"phase\":\"enter\",\"detail\":[0,2,3681]}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1925.8999999985099,\"label\":\"Role.parserhHeirloom\",\"phase\":\"enter\",\"detail\":[3527]}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1926.2000000029802,\"label\":\"Role.parserhHeirloom\",\"phase\":\"exit\"}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1927.2999999970198,\"label\":\"Role.parserAtt\",\"phase\":\"enter\",\"detail\":[3563]}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1927.3999999985099,\"label\":\"Role.parserAtt\",\"phase\":\"exit\"}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1927.3999999985099,\"label\":\"Role.parserExAtt\",\"phase\":\"enter\",\"detail\":[3565]}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1927.3999999985099,\"label\":\"Role.parserExAtt\",\"phase\":\"exit\"}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1927.3999999985099,\"label\":\"Role.parserZhuangbei\",\"phase\":\"enter\",\"detail\":[3569]}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1927.3999999985099,\"label\":\"Role.parserZhuangbei\",\"phase\":\"exit\"}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1927.5,\"label\":\"GameSocket.dispatch\",\"phase\":\"exit\"}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1927.5,\"label\":\"GameSocket.processRecvPacket\",\"phase\":\"exit\"}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1927.6000000014901,\"label\":\"GameSocket.onSocketRead\",\"phase\":\"exit\"}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1927.7000000029802,\"label\":\"GameSocket.onSocketRead\",\"phase\":\"enter\",\"detail\":[null,null]}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1927.7000000029802,\"label\":\"GameSocket.processRecvPacket\",\"phase\":\"enter\",\"detail\":[4,37]}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1927.7999999970198,\"label\":\"GameSocket.dispatch\",\"phase\":\"enter\",\"detail\":[0,3,37]}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1927.7999999970198,\"label\":\"GameLogic.postEnterMap\",\"phase\":\"enter\"}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1932.2000000029802,\"label\":\"GameLogic.postEnterMap\",\"phase\":\"exit\"}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1932.2000000029802,\"label\":\"GameSocket.dispatch\",\"phase\":\"exit\"}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1932.2999999970198,\"label\":\"GameSocket.processRecvPacket\",\"phase\":\"exit\"}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1932.2999999970198,\"label\":\"GameSocket.onSocketRead\",\"phase\":\"exit\"}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1932.5,\"label\":\"GameSocket.onSocketRead\",\"phase\":\"enter\",\"detail\":[null,null]}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1932.6000000014901,\"label\":\"GameSocket.processRecvPacket\",\"phase\":\"enter\",\"detail\":[4,170]}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1932.6000000014901,\"label\":\"GameSocket.dispatch\",\"phase\":\"enter\",\"detail\":[0,4,170]}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1932.6000000014901,\"label\":\"GameLogic.postCreateOtherEntity\",\"phase\":\"enter\",\"detail\":[6,170]}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1932.6000000014901,\"label\":\"Role.parserBase\",\"phase\":\"enter\",\"detail\":[6]}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1932.7000000029802,\"label\":\"Role.parserBase\",\"phase\":\"exit\"}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1932.7000000029802,\"label\":\"Role.parserOtherRole\",\"phase\":\"enter\",\"detail\":[36]}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1932.7999999970198,\"label\":\"Role.parserAtt\",\"phase\":\"enter\",\"detail\":[36]}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1932.7999999970198,\"label\":\"Role.parserAtt\",\"phase\":\"exit\"}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1932.8999999985099,\"label\":\"Role.parserExAtt\",\"phase\":\"enter\",\"detail\":[62]}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1932.8999999985099,\"label\":\"Role.parserExAtt\",\"phase\":\"exit\"}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1932.8999999985099,\"label\":\"Role.parserZhuangbei\",\"phase\":\"enter\",\"detail\":[116]}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1933,\"label\":\"Role.parserZhuangbei\",\"phase\":\"exit\"}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1933.1000000014901,\"label\":\"Role.parserhHeirloom\",\"phase\":\"enter\",\"detail\":[134]}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1933.1000000014901,\"label\":\"Role.parserhHeirloom\",\"phase\":\"exit\"}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1933.1000000014901,\"label\":\"Role.parserOtherRole\",\"phase\":\"exit\"}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1933.1000000014901,\"label\":\"GameLogic.createEntityByModel\",\"phase\":\"enter\",\"detail\":[1,1,1]}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1933.1000000014901,\"label\":\"EntityManager.createEntity\",\"phase\":\"enter\",\"detail\":[1,1,1]}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1933.7999999970198,\"label\":\"CharRole.reset\",\"phase\":\"enter\"}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1934,\"label\":\"CharRole.reset\",\"phase\":\"exit\"}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1934.1000000014901,\"label\":\"Role.mergeData\",\"phase\":\"enter\",\"detail\":[1,1]}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1934.1000000014901,\"label\":\"Role.mergeData\",\"phase\":\"exit\"}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1934.1000000014901,\"label\":\"EntityManager.addList\",\"phase\":\"enter\",\"detail\":[1]}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1934.1000000014901,\"label\":\"EntityManager.addList\",\"phase\":\"exit\"}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1934.2000000029802,\"label\":\"CharRole.updateModel\",\"phase\":\"enter\"}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1934.2999999970198,\"label\":\"CharRole.parseModel\",\"phase\":\"enter\"}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1935,\"label\":\"CharRole.updateBlood\",\"phase\":\"enter\"}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1935.2000000029802,\"label\":\"CharRole.updateBlood\",\"phase\":\"exit\"}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1936.7000000029802,\"label\":\"CharRole.initBody\",\"phase\":\"enter\",\"detail\":[\"res/body/body000_0\"]}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1936.8999999985099,\"label\":\"CharRole.initBody\",\"phase\":\"exit\"}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1936.8999999985099,\"label\":\"CharRole.parseModel\",\"phase\":\"exit\"}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1937,\"label\":\"CharRole.updateModel\",\"phase\":\"exit\"}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1937,\"label\":\"EntityManager.createEntity\",\"phase\":\"exit\"}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1937.2999999970198,\"label\":\"GameLogic.createEntityByModel\",\"phase\":\"exit\"}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1937.2999999970198,\"label\":\"GameLogic.postCreateOtherEntity\",\"phase\":\"exit\"}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1937.2999999970198,\"label\":\"GameSocket.dispatch\",\"phase\":\"exit\"}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1937.3999999985099,\"label\":\"GameSocket.processRecvPacket\",\"phase\":\"exit\"}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":1937.3999999985099,\"label\":\"GameSocket.onSocketRead\",\"phase\":\"exit\"}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":4272.89999999851,\"label\":\"GameLogic.sendFindPathToServer\",\"phase\":\"enter\",\"detail\":[1,1]}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":4273.29999999702,\"label\":\"GameLogic.sendFindPathToServer\",\"phase\":\"exit\"}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":4274.10000000149,\"label\":\"GameSocket.onSocketRead\",\"phase\":\"enter\",\"detail\":[null,null]}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":4274.10000000149,\"label\":\"GameSocket.processRecvPacket\",\"phase\":\"enter\",\"detail\":[4,28]}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":4274.10000000149,\"label\":\"GameSocket.dispatch\",\"phase\":\"enter\",\"detail\":[0,13,28]}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":4274.20000000298,\"label\":\"GameLogic.doSyncPos\",\"phase\":\"enter\",\"detail\":[6]}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":4274.79999999702,\"label\":\"GameLogic.doSyncPos\",\"phase\":\"exit\"}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":4274.89999999851,\"label\":\"GameSocket.dispatch\",\"phase\":\"exit\"}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":4274.89999999851,\"label\":\"GameSocket.processRecvPacket\",\"phase\":\"exit\"}"
+    },
+    {
+      "type": "log",
+      "text": "[TRACE] {\"at\":4274.89999999851,\"label\":\"GameSocket.onSocketRead\",\"phase\":\"exit\"}"
+    }
+  ],
+  "exceptions": [
+    {
+      "exceptionId": 1,
+      "text": "Uncaught (in promise)",
+      "lineNumber": 0,
+      "columnNumber": 8852,
+      "scriptId": "17",
+      "url": "http://localhost/libs/modules/egret/egret.web.min.js",
+      "stackTrace": {
+        "callFrames": [
+          {
+            "functionName": "i.$play",
+            "scriptId": "17",
+            "url": "http://localhost/libs/modules/egret/egret.web.min.js",
+            "lineNumber": 0,
+            "columnNumber": 8852
+          },
+          {
+            "functionName": "i.play",
+            "scriptId": "17",
+            "url": "http://localhost/libs/modules/egret/egret.web.min.js",
+            "lineNumber": 0,
+            "columnNumber": 7446
+          },
+          {
+            "functionName": "",
+            "scriptId": "25",
+            "url": "http://localhost/main.min.js",
+            "lineNumber": 111,
+            "columnNumber": 13253
+          },
+          {
+            "functionName": "",
+            "scriptId": "25",
+            "url": "http://localhost/main.min.js",
+            "lineNumber": 111,
+            "columnNumber": 13399
+          },
+          {
+            "functionName": "",
+            "scriptId": "25",
+            "url": "http://localhost/main.min.js",
+            "lineNumber": 3,
+            "columnNumber": 3117
+          },
+          {
+            "functionName": "r.onResourceItemComp",
+            "scriptId": "19",
+            "url": "http://localhost/libs/modules/res/res.min.js",
+            "lineNumber": 0,
+            "columnNumber": 26193
+          },
+          {
+            "functionName": "r.onItemComplete",
+            "scriptId": "19",
+            "url": "http://localhost/libs/modules/res/res.min.js",
+            "lineNumber": 0,
+            "columnNumber": 10839
+          },
+          {
+            "functionName": "r.onLoadFinish",
+            "scriptId": "19",
+            "url": "http://localhost/libs/modules/res/res.min.js",
+            "lineNumber": 0,
+            "columnNumber": 18509
+          },
+          {
+            "functionName": "r.$notifyListener",
+            "scriptId": "14",
+            "url": "http://localhost/libs/modules/egret/egret.min.js",
+            "lineNumber": 0,
+            "columnNumber": 6586
+          },
+          {
+            "functionName": "r.dispatchEvent",
+            "scriptId": "14",
+            "url": "http://localhost/libs/modules/egret/egret.min.js",
+            "lineNumber": 0,
+            "columnNumber": 6358
+          },
+          {
+            "functionName": "r.dispatchEventWith",
+            "scriptId": "14",
+            "url": "http://localhost/libs/modules/egret/egret.min.js",
+            "lineNumber": 0,
+            "columnNumber": 6948
+          },
+          {
+            "functionName": "r",
+            "scriptId": "17",
+            "url": "http://localhost/libs/modules/egret/egret.web.min.js",
+            "lineNumber": 0,
+            "columnNumber": 6741
+          }
+        ]
+      },
+      "exception": {
+        "type": "object",
+        "subtype": "error",
+        "className": "DOMException",
+        "description": "NotAllowedError: play() failed because the user didn't interact with the document first.",
+        "objectId": "7890589866198617374.2.1",
+        "preview": {
+          "type": "object",
+          "subtype": "error",
+          "description": "NotAllowedError: play() failed because the user didn't interact with the document first.",
+          "overflow": false,
+          "properties": [
+            {
+              "name": "code",
+              "type": "number",
+              "value": "0"
+            },
+            {
+              "name": "name",
+              "type": "string",
+              "value": "NotAllowedError"
+            },
+            {
+              "name": "message",
+              "type": "string",
+              "value": "play() failed because the user didn't interact with the document first."
+            }
+          ]
+        }
+      },
+      "executionContextId": 2
+    }
+  ],
+  "wsFrames": [
+    {
+      "event": "Network.webSocketFrameSent",
+      "head": null,
+      "hex": "ffff0fca"
+    },
+    {
+      "event": "Network.webSocketFrameReceived",
+      "head": null,
+      "hex": "fce9eb4d"
+    },
+    {
+      "event": "Network.webSocketFrameSent",
+      "head": [
+        255,
+        1,
+        58
+      ],
+      "hex": "fce9eb4d00000000ff01010000000600e5b885e593a5002000653130616463333934396261353961626265353665303537663230663838336500"
+    },
+    {
+      "event": "Network.webSocketFrameReceived",
+      "head": [
+        255,
+        1,
+        7
+      ],
+      "hex": "fce9eb4dff0100"
+    },
+    {
+      "event": "Network.webSocketFrameSent",
+      "head": [
+        255,
+        4,
+        10
+      ],
+      "hex": "fce9eb4d01000000ff04"
+    },
+    {
+      "event": "Network.webSocketFrameReceived",
+      "head": [
+        255,
+        4,
+        62
+      ],
+      "hex": "fce9eb4dff040ed901000101000000010000000c00e69c89e782b9e69c89e4bda00001000000050000006200000037f48800000000000f00000000000000"
+    },
+    {
+      "event": "Network.webSocketFrameSent",
+      "head": [
+        255,
+        5,
+        23
+      ],
+      "hex": "fce9eb4d02000000ff0501000000000000000000000000"
+    },
+    {
+      "event": "Network.webSocketFrameReceived",
+      "head": [
+        255,
+        5,
+        7
+      ],
+      "hex": "fce9eb4dff0501"
+    },
+    {
+      "event": "Network.webSocketFrameSent",
+      "head": [
+        37,
+        1,
+        10
+      ],
+      "hex": "fce9eb4d030000002501"
+    },
+    {
+      "event": "Network.webSocketFrameSent",
+      "head": [
+        37,
+        25,
+        10
+      ],
+      "hex": "fce9eb4d040000002519"
+    },
+    {
+      "event": "Network.webSocketFrameSent",
+      "head": [
+        76,
+        1,
+        11
+      ],
+      "hex": "fce9eb4d050000004c0100"
+    },
+    {
+      "event": "Network.webSocketFrameSent",
+      "head": [
+        76,
+        1,
+        11
+      ],
+      "hex": "fce9eb4d060000004c0101"
+    },
+    {
+      "event": "Network.webSocketFrameSent",
+      "head": [
+        10,
+        10,
+        14
+      ],
+      "hex": "fce9eb4d070000000a0a01000000"
+    },
+    {
+      "event": "Network.webSocketFrameSent",
+      "head": [
+        10,
+        10,
+        14
+      ],
+      "hex": "fce9eb4d080000000a0a02000000"
+    },
+    {
+      "event": "Network.webSocketFrameSent",
+      "head": [
+        10,
+        10,
+        14
+      ],
+      "hex": "fce9eb4d090000000a0a03000000"
+    },
+    {
+      "event": "Network.webSocketFrameSent",
+      "head": [
+        10,
+        10,
+        14
+      ],
+      "hex": "fce9eb4d0a0000000a0a04000000"
+    },
+    {
+      "event": "Network.webSocketFrameSent",
+      "head": [
+        10,
+        10,
+        14
+      ],
+      "hex": "fce9eb4d0b0000000a0a05000000"
+    },
+    {
+      "event": "Network.webSocketFrameSent",
+      "head": [
+        10,
+        10,
+        14
+      ],
+      "hex": "fce9eb4d0c0000000a0a06000000"
+    },
+    {
+      "event": "Network.webSocketFrameSent",
+      "head": [
+        10,
+        10,
+        14
+      ],
+      "hex": "fce9eb4d0d0000000a0a07000000"
+    },
+    {
+      "event": "Network.webSocketFrameSent",
+      "head": [
+        18,
+        4,
+        10
+      ],
+      "hex": "fce9eb4d0e0000001204"
+    },
+    {
+      "event": "Network.webSocketFrameSent",
+      "head": [
+        47,
+        3,
+        10
+      ],
+      "hex": "fce9eb4d0f0000002f03"
+    },
+    {
+      "event": "Network.webSocketFrameReceived",
+      "head": [
+        0,
+        1,
+        147
+      ],
+      "hex": "fce9eb4d0001000000000000f03f0100000001000000e69c89e782b9e69c89e4bda000000000000000000000000000000000000000000062000000932c0a000000000000000000b8850a000000000060380100000000000f0000000000000000000000bc0200000000000000000000f802000000000000000000000000000003000000000000000000000000000000b8f90200"
+    },
+    {
+      "event": "Network.webSocketFrameReceived",
+      "head": [
+        0,
+        2,
+        3681
+      ],
+      "hex": "fce9eb4d000201000000000000000000010000000000000037f488000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000050000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "event": "Network.webSocketFrameReceived",
+      "head": [
+        0,
+        3,
+        37
+      ],
+      "hex": "fce9eb4d0003000000002900000040138005000c00e6af94e5a587e79fbfe6b49e00000000"
+    },
+    {
+      "event": "Network.webSocketFrameReceived",
+      "head": [
+        0,
+        4,
+        170
+      ],
+      "hex": "fce9eb4d00040100000000000000f03f00000000000000000000f03f4013000080050000030000000000000059400000000000005940000000000000594000000c00e69c89e782b9e69c89e4bda00001000000010062000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "event": "Network.webSocketFrameSent",
+      "head": [
+        0,
+        31,
+        30
+      ],
+      "hex": "fce9eb4d10000000001f000000000000f03f01000000b4130000c6050000"
+    },
+    {
+      "event": "Network.webSocketFrameReceived",
+      "head": [
+        0,
+        13,
+        28
+      ],
+      "hex": "fce9eb4d000d000000000000f03f0100b4130000c60500002e000000"
+    }
+  ],
+  "failed": []
+}

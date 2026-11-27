@@ -1,0 +1,1192 @@
+{
+  "target": {
+    "description": "",
+    "devtoolsFrontendUrl": "https://aka.ms/docs-landing-page/serve_rev/@56b8f691820060b6e15f702165117f203442943f/inspector.html?ws=127.0.0.1:9223/devtools/page/376C9AB20C890CB47382BCE0CEAE5CDD",
+    "id": "376C9AB20C890CB47382BCE0CEAE5CDD",
+    "title": "",
+    "type": "page",
+    "url": "about:blank",
+    "webSocketDebuggerUrl": "ws://127.0.0.1:9223/devtools/page/376C9AB20C890CB47382BCE0CEAE5CDD"
+  },
+  "logs": [
+    {
+      "type": "log",
+      "text": "[FF#1 +0.1ms] MISSING GameMap.parser parser"
+    },
+    {
+      "type": "log",
+      "text": "[FF#2 +0.3ms] installed renderMode=webgl"
+    },
+    {
+      "type": "log",
+      "text": "[FF#3 +6.8ms] enter SystemTicker.update "
+    },
+    {
+      "type": "log",
+      "text": "[FF#4 +6.9ms] enter SystemTicker.callLaterAsyncs 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#5 +7.0ms] exit SystemTicker.callLaterAsyncs"
+    },
+    {
+      "type": "log",
+      "text": "[FF#6 +7.0ms] exit SystemTicker.update"
+    },
+    {
+      "type": "log",
+      "text": "[FF#7 +13.3ms] enter SystemTicker.update "
+    },
+    {
+      "type": "log",
+      "text": "[FF#8 +13.5ms] enter SystemTicker.callLaterAsyncs 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#9 +13.8ms] exit SystemTicker.callLaterAsyncs"
+    },
+    {
+      "type": "log",
+      "text": "[FF#10 +13.9ms] enter SystemTicker.render Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#11 +14.2ms] enter SystemTicker.callLaters 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#12 +14.3ms] exit SystemTicker.callLaters"
+    },
+    {
+      "type": "log",
+      "text": "[FF#13 +14.6ms] exit SystemTicker.render"
+    },
+    {
+      "type": "log",
+      "text": "[FF#14 +14.7ms] exit SystemTicker.update"
+    },
+    {
+      "type": "log",
+      "text": "[FF#15 +21.3ms] enter SystemTicker.update "
+    },
+    {
+      "type": "log",
+      "text": "[FF#16 +21.4ms] enter SystemTicker.callLaterAsyncs 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#17 +21.5ms] exit SystemTicker.callLaterAsyncs"
+    },
+    {
+      "type": "log",
+      "text": "[FF#18 +21.5ms] exit SystemTicker.update"
+    },
+    {
+      "type": "log",
+      "text": "[FF#19 +29.9ms] enter SystemTicker.update "
+    },
+    {
+      "type": "log",
+      "text": "[FF#20 +30.0ms] enter SystemTicker.callLaterAsyncs 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#21 +30.0ms] exit SystemTicker.callLaterAsyncs"
+    },
+    {
+      "type": "log",
+      "text": "[FF#22 +30.0ms] enter SystemTicker.render Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#23 +30.2ms] enter SystemTicker.callLaters 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#24 +30.2ms] exit SystemTicker.callLaters"
+    },
+    {
+      "type": "log",
+      "text": "[FF#25 +30.4ms] exit SystemTicker.render"
+    },
+    {
+      "type": "log",
+      "text": "[FF#26 +30.4ms] exit SystemTicker.update"
+    },
+    {
+      "type": "log",
+      "text": "[FF#27 +38.0ms] enter SystemTicker.update "
+    },
+    {
+      "type": "log",
+      "text": "[FF#28 +38.1ms] enter SystemTicker.callLaterAsyncs 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#29 +38.2ms] exit SystemTicker.callLaterAsyncs"
+    },
+    {
+      "type": "log",
+      "text": "[FF#30 +38.2ms] exit SystemTicker.update"
+    },
+    {
+      "type": "log",
+      "text": "[FF#31 +46.4ms] enter SystemTicker.update "
+    },
+    {
+      "type": "log",
+      "text": "[FF#32 +46.4ms] enter SystemTicker.callLaterAsyncs 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#33 +46.4ms] exit SystemTicker.callLaterAsyncs"
+    },
+    {
+      "type": "log",
+      "text": "[FF#34 +46.5ms] enter SystemTicker.render Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#35 +46.7ms] enter SystemTicker.callLaters 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#36 +46.7ms] exit SystemTicker.callLaters"
+    },
+    {
+      "type": "log",
+      "text": "[FF#37 +46.8ms] exit SystemTicker.render"
+    },
+    {
+      "type": "log",
+      "text": "[FF#38 +46.9ms] exit SystemTicker.update"
+    },
+    {
+      "type": "log",
+      "text": "[FF#39 +54.9ms] enter SystemTicker.update "
+    },
+    {
+      "type": "log",
+      "text": "[FF#40 +55.0ms] enter SystemTicker.callLaterAsyncs 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#41 +55.0ms] exit SystemTicker.callLaterAsyncs"
+    },
+    {
+      "type": "log",
+      "text": "[FF#42 +55.1ms] exit SystemTicker.update"
+    },
+    {
+      "type": "log",
+      "text": "[FF#43 +63.0ms] enter SystemTicker.update "
+    },
+    {
+      "type": "log",
+      "text": "[FF#44 +63.1ms] enter SystemTicker.callLaterAsyncs 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#45 +63.2ms] exit SystemTicker.callLaterAsyncs"
+    },
+    {
+      "type": "log",
+      "text": "[FF#46 +63.3ms] enter SystemTicker.render Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#47 +63.4ms] enter SystemTicker.callLaters 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#48 +63.4ms] exit SystemTicker.callLaters"
+    },
+    {
+      "type": "log",
+      "text": "[FF#49 +63.5ms] exit SystemTicker.render"
+    },
+    {
+      "type": "log",
+      "text": "[FF#50 +63.7ms] exit SystemTicker.update"
+    },
+    {
+      "type": "log",
+      "text": "[FF#51 +71.6ms] enter SystemTicker.update "
+    },
+    {
+      "type": "log",
+      "text": "[FF#52 +71.7ms] enter SystemTicker.callLaterAsyncs 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#53 +71.8ms] exit SystemTicker.callLaterAsyncs"
+    },
+    {
+      "type": "log",
+      "text": "[FF#54 +71.8ms] exit SystemTicker.update"
+    },
+    {
+      "type": "log",
+      "text": "[FF#55 +79.8ms] enter SystemTicker.update "
+    },
+    {
+      "type": "log",
+      "text": "[FF#56 +79.9ms] enter SystemTicker.callLaterAsyncs 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#57 +79.9ms] exit SystemTicker.callLaterAsyncs"
+    },
+    {
+      "type": "log",
+      "text": "[FF#58 +79.9ms] enter SystemTicker.render Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#59 +80.1ms] enter SystemTicker.callLaters 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#60 +80.1ms] exit SystemTicker.callLaters"
+    },
+    {
+      "type": "log",
+      "text": "[FF#61 +80.3ms] exit SystemTicker.render"
+    },
+    {
+      "type": "log",
+      "text": "[FF#62 +80.3ms] exit SystemTicker.update"
+    },
+    {
+      "type": "log",
+      "text": "[FF#63 +88.0ms] enter SystemTicker.update "
+    },
+    {
+      "type": "log",
+      "text": "[FF#64 +88.0ms] enter SystemTicker.callLaterAsyncs 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#65 +88.1ms] exit SystemTicker.callLaterAsyncs"
+    },
+    {
+      "type": "log",
+      "text": "[FF#66 +88.2ms] exit SystemTicker.update"
+    },
+    {
+      "type": "log",
+      "text": "[FF#67 +96.3ms] enter SystemTicker.update "
+    },
+    {
+      "type": "log",
+      "text": "[FF#68 +96.5ms] enter SystemTicker.callLaterAsyncs 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#69 +96.5ms] exit SystemTicker.callLaterAsyncs"
+    },
+    {
+      "type": "log",
+      "text": "[FF#70 +96.5ms] enter SystemTicker.render Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#71 +96.7ms] enter SystemTicker.callLaters 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#72 +96.8ms] exit SystemTicker.callLaters"
+    },
+    {
+      "type": "log",
+      "text": "[FF#73 +97.0ms] exit SystemTicker.render"
+    },
+    {
+      "type": "log",
+      "text": "[FF#74 +97.0ms] exit SystemTicker.update"
+    },
+    {
+      "type": "log",
+      "text": "[FF#75 +105.2ms] enter SystemTicker.update "
+    },
+    {
+      "type": "log",
+      "text": "[FF#76 +105.3ms] enter SystemTicker.callLaterAsyncs 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#77 +105.4ms] exit SystemTicker.callLaterAsyncs"
+    },
+    {
+      "type": "log",
+      "text": "[FF#78 +105.4ms] exit SystemTicker.update"
+    },
+    {
+      "type": "log",
+      "text": "[FF#79 +113.1ms] enter SystemTicker.render Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#80 +113.3ms] enter SystemTicker.callLaters 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#81 +113.3ms] exit SystemTicker.callLaters"
+    },
+    {
+      "type": "log",
+      "text": "[FF#82 +113.5ms] exit SystemTicker.render"
+    },
+    {
+      "type": "log",
+      "text": "[FF#83 +129.9ms] enter SystemTicker.render Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#84 +130.1ms] enter SystemTicker.callLaters 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#85 +130.2ms] exit SystemTicker.callLaters"
+    },
+    {
+      "type": "log",
+      "text": "[FF#86 +130.3ms] exit SystemTicker.render"
+    },
+    {
+      "type": "log",
+      "text": "[FF#87 +146.4ms] enter SystemTicker.render Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#88 +146.6ms] enter SystemTicker.callLaters 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#89 +146.6ms] exit SystemTicker.callLaters"
+    },
+    {
+      "type": "log",
+      "text": "[FF#90 +146.7ms] exit SystemTicker.render"
+    },
+    {
+      "type": "log",
+      "text": "[FF#91 +163.0ms] enter SystemTicker.render Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#92 +163.2ms] enter SystemTicker.callLaters 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#93 +163.2ms] exit SystemTicker.callLaters"
+    },
+    {
+      "type": "log",
+      "text": "[FF#94 +163.3ms] exit SystemTicker.render"
+    },
+    {
+      "type": "log",
+      "text": "[FF#95 +179.6ms] enter SystemTicker.render Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#96 +179.8ms] enter SystemTicker.callLaters 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#97 +179.8ms] exit SystemTicker.callLaters"
+    },
+    {
+      "type": "log",
+      "text": "[FF#98 +180.0ms] exit SystemTicker.render"
+    },
+    {
+      "type": "log",
+      "text": "[FF#99 +196.3ms] enter SystemTicker.render Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#100 +196.5ms] enter SystemTicker.callLaters 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#101 +196.6ms] exit SystemTicker.callLaters"
+    },
+    {
+      "type": "log",
+      "text": "[FF#102 +196.7ms] exit SystemTicker.render"
+    },
+    {
+      "type": "log",
+      "text": "[FF#103 +213.0ms] enter SystemTicker.render Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#104 +213.3ms] enter SystemTicker.callLaters 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#105 +213.3ms] exit SystemTicker.callLaters"
+    },
+    {
+      "type": "log",
+      "text": "[FF#106 +213.3ms] exit SystemTicker.render"
+    },
+    {
+      "type": "log",
+      "text": "[FF#107 +500.3ms] watchdog counts={\"SystemTicker.update\":180,\"SystemTicker.callLaterAsyncs\":180,\"SystemTicker.render\":90,\"SystemTicker.callLaters\":90}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#108 +1000.3ms] watchdog counts={\"SystemTicker.update\":360,\"SystemTicker.callLaterAsyncs\":360,\"SystemTicker.render\":180,\"SystemTicker.callLaters\":180}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#109 +2002.6ms] watchdog counts={\"SystemTicker.update\":381,\"SystemTicker.callLaterAsyncs\":381,\"SystemTicker.render\":192,\"SystemTicker.callLaters\":192}"
+    },
+    {
+      "type": "log",
+      "text": "资源加载成功！！"
+    },
+    {
+      "type": "log",
+      "text": "[FF#110 +2138.5ms] enter MessageCenter.run queue=0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#111 +2138.6ms] exit MessageCenter.run"
+    },
+    {
+      "type": "log",
+      "text": "[FF#112 +2138.7ms] enter TimerManager.onEnterFrame Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#113 +2139.0ms] exit TimerManager.onEnterFrame"
+    },
+    {
+      "type": "log",
+      "text": "[FF#114 +2146.5ms] enter MessageCenter.run queue=0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#115 +2146.7ms] exit MessageCenter.run"
+    },
+    {
+      "type": "log",
+      "text": "[FF#116 +2146.7ms] enter TimerManager.onEnterFrame Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#117 +2146.9ms] exit TimerManager.onEnterFrame"
+    },
+    {
+      "type": "log",
+      "text": "[FF#118 +2176.1ms] enter MessageCenter.run queue=0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#119 +2176.2ms] exit MessageCenter.run"
+    },
+    {
+      "type": "log",
+      "text": "[FF#120 +2176.2ms] enter TimerManager.onEnterFrame Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#121 +2176.3ms] exit TimerManager.onEnterFrame"
+    },
+    {
+      "type": "log",
+      "text": "[FF#122 +2177.0ms] enter MessageCenter.run queue=0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#123 +2177.0ms] exit MessageCenter.run"
+    },
+    {
+      "type": "log",
+      "text": "[FF#124 +2177.1ms] enter TimerManager.onEnterFrame Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#125 +2177.1ms] exit TimerManager.onEnterFrame"
+    },
+    {
+      "type": "log",
+      "text": "[FF#126 +2183.6ms] enter MessageCenter.run queue=0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#127 +2183.6ms] exit MessageCenter.run"
+    },
+    {
+      "type": "log",
+      "text": "[FF#128 +2183.6ms] enter TimerManager.onEnterFrame Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#129 +2183.7ms] exit TimerManager.onEnterFrame"
+    },
+    {
+      "type": "log",
+      "text": "[FF#130 +2188.7ms] enter MessageCenter.run queue=0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#131 +2188.8ms] exit MessageCenter.run"
+    },
+    {
+      "type": "log",
+      "text": "[FF#132 +2188.9ms] enter TimerManager.onEnterFrame Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#133 +2189.1ms] exit TimerManager.onEnterFrame"
+    },
+    {
+      "type": "log",
+      "text": "[FF#134 +2197.6ms] enter MessageCenter.run queue=0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#135 +2197.7ms] exit MessageCenter.run"
+    },
+    {
+      "type": "log",
+      "text": "[FF#136 +2197.7ms] enter TimerManager.onEnterFrame Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#137 +2197.9ms] exit TimerManager.onEnterFrame"
+    },
+    {
+      "type": "log",
+      "text": "[FF#138 +2207.5ms] enter MessageCenter.run queue=0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#139 +2207.6ms] exit MessageCenter.run"
+    },
+    {
+      "type": "log",
+      "text": "[FF#140 +2207.7ms] enter TimerManager.onEnterFrame Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#141 +2207.8ms] exit TimerManager.onEnterFrame"
+    },
+    {
+      "type": "log",
+      "text": "[FF#142 +2214.8ms] enter MessageCenter.run queue=0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#143 +2214.9ms] exit MessageCenter.run"
+    },
+    {
+      "type": "log",
+      "text": "[FF#144 +2215.0ms] enter TimerManager.onEnterFrame Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#145 +2215.1ms] exit TimerManager.onEnterFrame"
+    },
+    {
+      "type": "log",
+      "text": "[FF#146 +2223.0ms] enter MessageCenter.run queue=0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#147 +2223.2ms] exit MessageCenter.run"
+    },
+    {
+      "type": "log",
+      "text": "[FF#148 +2223.3ms] enter TimerManager.onEnterFrame Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#149 +2223.4ms] exit TimerManager.onEnterFrame"
+    },
+    {
+      "type": "log",
+      "text": "[FF#150 +2231.3ms] enter MessageCenter.run queue=0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#151 +2231.6ms] exit MessageCenter.run"
+    },
+    {
+      "type": "log",
+      "text": "[FF#152 +2231.6ms] enter TimerManager.onEnterFrame Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#153 +2232.0ms] exit TimerManager.onEnterFrame"
+    },
+    {
+      "type": "log",
+      "text": "[FF#154 +2239.1ms] enter MessageCenter.run queue=0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#155 +2239.3ms] exit MessageCenter.run"
+    },
+    {
+      "type": "log",
+      "text": "[FF#156 +2239.3ms] enter TimerManager.onEnterFrame Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#157 +2239.5ms] exit TimerManager.onEnterFrame"
+    },
+    {
+      "type": "log",
+      "text": "[FF#158 +2247.3ms] enter MessageCenter.run queue=0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#159 +2247.5ms] exit MessageCenter.run"
+    },
+    {
+      "type": "log",
+      "text": "[FF#160 +2247.7ms] enter TimerManager.onEnterFrame Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#161 +2247.9ms] exit TimerManager.onEnterFrame"
+    },
+    {
+      "type": "log",
+      "text": "[FF#162 +2331.1ms] enter SystemTicker.update "
+    },
+    {
+      "type": "log",
+      "text": "[FF#163 +2331.3ms] enter SystemTicker.callLaterAsyncs 0"
+    },
+    {
+      "type": "log",
+      "text": "解压成功！！"
+    },
+    {
+      "type": "log",
+      "text": "[FF#164 +2507.7ms] watchdog counts={\"SystemTicker.update\":534,\"SystemTicker.callLaterAsyncs\":534,\"SystemTicker.render\":270,\"SystemTicker.callLaters\":270,\"MessageCenter.run\":102,\"TimerManager.onEnterFrame\":102}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#165 +2510.1ms] enter GameSocket.onSocketRead "
+    },
+    {
+      "type": "log",
+      "text": "[FF#166 +2510.8ms] exit GameSocket.onSocketRead"
+    },
+    {
+      "type": "log",
+      "text": "[FF#167 +2513.2ms] enter GameSocket.onSocketRead "
+    },
+    {
+      "type": "log",
+      "text": "[FF#168 +2513.5ms] enter GameSocket.processRecvPacket Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#169 +2513.7ms] enter GameSocket.dispatch Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#170 +2514.0ms] exit GameSocket.dispatch"
+    },
+    {
+      "type": "log",
+      "text": "[FF#171 +2514.2ms] exit GameSocket.processRecvPacket"
+    },
+    {
+      "type": "log",
+      "text": "[FF#172 +2514.2ms] exit GameSocket.onSocketRead"
+    },
+    {
+      "type": "log",
+      "text": "[FF#173 +2516.9ms] enter GameSocket.onSocketRead "
+    },
+    {
+      "type": "log",
+      "text": "[FF#174 +2517.1ms] enter GameSocket.processRecvPacket Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#175 +2517.3ms] enter GameSocket.dispatch Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#176 +2517.9ms] exit GameSocket.dispatch"
+    },
+    {
+      "type": "log",
+      "text": "[FF#177 +2517.9ms] exit GameSocket.processRecvPacket"
+    },
+    {
+      "type": "log",
+      "text": "[FF#178 +2518.0ms] exit GameSocket.onSocketRead"
+    },
+    {
+      "type": "log",
+      "text": "[FF#179 +2519.3ms] enter GameSocket.onSocketRead "
+    },
+    {
+      "type": "log",
+      "text": "[FF#180 +2519.4ms] enter GameSocket.processRecvPacket Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#181 +2519.7ms] enter GameSocket.dispatch Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#182 +2519.7ms] enter RoleMgr.doEnterGame "
+    },
+    {
+      "type": "log",
+      "text": "[FF#183 +2519.9ms] enter SceneManager.runScene "
+    },
+    {
+      "type": "log",
+      "text": "[FF#184 +2520.0ms] enter MainScene.onEnter "
+    },
+    {
+      "type": "log",
+      "text": "[FF#185 +2520.4ms] enter ViewManager.open GameSceneView"
+    },
+    {
+      "type": "log",
+      "text": "[FF#186 +2520.5ms] enter ViewManager.openEasy string"
+    },
+    {
+      "type": "log",
+      "text": "[FF#187 +2522.6ms] enter GameSceneView.initUI "
+    },
+    {
+      "type": "log",
+      "text": "[FF#188 +2526.0ms] enter MapView.initMap "
+    },
+    {
+      "type": "log",
+      "text": "[FF#189 +2526.4ms] exit MapView.initMap"
+    },
+    {
+      "type": "log",
+      "text": "[FF#190 +2527.4ms] exit GameSceneView.initUI"
+    },
+    {
+      "type": "log",
+      "text": "[FF#191 +2527.8ms] exit ViewManager.openEasy"
+    },
+    {
+      "type": "log",
+      "text": "[FF#192 +2527.9ms] exit ViewManager.open"
+    },
+    {
+      "type": "log",
+      "text": "[FF#193 +2528.0ms] enter ViewManager.open ChatMainUI"
+    },
+    {
+      "type": "log",
+      "text": "[FF#194 +2528.0ms] enter ViewManager.openEasy string"
+    },
+    {
+      "type": "log",
+      "text": "[FF#195 +2528.7ms] enter ChatMainUI.checkShow "
+    },
+    {
+      "type": "log",
+      "text": "[FF#196 +2528.7ms] exit ChatMainUI.checkShow"
+    },
+    {
+      "type": "log",
+      "text": "[FF#197 +2528.8ms] exit ViewManager.openEasy"
+    },
+    {
+      "type": "log",
+      "text": "[FF#198 +2528.8ms] exit ViewManager.open"
+    },
+    {
+      "type": "log",
+      "text": "[FF#199 +2528.9ms] enter ViewManager.open UIView2"
+    },
+    {
+      "type": "log",
+      "text": "[FF#200 +2529.0ms] enter ViewManager.openEasy string"
+    },
+    {
+      "type": "log",
+      "text": "[FF#201 +2532.7ms] exit ViewManager.openEasy"
+    },
+    {
+      "type": "log",
+      "text": "[FF#202 +2532.8ms] exit ViewManager.open"
+    },
+    {
+      "type": "log",
+      "text": "[FF#203 +2532.9ms] enter ViewManager.open TipsView"
+    },
+    {
+      "type": "log",
+      "text": "[FF#204 +2532.9ms] enter ViewManager.openEasy string"
+    },
+    {
+      "type": "log",
+      "text": "[FF#205 +2535.1ms] exit ViewManager.openEasy"
+    },
+    {
+      "type": "log",
+      "text": "[FF#206 +2535.3ms] exit ViewManager.open"
+    },
+    {
+      "type": "log",
+      "text": "[FF#207 +2535.4ms] enter GameApp.postLoginInit "
+    },
+    {
+      "type": "log",
+      "text": "[FF#208 +2535.5ms] enter MessageCenter.dispatch Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#209 +2535.6ms] exit MessageCenter.dispatch"
+    },
+    {
+      "type": "log",
+      "text": "[FF#210 +2535.6ms] exit GameApp.postLoginInit"
+    },
+    {
+      "type": "log",
+      "text": "[FF#211 +2535.7ms] exit MainScene.onEnter"
+    },
+    {
+      "type": "log",
+      "text": "[FF#212 +2535.7ms] exit SceneManager.runScene"
+    },
+    {
+      "type": "log",
+      "text": "[FF#213 +2535.9ms] exit RoleMgr.doEnterGame"
+    },
+    {
+      "type": "log",
+      "text": "[FF#214 +2535.9ms] exit GameSocket.dispatch"
+    },
+    {
+      "type": "log",
+      "text": "[FF#215 +2535.9ms] exit GameSocket.processRecvPacket"
+    },
+    {
+      "type": "log",
+      "text": "[FF#216 +2535.9ms] exit GameSocket.onSocketRead"
+    },
+    {
+      "type": "log",
+      "text": "[FF#217 +2536.2ms] message:begin BaseClass.postLoginInit3 listeners=0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#218 +2536.2ms] message:exit BaseClass.postLoginInit3"
+    },
+    {
+      "type": "log",
+      "text": "[FF#219 +2536.3ms] enter MapView.onEnterFrame 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#220 +2536.3ms] exit MapView.onEnterFrame"
+    },
+    {
+      "type": "log",
+      "text": "[FF#221 +2536.5ms] enter GameSocket.onSocketRead "
+    },
+    {
+      "type": "log",
+      "text": "[FF#222 +2536.5ms] enter GameSocket.processRecvPacket Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#223 +2536.6ms] enter GameSocket.dispatch Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#224 +2536.7ms] enter Actor.postInit "
+    },
+    {
+      "type": "log",
+      "text": "[FF#225 +2536.8ms] enter MessageCenter.dispatch Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#226 +2537.0ms] exit MessageCenter.dispatch"
+    },
+    {
+      "type": "log",
+      "text": "[FF#227 +2537.1ms] enter MessageCenter.dispatch Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#228 +2537.1ms] exit MessageCenter.dispatch"
+    },
+    {
+      "type": "log",
+      "text": "[FF#229 +2537.2ms] enter MessageCenter.dispatch Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#230 +2537.3ms] exit MessageCenter.dispatch"
+    },
+    {
+      "type": "log",
+      "text": "[FF#231 +2537.3ms] enter MessageCenter.dispatch Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#232 +2537.4ms] exit MessageCenter.dispatch"
+    },
+    {
+      "type": "log",
+      "text": "[FF#233 +2537.5ms] enter MessageCenter.dispatch Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#234 +2537.5ms] exit MessageCenter.dispatch"
+    },
+    {
+      "type": "log",
+      "text": "[FF#235 +2537.6ms] enter MessageCenter.dispatch Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#236 +2537.8ms] exit MessageCenter.dispatch"
+    },
+    {
+      "type": "log",
+      "text": "[FF#237 +2537.8ms] enter MessageCenter.dispatch Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#238 +2538.0ms] exit MessageCenter.dispatch"
+    },
+    {
+      "type": "log",
+      "text": "[FF#239 +2538.1ms] enter MessageCenter.dispatch Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#240 +2538.2ms] exit MessageCenter.dispatch"
+    },
+    {
+      "type": "log",
+      "text": "[FF#241 +2538.7ms] exit Actor.postInit"
+    },
+    {
+      "type": "log",
+      "text": "[FF#242 +2538.9ms] enter MessageCenter.dispatch Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#243 +2539.0ms] exit MessageCenter.dispatch"
+    },
+    {
+      "type": "log",
+      "text": "[FF#244 +2539.1ms] exit GameSocket.dispatch"
+    },
+    {
+      "type": "log",
+      "text": "[FF#245 +2539.1ms] exit GameSocket.processRecvPacket"
+    },
+    {
+      "type": "log",
+      "text": "[FF#246 +2539.1ms] exit GameSocket.onSocketRead"
+    },
+    {
+      "type": "log",
+      "text": "[FF#247 +2539.3ms] message:begin BaseSystem.postNameChange7 listeners=0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#248 +2539.4ms] message:exit BaseSystem.postNameChange7"
+    },
+    {
+      "type": "log",
+      "text": "[FF#249 +2539.4ms] message:begin BaseSystem.postGoldChange8 listeners=2"
+    },
+    {
+      "type": "log",
+      "text": "[FF#250 +2539.5ms] listener:enter BaseSystem.postGoldChange8 0 anonymous function(){TimerManager.ins().isExists(this.showNavBtnRedPoint,this)||TimerManager.ins().doTimer(60,"
+    },
+    {
+      "type": "log",
+      "text": "[FF#251 +2539.6ms] listener:exit BaseSystem.postGoldChange8 0 anonymous function(){TimerManager.ins().isExists(this.showNavBtnRedPoint,this)||TimerManager.ins().doTimer(60,"
+    },
+    {
+      "type": "log",
+      "text": "[FF#252 +2539.6ms] listener:enter BaseSystem.postGoldChange8 1 anonymous function(){TimerManager.ins().isExists(this.updateRedPoint,this)||TimerManager.ins().doTimer(50,1,th"
+    },
+    {
+      "type": "log",
+      "text": "[FF#253 +2539.7ms] listener:exit BaseSystem.postGoldChange8 1 anonymous function(){TimerManager.ins().isExists(this.updateRedPoint,this)||TimerManager.ins().doTimer(50,1,th"
+    },
+    {
+      "type": "log",
+      "text": "[FF#254 +2539.7ms] message:exit "
+    },
+    {
+      "type": "log",
+      "text": "[FF#255 +2539.8ms] message:begin BaseSystem.postYbChange9 listeners=1"
+    },
+    {
+      "type": "log",
+      "text": "[FF#256 +2539.8ms] listener:enter BaseSystem.postYbChange9 0 a function(){n||(n=!0,TimerManager.ins().doTimer(60,1,o,e))}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#257 +2539.9ms] listener:exit BaseSystem.postYbChange9 0 a function(){n||(n=!0,TimerManager.ins().doTimer(60,1,o,e))}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#258 +2539.9ms] message:exit "
+    },
+    {
+      "type": "log",
+      "text": "[FF#259 +2539.9ms] message:begin BaseSystem.postSoulChange14 listeners=1"
+    },
+    {
+      "type": "log",
+      "text": "[FF#260 +2539.9ms] listener:enter BaseSystem.postSoulChange14 0 anonymous function(){TimerManager.ins().isExists(this.seekForgeItem,this)||TimerManager.ins().doTimer(60,1,thi"
+    },
+    {
+      "type": "log",
+      "text": "[FF#261 +2540.0ms] listener:exit BaseSystem.postSoulChange14 0 anonymous function(){TimerManager.ins().isExists(this.seekForgeItem,this)||TimerManager.ins().doTimer(60,1,thi"
+    },
+    {
+      "type": "log",
+      "text": "[FF#262 +2540.0ms] message:exit "
+    },
+    {
+      "type": "log",
+      "text": "[FF#263 +2540.1ms] message:begin BaseSystem.postFeatsChange10 listeners=0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#264 +2540.2ms] message:exit BaseSystem.postFeatsChange10"
+    },
+    {
+      "type": "log",
+      "text": "[FF#265 +2540.2ms] message:begin BaseSystem.postUpdateTogeatter12 listeners=0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#266 +2540.2ms] message:exit BaseSystem.postUpdateTogeatter12"
+    },
+    {
+      "type": "log",
+      "text": "[FF#267 +2540.2ms] message:begin BaseSystem.postUpdateTogeatter12 listeners=0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#268 +2540.2ms] message:exit BaseSystem.postUpdateTogeatter12"
+    },
+    {
+      "type": "log",
+      "text": "[FF#269 +2540.3ms] message:begin BaseSystem.postWeiWang16 listeners=0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#270 +2540.3ms] message:exit BaseSystem.postWeiWang16"
+    },
+    {
+      "type": "log",
+      "text": "[FF#271 +2540.4ms] message:begin BaseSystem.postInit6 listeners=1"
+    },
+    {
+      "type": "log",
+      "text": "[FF#272 +2540.4ms] listener:enter BaseSystem.postInit6 0 w function(...args) {\n        const n = count(label);\n        if (!limit || should(label)) emit('enter"
+    },
+    {
+      "type": "log",
+      "text": "[FF#273 +2540.4ms] enter UIView2.expChange "
+    },
+    {
+      "type": "log",
+      "text": "[FF#274 +2540.8ms] throw UIView2.expChange TypeError: Cannot read properties of undefined (reading 'exp')\n    at e.expChange (http://localhost/main.min.js:68:10254)\n    at e.w [as expChange] (<anonymous>:15:27)\n    at MC.dealMsg (<anonymous>:85:16)\n    at e.run (http://localhost/main.min.js:1:5961)\n    at e.w [as run] (<anonymous>:15:27)\n    at i.update (http://localhost/libs/modules/egret/egret.min.js:4:11822)\n    at i.w [as update] (<anonymous>:15:27)\n    at t (http://localhost/libs/modules/egret/egret.web.min.js:2:15183)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#275 +2540.8ms] listener:throw BaseSystem.postInit6 TypeError: Cannot read properties of undefined (reading 'exp')\n    at e.expChange (http://localhost/main.min.js:68:10254)\n    at e.w [as expChange] (<anonymous>:15:27)\n    at MC.dealMsg (<anonymous>:85:16)\n    at e.run (http://localhost/main.min.js:1:5961)\n    at e.w [as run] (<anonymous>:15:27)\n    at i.update (http://localhost/libs/modules/egret/egret.min.js:4:11822)\n    at i.w [as update] (<anonymous>:15:27)\n    at t (http://localhost/libs/modules/egret/egret.web.min.js:2:15183)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#276 +2540.8ms] throw MessageCenter.run TypeError: Cannot read properties of undefined (reading 'exp')\n    at e.expChange (http://localhost/main.min.js:68:10254)\n    at e.w [as expChange] (<anonymous>:15:27)\n    at MC.dealMsg (<anonymous>:85:16)\n    at e.run (http://localhost/main.min.js:1:5961)\n    at e.w [as run] (<anonymous>:15:27)\n    at i.update (http://localhost/libs/modules/egret/egret.min.js:4:11822)\n    at i.w [as update] (<anonymous>:15:27)\n    at t (http://localhost/libs/modules/egret/egret.web.min.js:2:15183)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#277 +2540.8ms] throw SystemTicker.update TypeError: Cannot read properties of undefined (reading 'exp')\n    at e.expChange (http://localhost/main.min.js:68:10254)\n    at e.w [as expChange] (<anonymous>:15:27)\n    at MC.dealMsg (<anonymous>:85:16)\n    at e.run (http://localhost/main.min.js:1:5961)\n    at e.w [as run] (<anonymous>:15:27)\n    at i.update (http://localhost/libs/modules/egret/egret.min.js:4:11822)\n    at i.w [as update] (<anonymous>:15:27)\n    at t (http://localhost/libs/modules/egret/egret.web.min.js:2:15183)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#278 +2541.0ms] window.onerror Uncaught TypeError: Cannot read properties of undefined (reading 'exp') http://localhost/ 18 72 TypeError: Cannot read properties of undefined (reading 'exp')\n    at e.expChange (http://localhost/main.min.js:68:10254)\n    at e.w [as expChange] (<anonymous>:15:27)\n    at MC.dealMsg (<anonymous>:85:16)\n    at e.run (http://localhost/main.min.js:1:5961)\n    at e.w [as run] (<anonymous>:15:27)\n    at i.update (http://localhost/libs/modules/egret/egret.min.js:4:11822)\n    at i.w [as update] (<anonymous>:15:27)\n    at t (http://localhost/libs/modules/egret/egret.web.min.js:2:15183)"
+    }
+  ],
+  "exceptions": [],
+  "wsFrames": [
+    {
+      "event": "Network.webSocketFrameSent",
+      "opcode": 2,
+      "mask": true,
+      "payloadData": "//8Pyg=="
+    },
+    {
+      "event": "Network.webSocketFrameReceived",
+      "opcode": 2,
+      "mask": false,
+      "payloadData": "o4oLbQ=="
+    },
+    {
+      "event": "Network.webSocketFrameSent",
+      "opcode": 2,
+      "mask": true,
+      "payloadData": "o4oLbQAAAAD/AQEAAAAGAOW4heWTpQAgAGUxMGFkYzM5NDliYTU5YWJiZTU2ZTA1N2YyMGY4ODNlAA=="
+    },
+    {
+      "event": "Network.webSocketFrameReceived",
+      "opcode": 2,
+      "mask": false,
+      "payloadData": "o4oLbf8BAA=="
+    },
+    {
+      "event": "Network.webSocketFrameSent",
+      "opcode": 2,
+      "mask": true,
+      "payloadData": "o4oLbQEAAAD/BA=="
+    },
+    {
+      "event": "Network.webSocketFrameReceived",
+      "opcode": 2,
+      "mask": false,
+      "payloadData": "o4oLbf8EDtkBAAEBAAAAAQAAAAwA5pyJ54K55pyJ5L2gAAEAAAAFAAAAYgAAAJfHgwAAAAAADwAAAAAAAAA="
+    },
+    {
+      "event": "Network.webSocketFrameSent",
+      "opcode": 2,
+      "mask": true,
+      "payloadData": "o4oLbQIAAAD/BQEAAAAAAAAAAAAAAAA="
+    },
+    {
+      "event": "Network.webSocketFrameReceived",
+      "opcode": 2,
+      "mask": false,
+      "payloadData": "o4oLbf8FAQ=="
+    },
+    {
+      "event": "Network.webSocketFrameReceived",
+      "opcode": 2,
+      "mask": false,
+      "payloadData": "o4oLbQABAAEBAAAAAAAAAAEAAAABAAAA5pyJ54K55pyJ5L2gAAAAAAAAAAAAAAAAAAAAAAAAAAAAYgAAAEDHAwAAAAAAAAAAAOHJFQAAAAAAqZUAAAAAAAAPAAAAAAAAAAAAAAC8AgAAAAAAAAAAAADIAAAAAAAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAAAAAAIiEAgA="
+    }
+  ],
+  "failed": [],
+  "pauses": []
+}

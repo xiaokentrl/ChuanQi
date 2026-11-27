@@ -1,0 +1,2664 @@
+{
+  "target": {
+    "description": "",
+    "devtoolsFrontendUrl": "https://aka.ms/docs-landing-page/serve_rev/@56b8f691820060b6e15f702165117f203442943f/inspector.html?ws=127.0.0.1:9223/devtools/page/A761F52413A0732AA54F4FDEB643782A",
+    "id": "A761F52413A0732AA54F4FDEB643782A",
+    "title": "",
+    "type": "page",
+    "url": "about:blank",
+    "webSocketDebuggerUrl": "ws://127.0.0.1:9223/devtools/page/A761F52413A0732AA54F4FDEB643782A"
+  },
+  "logs": [
+    {
+      "type": "log",
+      "text": "[FF#1 +0.2ms] MISSING GameMap.parser parser"
+    },
+    {
+      "type": "log",
+      "text": "[FF#2 +0.4ms] installed renderMode=webgl"
+    },
+    {
+      "type": "log",
+      "text": "[FF#3 +1.0ms] enter SystemTicker.update "
+    },
+    {
+      "type": "log",
+      "text": "[FF#4 +1.1ms] enter SystemTicker.callLaterAsyncs 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#5 +1.1ms] exit SystemTicker.callLaterAsyncs"
+    },
+    {
+      "type": "log",
+      "text": "[FF#6 +1.2ms] enter SystemTicker.render Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#7 +1.3ms] enter SystemTicker.callLaters 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#8 +1.3ms] exit SystemTicker.callLaters"
+    },
+    {
+      "type": "log",
+      "text": "[FF#9 +1.5ms] exit SystemTicker.render"
+    },
+    {
+      "type": "log",
+      "text": "[FF#10 +1.6ms] exit SystemTicker.update"
+    },
+    {
+      "type": "log",
+      "text": "[FF#11 +3.5ms] enter SystemTicker.update "
+    },
+    {
+      "type": "log",
+      "text": "[FF#12 +3.6ms] enter SystemTicker.callLaterAsyncs 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#13 +3.6ms] exit SystemTicker.callLaterAsyncs"
+    },
+    {
+      "type": "log",
+      "text": "[FF#14 +3.7ms] exit SystemTicker.update"
+    },
+    {
+      "type": "log",
+      "text": "[FF#15 +10.9ms] enter SystemTicker.update "
+    },
+    {
+      "type": "log",
+      "text": "[FF#16 +11.0ms] enter SystemTicker.callLaterAsyncs 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#17 +11.1ms] exit SystemTicker.callLaterAsyncs"
+    },
+    {
+      "type": "log",
+      "text": "[FF#18 +11.1ms] enter SystemTicker.render Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#19 +11.4ms] enter SystemTicker.callLaters 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#20 +11.4ms] exit SystemTicker.callLaters"
+    },
+    {
+      "type": "log",
+      "text": "[FF#21 +11.4ms] exit SystemTicker.render"
+    },
+    {
+      "type": "log",
+      "text": "[FF#22 +11.5ms] exit SystemTicker.update"
+    },
+    {
+      "type": "log",
+      "text": "[FF#23 +17.4ms] enter SystemTicker.update "
+    },
+    {
+      "type": "log",
+      "text": "[FF#24 +17.6ms] enter SystemTicker.callLaterAsyncs 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#25 +17.6ms] exit SystemTicker.callLaterAsyncs"
+    },
+    {
+      "type": "log",
+      "text": "[FF#26 +17.7ms] exit SystemTicker.update"
+    },
+    {
+      "type": "log",
+      "text": "[FF#27 +25.8ms] enter SystemTicker.update "
+    },
+    {
+      "type": "log",
+      "text": "[FF#28 +26.0ms] enter SystemTicker.callLaterAsyncs 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#29 +26.0ms] exit SystemTicker.callLaterAsyncs"
+    },
+    {
+      "type": "log",
+      "text": "[FF#30 +26.0ms] enter SystemTicker.render Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#31 +26.3ms] enter SystemTicker.callLaters 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#32 +26.3ms] exit SystemTicker.callLaters"
+    },
+    {
+      "type": "log",
+      "text": "[FF#33 +26.5ms] exit SystemTicker.render"
+    },
+    {
+      "type": "log",
+      "text": "[FF#34 +26.5ms] exit SystemTicker.update"
+    },
+    {
+      "type": "log",
+      "text": "[FF#35 +34.4ms] enter SystemTicker.update "
+    },
+    {
+      "type": "log",
+      "text": "[FF#36 +34.5ms] enter SystemTicker.callLaterAsyncs 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#37 +34.5ms] exit SystemTicker.callLaterAsyncs"
+    },
+    {
+      "type": "log",
+      "text": "[FF#38 +34.7ms] exit SystemTicker.update"
+    },
+    {
+      "type": "log",
+      "text": "[FF#39 +43.0ms] enter SystemTicker.update "
+    },
+    {
+      "type": "log",
+      "text": "[FF#40 +43.1ms] enter SystemTicker.callLaterAsyncs 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#41 +43.2ms] exit SystemTicker.callLaterAsyncs"
+    },
+    {
+      "type": "log",
+      "text": "[FF#42 +43.2ms] enter SystemTicker.render Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#43 +43.3ms] enter SystemTicker.callLaters 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#44 +43.3ms] exit SystemTicker.callLaters"
+    },
+    {
+      "type": "log",
+      "text": "[FF#45 +43.4ms] exit SystemTicker.render"
+    },
+    {
+      "type": "log",
+      "text": "[FF#46 +43.5ms] exit SystemTicker.update"
+    },
+    {
+      "type": "log",
+      "text": "[FF#47 +50.7ms] enter SystemTicker.update "
+    },
+    {
+      "type": "log",
+      "text": "[FF#48 +50.8ms] enter SystemTicker.callLaterAsyncs 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#49 +50.8ms] exit SystemTicker.callLaterAsyncs"
+    },
+    {
+      "type": "log",
+      "text": "[FF#50 +51.0ms] exit SystemTicker.update"
+    },
+    {
+      "type": "log",
+      "text": "[FF#51 +60.9ms] enter SystemTicker.update "
+    },
+    {
+      "type": "log",
+      "text": "[FF#52 +61.0ms] enter SystemTicker.callLaterAsyncs 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#53 +61.1ms] exit SystemTicker.callLaterAsyncs"
+    },
+    {
+      "type": "log",
+      "text": "[FF#54 +61.1ms] enter SystemTicker.render Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#55 +61.3ms] enter SystemTicker.callLaters 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#56 +61.3ms] exit SystemTicker.callLaters"
+    },
+    {
+      "type": "log",
+      "text": "[FF#57 +61.4ms] exit SystemTicker.render"
+    },
+    {
+      "type": "log",
+      "text": "[FF#58 +61.5ms] exit SystemTicker.update"
+    },
+    {
+      "type": "log",
+      "text": "[FF#59 +67.7ms] enter SystemTicker.update "
+    },
+    {
+      "type": "log",
+      "text": "[FF#60 +67.9ms] enter SystemTicker.callLaterAsyncs 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#61 +67.9ms] exit SystemTicker.callLaterAsyncs"
+    },
+    {
+      "type": "log",
+      "text": "[FF#62 +67.9ms] exit SystemTicker.update"
+    },
+    {
+      "type": "log",
+      "text": "[FF#63 +76.4ms] enter SystemTicker.update "
+    },
+    {
+      "type": "log",
+      "text": "[FF#64 +76.6ms] enter SystemTicker.callLaterAsyncs 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#65 +76.6ms] exit SystemTicker.callLaterAsyncs"
+    },
+    {
+      "type": "log",
+      "text": "[FF#66 +76.6ms] enter SystemTicker.render Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#67 +76.8ms] enter SystemTicker.callLaters 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#68 +76.8ms] exit SystemTicker.callLaters"
+    },
+    {
+      "type": "log",
+      "text": "[FF#69 +76.8ms] exit SystemTicker.render"
+    },
+    {
+      "type": "log",
+      "text": "[FF#70 +76.9ms] exit SystemTicker.update"
+    },
+    {
+      "type": "log",
+      "text": "[FF#71 +84.1ms] enter SystemTicker.update "
+    },
+    {
+      "type": "log",
+      "text": "[FF#72 +84.2ms] enter SystemTicker.callLaterAsyncs 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#73 +84.2ms] exit SystemTicker.callLaterAsyncs"
+    },
+    {
+      "type": "log",
+      "text": "[FF#74 +84.3ms] exit SystemTicker.update"
+    },
+    {
+      "type": "log",
+      "text": "[FF#75 +93.9ms] enter SystemTicker.update "
+    },
+    {
+      "type": "log",
+      "text": "[FF#76 +94.0ms] enter SystemTicker.callLaterAsyncs 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#77 +94.0ms] exit SystemTicker.callLaterAsyncs"
+    },
+    {
+      "type": "log",
+      "text": "[FF#78 +94.1ms] enter SystemTicker.render Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#79 +94.2ms] enter SystemTicker.callLaters 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#80 +94.2ms] exit SystemTicker.callLaters"
+    },
+    {
+      "type": "log",
+      "text": "[FF#81 +94.4ms] exit SystemTicker.render"
+    },
+    {
+      "type": "log",
+      "text": "[FF#82 +94.4ms] exit SystemTicker.update"
+    },
+    {
+      "type": "log",
+      "text": "[FF#83 +111.4ms] enter SystemTicker.render Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#84 +111.8ms] enter SystemTicker.callLaters 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#85 +111.8ms] exit SystemTicker.callLaters"
+    },
+    {
+      "type": "log",
+      "text": "[FF#86 +112.1ms] exit SystemTicker.render"
+    },
+    {
+      "type": "log",
+      "text": "[FF#87 +126.5ms] enter SystemTicker.render Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#88 +126.8ms] enter SystemTicker.callLaters 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#89 +126.9ms] exit SystemTicker.callLaters"
+    },
+    {
+      "type": "log",
+      "text": "[FF#90 +127.2ms] exit SystemTicker.render"
+    },
+    {
+      "type": "log",
+      "text": "[FF#91 +143.1ms] enter SystemTicker.render Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#92 +143.5ms] enter SystemTicker.callLaters 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#93 +143.5ms] exit SystemTicker.callLaters"
+    },
+    {
+      "type": "log",
+      "text": "[FF#94 +143.8ms] exit SystemTicker.render"
+    },
+    {
+      "type": "log",
+      "text": "[FF#95 +159.9ms] enter SystemTicker.render Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#96 +160.4ms] enter SystemTicker.callLaters 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#97 +160.5ms] exit SystemTicker.callLaters"
+    },
+    {
+      "type": "log",
+      "text": "[FF#98 +160.7ms] exit SystemTicker.render"
+    },
+    {
+      "type": "log",
+      "text": "[FF#99 +175.8ms] enter SystemTicker.render Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#100 +176.0ms] enter SystemTicker.callLaters 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#101 +176.0ms] exit SystemTicker.callLaters"
+    },
+    {
+      "type": "log",
+      "text": "[FF#102 +176.1ms] exit SystemTicker.render"
+    },
+    {
+      "type": "log",
+      "text": "[FF#103 +192.9ms] enter SystemTicker.render Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#104 +193.2ms] enter SystemTicker.callLaters 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#105 +193.2ms] exit SystemTicker.callLaters"
+    },
+    {
+      "type": "log",
+      "text": "[FF#106 +193.5ms] exit SystemTicker.render"
+    },
+    {
+      "type": "log",
+      "text": "[FF#107 +1416.0ms] watchdog counts={\"SystemTicker.update\":177,\"SystemTicker.callLaterAsyncs\":177,\"SystemTicker.render\":90,\"SystemTicker.callLaters\":90}"
+    },
+    {
+      "type": "log",
+      "text": "资源加载成功！！"
+    },
+    {
+      "type": "log",
+      "text": "[FF#108 +1470.3ms] enter MessageCenter.run queue=0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#109 +1470.3ms] exit MessageCenter.run"
+    },
+    {
+      "type": "log",
+      "text": "[FF#110 +1470.5ms] enter TimerManager.onEnterFrame Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#111 +1470.7ms] exit TimerManager.onEnterFrame"
+    },
+    {
+      "type": "log",
+      "text": "[FF#112 +1498.6ms] enter MessageCenter.run queue=0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#113 +1498.6ms] exit MessageCenter.run"
+    },
+    {
+      "type": "log",
+      "text": "[FF#114 +1498.7ms] enter TimerManager.onEnterFrame Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#115 +1498.8ms] exit TimerManager.onEnterFrame"
+    },
+    {
+      "type": "log",
+      "text": "[FF#116 +1499.1ms] enter MessageCenter.run queue=0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#117 +1499.2ms] exit MessageCenter.run"
+    },
+    {
+      "type": "log",
+      "text": "[FF#118 +1499.2ms] enter TimerManager.onEnterFrame Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#119 +1499.3ms] exit TimerManager.onEnterFrame"
+    },
+    {
+      "type": "log",
+      "text": "[FF#120 +1505.9ms] enter MessageCenter.run queue=0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#121 +1505.9ms] exit MessageCenter.run"
+    },
+    {
+      "type": "log",
+      "text": "[FF#122 +1506.0ms] enter TimerManager.onEnterFrame Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#123 +1506.1ms] exit TimerManager.onEnterFrame"
+    },
+    {
+      "type": "log",
+      "text": "[FF#124 +1510.4ms] watchdog counts={\"SystemTicker.update\":210,\"SystemTicker.callLaterAsyncs\":210,\"SystemTicker.render\":105,\"SystemTicker.callLaters\":105,\"MessageCenter.run\":12,\"TimerManager.onEnterFrame\":12}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#125 +1514.9ms] enter MessageCenter.run queue=0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#126 +1515.1ms] exit MessageCenter.run"
+    },
+    {
+      "type": "log",
+      "text": "[FF#127 +1515.1ms] enter TimerManager.onEnterFrame Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#128 +1515.3ms] exit TimerManager.onEnterFrame"
+    },
+    {
+      "type": "log",
+      "text": "[FF#129 +1519.2ms] enter MessageCenter.run queue=0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#130 +1519.3ms] exit MessageCenter.run"
+    },
+    {
+      "type": "log",
+      "text": "[FF#131 +1519.4ms] enter TimerManager.onEnterFrame Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#132 +1519.5ms] exit TimerManager.onEnterFrame"
+    },
+    {
+      "type": "log",
+      "text": "[FF#133 +1528.5ms] enter MessageCenter.run queue=0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#134 +1528.5ms] exit MessageCenter.run"
+    },
+    {
+      "type": "log",
+      "text": "[FF#135 +1528.6ms] enter TimerManager.onEnterFrame Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#136 +1528.7ms] exit TimerManager.onEnterFrame"
+    },
+    {
+      "type": "log",
+      "text": "[FF#137 +1534.6ms] enter MessageCenter.run queue=0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#138 +1534.8ms] exit MessageCenter.run"
+    },
+    {
+      "type": "log",
+      "text": "[FF#139 +1534.8ms] enter TimerManager.onEnterFrame Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#140 +1535.0ms] exit TimerManager.onEnterFrame"
+    },
+    {
+      "type": "log",
+      "text": "[FF#141 +1544.6ms] enter MessageCenter.run queue=0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#142 +1544.7ms] exit MessageCenter.run"
+    },
+    {
+      "type": "log",
+      "text": "[FF#143 +1544.8ms] enter TimerManager.onEnterFrame Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#144 +1544.8ms] exit TimerManager.onEnterFrame"
+    },
+    {
+      "type": "log",
+      "text": "[FF#145 +1552.4ms] enter MessageCenter.run queue=0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#146 +1552.6ms] exit MessageCenter.run"
+    },
+    {
+      "type": "log",
+      "text": "[FF#147 +1552.7ms] enter TimerManager.onEnterFrame Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#148 +1552.8ms] exit TimerManager.onEnterFrame"
+    },
+    {
+      "type": "log",
+      "text": "[FF#149 +1562.1ms] enter MessageCenter.run queue=0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#150 +1562.2ms] exit MessageCenter.run"
+    },
+    {
+      "type": "log",
+      "text": "[FF#151 +1562.2ms] enter TimerManager.onEnterFrame Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#152 +1562.3ms] exit TimerManager.onEnterFrame"
+    },
+    {
+      "type": "log",
+      "text": "[FF#153 +1567.9ms] enter MessageCenter.run queue=0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#154 +1568.0ms] exit MessageCenter.run"
+    },
+    {
+      "type": "log",
+      "text": "[FF#155 +1568.0ms] enter TimerManager.onEnterFrame Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#156 +1568.2ms] exit TimerManager.onEnterFrame"
+    },
+    {
+      "type": "log",
+      "text": "[FF#157 +1576.5ms] enter MessageCenter.run queue=0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#158 +1576.8ms] exit MessageCenter.run"
+    },
+    {
+      "type": "log",
+      "text": "[FF#159 +1576.9ms] enter TimerManager.onEnterFrame Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#160 +1577.0ms] exit TimerManager.onEnterFrame"
+    },
+    {
+      "type": "log",
+      "text": "解压成功！！"
+    },
+    {
+      "type": "log",
+      "text": "[FF#161 +1831.1ms] enter GameSocket.onSocketRead "
+    },
+    {
+      "type": "log",
+      "text": "[FF#162 +1831.9ms] exit GameSocket.onSocketRead"
+    },
+    {
+      "type": "log",
+      "text": "[FF#163 +1833.1ms] enter GameSocket.onSocketRead "
+    },
+    {
+      "type": "log",
+      "text": "[FF#164 +1833.3ms] enter GameSocket.processRecvPacket Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#165 +1833.6ms] enter GameSocket.dispatch Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#166 +1834.0ms] exit GameSocket.dispatch"
+    },
+    {
+      "type": "log",
+      "text": "[FF#167 +1834.2ms] exit GameSocket.processRecvPacket"
+    },
+    {
+      "type": "log",
+      "text": "[FF#168 +1834.2ms] exit GameSocket.onSocketRead"
+    },
+    {
+      "type": "log",
+      "text": "[FF#169 +1835.5ms] enter GameSocket.onSocketRead "
+    },
+    {
+      "type": "log",
+      "text": "[FF#170 +1835.7ms] enter GameSocket.processRecvPacket Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#171 +1836.0ms] enter GameSocket.dispatch Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#172 +1837.1ms] exit GameSocket.dispatch"
+    },
+    {
+      "type": "log",
+      "text": "[FF#173 +1837.2ms] exit GameSocket.processRecvPacket"
+    },
+    {
+      "type": "log",
+      "text": "[FF#174 +1837.3ms] exit GameSocket.onSocketRead"
+    },
+    {
+      "type": "log",
+      "text": "[FF#175 +1838.4ms] enter GameSocket.onSocketRead "
+    },
+    {
+      "type": "log",
+      "text": "[FF#176 +1838.5ms] enter GameSocket.processRecvPacket Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#177 +1838.7ms] enter GameSocket.dispatch Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#178 +1838.8ms] enter RoleMgr.doEnterGame "
+    },
+    {
+      "type": "log",
+      "text": "[FF#179 +1839.0ms] enter SceneManager.runScene "
+    },
+    {
+      "type": "log",
+      "text": "[FF#180 +1839.1ms] enter MainScene.onEnter "
+    },
+    {
+      "type": "log",
+      "text": "[FF#181 +1839.6ms] enter ViewManager.open GameSceneView"
+    },
+    {
+      "type": "log",
+      "text": "[FF#182 +1839.8ms] enter ViewManager.openEasy string"
+    },
+    {
+      "type": "log",
+      "text": "[FF#183 +1841.4ms] enter GameSceneView.initUI "
+    },
+    {
+      "type": "log",
+      "text": "[FF#184 +1844.5ms] enter MapView.initMap "
+    },
+    {
+      "type": "log",
+      "text": "[FF#185 +1845.0ms] exit MapView.initMap"
+    },
+    {
+      "type": "log",
+      "text": "[FF#186 +1846.0ms] exit GameSceneView.initUI"
+    },
+    {
+      "type": "log",
+      "text": "[FF#187 +1846.4ms] exit ViewManager.openEasy"
+    },
+    {
+      "type": "log",
+      "text": "[FF#188 +1846.5ms] exit ViewManager.open"
+    },
+    {
+      "type": "log",
+      "text": "[FF#189 +1846.6ms] enter ViewManager.open ChatMainUI"
+    },
+    {
+      "type": "log",
+      "text": "[FF#190 +1846.6ms] enter ViewManager.openEasy string"
+    },
+    {
+      "type": "log",
+      "text": "[FF#191 +1847.4ms] enter ChatMainUI.checkShow "
+    },
+    {
+      "type": "log",
+      "text": "[FF#192 +1847.4ms] exit ChatMainUI.checkShow"
+    },
+    {
+      "type": "log",
+      "text": "[FF#193 +1847.6ms] exit ViewManager.openEasy"
+    },
+    {
+      "type": "log",
+      "text": "[FF#194 +1847.6ms] exit ViewManager.open"
+    },
+    {
+      "type": "log",
+      "text": "[FF#195 +1847.6ms] enter ViewManager.open UIView2"
+    },
+    {
+      "type": "log",
+      "text": "[FF#196 +1847.7ms] enter ViewManager.openEasy string"
+    },
+    {
+      "type": "log",
+      "text": "[FF#197 +1850.3ms] exit ViewManager.openEasy"
+    },
+    {
+      "type": "log",
+      "text": "[FF#198 +1850.4ms] exit ViewManager.open"
+    },
+    {
+      "type": "log",
+      "text": "[FF#199 +1850.5ms] enter ViewManager.open TipsView"
+    },
+    {
+      "type": "log",
+      "text": "[FF#200 +1850.5ms] enter ViewManager.openEasy string"
+    },
+    {
+      "type": "log",
+      "text": "[FF#201 +1853.7ms] exit ViewManager.openEasy"
+    },
+    {
+      "type": "log",
+      "text": "[FF#202 +1853.9ms] exit ViewManager.open"
+    },
+    {
+      "type": "log",
+      "text": "[FF#203 +1854.0ms] enter GameApp.postLoginInit "
+    },
+    {
+      "type": "log",
+      "text": "[FF#204 +1854.1ms] enter MessageCenter.dispatch Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#205 +1854.3ms] exit MessageCenter.dispatch"
+    },
+    {
+      "type": "log",
+      "text": "[FF#206 +1854.4ms] exit GameApp.postLoginInit"
+    },
+    {
+      "type": "log",
+      "text": "[FF#207 +1854.4ms] exit MainScene.onEnter"
+    },
+    {
+      "type": "log",
+      "text": "[FF#208 +1854.4ms] exit SceneManager.runScene"
+    },
+    {
+      "type": "log",
+      "text": "[FF#209 +1854.5ms] exit RoleMgr.doEnterGame"
+    },
+    {
+      "type": "log",
+      "text": "[FF#210 +1854.6ms] exit GameSocket.dispatch"
+    },
+    {
+      "type": "log",
+      "text": "[FF#211 +1854.6ms] exit GameSocket.processRecvPacket"
+    },
+    {
+      "type": "log",
+      "text": "[FF#212 +1854.7ms] exit GameSocket.onSocketRead"
+    },
+    {
+      "type": "log",
+      "text": "[FF#213 +1855.0ms] message:begin BaseClass.postLoginInit3 listeners=0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#214 +1855.0ms] message:exit BaseClass.postLoginInit3"
+    },
+    {
+      "type": "log",
+      "text": "[FF#215 +1855.1ms] enter MapView.onEnterFrame 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#216 +1855.1ms] exit MapView.onEnterFrame"
+    },
+    {
+      "type": "log",
+      "text": "[FF#217 +1856.1ms] enter GameSocket.onSocketRead "
+    },
+    {
+      "type": "log",
+      "text": "[FF#218 +1856.1ms] enter GameSocket.processRecvPacket Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#219 +1856.3ms] enter GameSocket.dispatch Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#220 +1856.4ms] enter Actor.postInit "
+    },
+    {
+      "type": "log",
+      "text": "[FF#221 +1856.5ms] enter MessageCenter.dispatch Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#222 +1856.6ms] exit MessageCenter.dispatch"
+    },
+    {
+      "type": "log",
+      "text": "[FF#223 +1856.7ms] enter MessageCenter.dispatch Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#224 +1856.8ms] exit MessageCenter.dispatch"
+    },
+    {
+      "type": "log",
+      "text": "[FF#225 +1856.9ms] enter MessageCenter.dispatch Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#226 +1856.9ms] exit MessageCenter.dispatch"
+    },
+    {
+      "type": "log",
+      "text": "[FF#227 +1857.0ms] enter MessageCenter.dispatch Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#228 +1857.1ms] exit MessageCenter.dispatch"
+    },
+    {
+      "type": "log",
+      "text": "[FF#229 +1857.2ms] enter MessageCenter.dispatch Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#230 +1857.2ms] exit MessageCenter.dispatch"
+    },
+    {
+      "type": "log",
+      "text": "[FF#231 +1857.3ms] enter MessageCenter.dispatch Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#232 +1857.4ms] exit MessageCenter.dispatch"
+    },
+    {
+      "type": "log",
+      "text": "[FF#233 +1857.4ms] enter MessageCenter.dispatch Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#234 +1857.5ms] exit MessageCenter.dispatch"
+    },
+    {
+      "type": "log",
+      "text": "[FF#235 +1857.6ms] enter MessageCenter.dispatch Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#236 +1857.6ms] exit MessageCenter.dispatch"
+    },
+    {
+      "type": "log",
+      "text": "[FF#237 +1857.9ms] exit Actor.postInit"
+    },
+    {
+      "type": "log",
+      "text": "[FF#238 +1857.9ms] enter MessageCenter.dispatch Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#239 +1858.0ms] exit MessageCenter.dispatch"
+    },
+    {
+      "type": "log",
+      "text": "[FF#240 +1858.0ms] exit GameSocket.dispatch"
+    },
+    {
+      "type": "log",
+      "text": "[FF#241 +1858.0ms] exit GameSocket.processRecvPacket"
+    },
+    {
+      "type": "log",
+      "text": "[FF#242 +1858.1ms] exit GameSocket.onSocketRead"
+    },
+    {
+      "type": "log",
+      "text": "[FF#243 +1858.2ms] enter GameSocket.onSocketRead "
+    },
+    {
+      "type": "log",
+      "text": "[FF#244 +1858.2ms] enter GameSocket.processRecvPacket Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#245 +1858.3ms] enter GameSocket.dispatch Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#246 +1858.4ms] enter SubRoles.doSubRole "
+    },
+    {
+      "type": "log",
+      "text": "[FF#247 +1858.6ms] enter Role.parser "
+    },
+    {
+      "type": "log",
+      "text": "[FF#248 +1870.1ms] exit Role.parser"
+    },
+    {
+      "type": "log",
+      "text": "[FF#249 +1870.2ms] exit SubRoles.doSubRole"
+    },
+    {
+      "type": "log",
+      "text": "[FF#250 +1870.2ms] enter MessageCenter.dispatch Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#251 +1870.4ms] exit MessageCenter.dispatch"
+    },
+    {
+      "type": "log",
+      "text": "[FF#252 +1870.4ms] exit GameSocket.dispatch"
+    },
+    {
+      "type": "log",
+      "text": "[FF#253 +1870.5ms] exit GameSocket.processRecvPacket"
+    },
+    {
+      "type": "log",
+      "text": "[FF#254 +1870.5ms] exit GameSocket.onSocketRead"
+    },
+    {
+      "type": "log",
+      "text": "[FF#255 +1870.6ms] enter GameSocket.onSocketRead "
+    },
+    {
+      "type": "log",
+      "text": "[FF#256 +1870.7ms] enter GameSocket.processRecvPacket Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#257 +1870.8ms] enter GameSocket.dispatch Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#258 +1870.9ms] enter GameLogic.postEnterMap "
+    },
+    {
+      "type": "log",
+      "text": "[FF#259 +1873.2ms] enter MessageCenter.dispatch Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#260 +1873.3ms] exit MessageCenter.dispatch"
+    },
+    {
+      "type": "log",
+      "text": "[FF#261 +1875.3ms] enter MapView.changeMap "
+    },
+    {
+      "type": "log",
+      "text": "[FF#262 +1875.4ms] enter MapViewBg.initThumbnail "
+    },
+    {
+      "type": "log",
+      "text": "[FF#263 +1875.9ms] enter MapViewBg.updateHDMap {\"x\":0,\"y\":0}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#264 +1876.1ms] exit MapViewBg.updateHDMap"
+    },
+    {
+      "type": "log",
+      "text": "[FF#265 +1876.2ms] exit MapViewBg.initThumbnail"
+    },
+    {
+      "type": "log",
+      "text": "[FF#266 +1876.4ms] enter MapViewBg.updateHDMap {\"x\":0,\"y\":0}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#267 +1876.7ms] exit MapViewBg.updateHDMap"
+    },
+    {
+      "type": "log",
+      "text": "[FF#268 +1876.8ms] exit MapView.changeMap"
+    },
+    {
+      "type": "log",
+      "text": "[FF#269 +1877.0ms] enter MessageCenter.dispatch Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#270 +1877.2ms] exit MessageCenter.dispatch"
+    },
+    {
+      "type": "log",
+      "text": "[FF#271 +1877.5ms] exit GameLogic.postEnterMap"
+    },
+    {
+      "type": "log",
+      "text": "[FF#272 +1877.5ms] enter MessageCenter.dispatch Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#273 +1877.6ms] exit MessageCenter.dispatch"
+    },
+    {
+      "type": "log",
+      "text": "[FF#274 +1877.6ms] exit GameSocket.dispatch"
+    },
+    {
+      "type": "log",
+      "text": "[FF#275 +1877.6ms] exit GameSocket.processRecvPacket"
+    },
+    {
+      "type": "log",
+      "text": "[FF#276 +1877.7ms] exit GameSocket.onSocketRead"
+    },
+    {
+      "type": "log",
+      "text": "[FF#277 +1877.8ms] message:begin BaseSystem.postNameChange7 listeners=0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#278 +1877.9ms] message:exit BaseSystem.postNameChange7"
+    },
+    {
+      "type": "log",
+      "text": "[FF#279 +1877.9ms] message:begin BaseSystem.postGoldChange8 listeners=2"
+    },
+    {
+      "type": "log",
+      "text": "[FF#280 +1878.0ms] listener:enter BaseSystem.postGoldChange8 0 anonymous function(){TimerManager.ins().isExists(this.showNavBtnRedPoint,this)||TimerManager.ins().doTimer(60,"
+    },
+    {
+      "type": "log",
+      "text": "[FF#281 +1878.1ms] listener:exit BaseSystem.postGoldChange8 0 anonymous function(){TimerManager.ins().isExists(this.showNavBtnRedPoint,this)||TimerManager.ins().doTimer(60,"
+    },
+    {
+      "type": "log",
+      "text": "[FF#282 +1878.1ms] listener:enter BaseSystem.postGoldChange8 1 anonymous function(){TimerManager.ins().isExists(this.updateRedPoint,this)||TimerManager.ins().doTimer(50,1,th"
+    },
+    {
+      "type": "log",
+      "text": "[FF#283 +1878.1ms] listener:exit BaseSystem.postGoldChange8 1 anonymous function(){TimerManager.ins().isExists(this.updateRedPoint,this)||TimerManager.ins().doTimer(50,1,th"
+    },
+    {
+      "type": "log",
+      "text": "[FF#284 +1878.1ms] message:exit "
+    },
+    {
+      "type": "log",
+      "text": "[FF#285 +1878.2ms] message:begin BaseSystem.postYbChange9 listeners=1"
+    },
+    {
+      "type": "log",
+      "text": "[FF#286 +1878.2ms] listener:enter BaseSystem.postYbChange9 0 a function(){n||(n=!0,TimerManager.ins().doTimer(60,1,o,e))}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#287 +1878.2ms] listener:exit BaseSystem.postYbChange9 0 a function(){n||(n=!0,TimerManager.ins().doTimer(60,1,o,e))}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#288 +1878.3ms] message:exit "
+    },
+    {
+      "type": "log",
+      "text": "[FF#289 +1878.4ms] message:begin BaseSystem.postSoulChange14 listeners=1"
+    },
+    {
+      "type": "log",
+      "text": "[FF#290 +1878.4ms] listener:enter BaseSystem.postSoulChange14 0 anonymous function(){TimerManager.ins().isExists(this.seekForgeItem,this)||TimerManager.ins().doTimer(60,1,thi"
+    },
+    {
+      "type": "log",
+      "text": "[FF#291 +1878.4ms] listener:exit BaseSystem.postSoulChange14 0 anonymous function(){TimerManager.ins().isExists(this.seekForgeItem,this)||TimerManager.ins().doTimer(60,1,thi"
+    },
+    {
+      "type": "log",
+      "text": "[FF#292 +1878.4ms] message:exit "
+    },
+    {
+      "type": "log",
+      "text": "[FF#293 +1878.4ms] message:begin BaseSystem.postFeatsChange10 listeners=0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#294 +1878.4ms] message:exit BaseSystem.postFeatsChange10"
+    },
+    {
+      "type": "log",
+      "text": "[FF#295 +1878.5ms] message:begin BaseSystem.postUpdateTogeatter12 listeners=0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#296 +1878.5ms] message:exit BaseSystem.postUpdateTogeatter12"
+    },
+    {
+      "type": "log",
+      "text": "[FF#297 +1878.5ms] message:begin BaseSystem.postUpdateTogeatter12 listeners=0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#298 +1878.6ms] message:exit BaseSystem.postUpdateTogeatter12"
+    },
+    {
+      "type": "log",
+      "text": "[FF#299 +1878.6ms] message:begin BaseSystem.postWeiWang16 listeners=0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#300 +1878.6ms] message:exit BaseSystem.postWeiWang16"
+    },
+    {
+      "type": "log",
+      "text": "[FF#301 +1878.6ms] message:begin BaseSystem.postInit6 listeners=1"
+    },
+    {
+      "type": "log",
+      "text": "[FF#302 +1878.6ms] listener:enter BaseSystem.postInit6 0 w function(...args) {\n        const n = count(label);\n        if (!limit || should(label)) emit('enter"
+    },
+    {
+      "type": "log",
+      "text": "[FF#303 +1878.7ms] enter UIView2.expChange "
+    },
+    {
+      "type": "log",
+      "text": "[FF#304 +1879.2ms] exit UIView2.expChange"
+    },
+    {
+      "type": "log",
+      "text": "[FF#305 +1879.2ms] listener:exit BaseSystem.postInit6 0 w function(...args) {\n        const n = count(label);\n        if (!limit || should(label)) emit('enter"
+    },
+    {
+      "type": "log",
+      "text": "[FF#306 +1879.3ms] message:exit "
+    },
+    {
+      "type": "log",
+      "text": "[FF#307 +1879.3ms] message:begin BaseSystem.postSubRoleChange54 listeners=6"
+    },
+    {
+      "type": "log",
+      "text": "[FF#308 +1879.3ms] listener:enter BaseSystem.postSubRoleChange54 0 a function(){n||(n=!0,TimerManager.ins().doTimer(60,1,o,e))}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#309 +1879.3ms] listener:exit BaseSystem.postSubRoleChange54 0 a function(){n||(n=!0,TimerManager.ins().doTimer(60,1,o,e))}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#310 +1879.3ms] listener:enter BaseSystem.postSubRoleChange54 1 a function(){n||(n=!0,TimerManager.ins().doTimer(60,1,o,e))}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#311 +1879.4ms] listener:exit BaseSystem.postSubRoleChange54 1 a function(){n||(n=!0,TimerManager.ins().doTimer(60,1,o,e))}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#312 +1879.4ms] listener:enter BaseSystem.postSubRoleChange54 2 anonymous function(t,e){void 0===t&&(t=!1),void 0===e&&(e=-1),this.isListen||(this.isListen=!0,TimerManager.in"
+    },
+    {
+      "type": "log",
+      "text": "[FF#313 +1879.4ms] listener:exit BaseSystem.postSubRoleChange54 2 anonymous function(t,e){void 0===t&&(t=!1),void 0===e&&(e=-1),this.isListen||(this.isListen=!0,TimerManager.in"
+    },
+    {
+      "type": "log",
+      "text": "[FF#314 +1879.5ms] listener:enter BaseSystem.postSubRoleChange54 3 a function(){n||(n=!0,TimerManager.ins().doTimer(60,1,o,e))}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#315 +1879.5ms] listener:exit BaseSystem.postSubRoleChange54 3 a function(){n||(n=!0,TimerManager.ins().doTimer(60,1,o,e))}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#316 +1879.6ms] listener:enter BaseSystem.postSubRoleChange54 4 a function(){n||(n=!0,TimerManager.ins().doTimer(60,1,o,e))}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#317 +1879.6ms] listener:exit BaseSystem.postSubRoleChange54 4 a function(){n||(n=!0,TimerManager.ins().doTimer(60,1,o,e))}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#318 +1879.7ms] listener:enter BaseSystem.postSubRoleChange54 5 anonymous function(t,e){var i=this;void 0===t&&(t=!1),void 0===e&&(e=-1),this.timeID||(this.timeID=1,TimerMana"
+    },
+    {
+      "type": "log",
+      "text": "[FF#319 +1879.7ms] listener:exit BaseSystem.postSubRoleChange54 5 anonymous function(t,e){var i=this;void 0===t&&(t=!1),void 0===e&&(e=-1),this.timeID||(this.timeID=1,TimerMana"
+    },
+    {
+      "type": "log",
+      "text": "[FF#320 +1879.7ms] message:exit "
+    },
+    {
+      "type": "log",
+      "text": "[FF#321 +1879.7ms] message:begin BaseSystem.postHookStateChange74 listeners=1"
+    },
+    {
+      "type": "log",
+      "text": "[FF#322 +1879.7ms] listener:enter BaseSystem.postHookStateChange74 0 anonymous function(t){0!=GameMap.fubenID&&1==t&&(t=0),this.stateImg.source=t?\"zy_20\":\"\"}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#323 +1879.8ms] listener:exit BaseSystem.postHookStateChange74 0 anonymous function(t){0!=GameMap.fubenID&&1==t&&(t=0),this.stateImg.source=t?\"zy_20\":\"\"}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#324 +1879.9ms] message:exit "
+    },
+    {
+      "type": "log",
+      "text": "[FF#325 +1879.9ms] message:begin BaseSystem.postViewOpen76 listeners=2"
+    },
+    {
+      "type": "log",
+      "text": "[FF#326 +1880.0ms] listener:enter BaseSystem.postViewOpen76 0 anonymous function(t){1==t?this.map.parent&&(ViewManager.ins().open(GameBlackView),this.removeChild(this.map))"
+    },
+    {
+      "type": "log",
+      "text": "[FF#327 +1880.0ms] listener:exit BaseSystem.postViewOpen76 0 anonymous function(t){1==t?this.map.parent&&(ViewManager.ins().open(GameBlackView),this.removeChild(this.map))"
+    },
+    {
+      "type": "log",
+      "text": "[FF#328 +1880.0ms] listener:enter BaseSystem.postViewOpen76 1 anonymous function(t){void 0===t&&(t=0),1==t?(this.backBtnGroup.visible=!0,this.powerGroup.visible=!1,this.bac"
+    },
+    {
+      "type": "log",
+      "text": "[FF#329 +1880.1ms] listener:exit BaseSystem.postViewOpen76 1 anonymous function(t){void 0===t&&(t=0),1==t?(this.backBtnGroup.visible=!0,this.powerGroup.visible=!1,this.bac"
+    },
+    {
+      "type": "log",
+      "text": "[FF#330 +1880.1ms] message:exit "
+    },
+    {
+      "type": "log",
+      "text": "[FF#331 +1880.1ms] message:begin BaseSystem.postEnterMap55 listeners=25"
+    },
+    {
+      "type": "log",
+      "text": "[FF#332 +1880.1ms] listener:enter BaseSystem.postEnterMap55 0 anonymous function(){this.rewards=[],this.eliteRewards=[],this.expMonterCountKill=0,this.expMonterCount=0,this"
+    },
+    {
+      "type": "log",
+      "text": "[FF#333 +1880.3ms] listener:exit BaseSystem.postEnterMap55 0 anonymous function(){this.rewards=[],this.eliteRewards=[],this.expMonterCountKill=0,this.expMonterCount=0,this"
+    },
+    {
+      "type": "log",
+      "text": "[FF#334 +1880.3ms] listener:enter BaseSystem.postEnterMap55 1 anonymous function(){if(0==GameMap.fbType){var t=this.getSpecialRingDataById(e.FIRE_RING_ID);if(t){var i=this."
+    },
+    {
+      "type": "log",
+      "text": "[FF#335 +1880.3ms] listener:exit BaseSystem.postEnterMap55 1 anonymous function(){if(0==GameMap.fbType){var t=this.getSpecialRingDataById(e.FIRE_RING_ID);if(t){var i=this."
+    },
+    {
+      "type": "log",
+      "text": "[FF#336 +1880.3ms] listener:enter BaseSystem.postEnterMap55 2 anonymous function(){this.isFirstEnter?(this.isFirstEnter=!1,this.start()):this.destroyRes()}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#337 +1880.3ms] listener:exit BaseSystem.postEnterMap55 2 anonymous function(){this.isFirstEnter?(this.isFirstEnter=!1,this.start()):this.destroyRes()}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#338 +1880.4ms] listener:enter BaseSystem.postEnterMap55 3 anonymous function(){var t=GameMap.fubenID;isNaN(t)||(0!=t&&GameMap.fbType!=UserFb.FB_TYPE_GUANQIABOSS?GameMap"
+    },
+    {
+      "type": "log",
+      "text": "[FF#339 +1880.5ms] listener:exit BaseSystem.postEnterMap55 3 anonymous function(){var t=GameMap.fubenID;isNaN(t)||(0!=t&&GameMap.fbType!=UserFb.FB_TYPE_GUANQIABOSS?GameMap"
+    },
+    {
+      "type": "log",
+      "text": "[FF#340 +1880.5ms] listener:enter BaseSystem.postEnterMap55 4 anonymous function(){GameMap.fubenID==GlobalConfig.CampBattleConfig.fbId&&this.enterBattle(),this._isBattle&&G"
+    },
+    {
+      "type": "log",
+      "text": "[FF#341 +1880.5ms] listener:exit BaseSystem.postEnterMap55 4 anonymous function(){GameMap.fubenID==GlobalConfig.CampBattleConfig.fbId&&this.enterBattle(),this._isBattle&&G"
+    },
+    {
+      "type": "log",
+      "text": "[FF#342 +1880.5ms] listener:enter BaseSystem.postEnterMap55 5 anonymous function(){this.masterAtkTarget={},this.attackMeHandles.length=0,this.canAttackHandles.length=0,Time"
+    },
+    {
+      "type": "log",
+      "text": "[FF#343 +1880.6ms] enter MessageCenter.dispatch Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#344 +1880.8ms] exit MessageCenter.dispatch"
+    },
+    {
+      "type": "log",
+      "text": "[FF#345 +1880.8ms] listener:exit BaseSystem.postEnterMap55 5 anonymous function(){this.masterAtkTarget={},this.attackMeHandles.length=0,this.canAttackHandles.length=0,Time"
+    },
+    {
+      "type": "log",
+      "text": "[FF#346 +1880.8ms] listener:enter BaseSystem.postEnterMap55 6 anonymous function(){var t=GameMap.fubenID;isNaN(t)||(GameMap.fubenID!=GameMap.lastFbId&&(this.lastBossID=-1,G"
+    },
+    {
+      "type": "log",
+      "text": "[FF#347 +1880.9ms] enter ViewManager.open MineScenePanel"
+    },
+    {
+      "type": "log",
+      "text": "[FF#348 +1881.0ms] enter ViewManager.openEasy string"
+    },
+    {
+      "type": "log",
+      "text": "[FF#349 +1881.9ms] exit ViewManager.openEasy"
+    },
+    {
+      "type": "log",
+      "text": "[FF#350 +1882.0ms] exit ViewManager.open"
+    },
+    {
+      "type": "log",
+      "text": "[FF#351 +1882.0ms] listener:exit BaseSystem.postEnterMap55 6 anonymous function(){var t=GameMap.fubenID;isNaN(t)||(GameMap.fubenID!=GameMap.lastFbId&&(this.lastBossID=-1,G"
+    },
+    {
+      "type": "log",
+      "text": "[FF#352 +1882.0ms] listener:enter BaseSystem.postEnterMap55 7 anonymous function(){0==GameMap.fubenID&&e.checkEnter()}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#353 +1882.1ms] listener:exit BaseSystem.postEnterMap55 7 anonymous function(){0==GameMap.fubenID&&e.checkEnter()}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#354 +1882.1ms] listener:enter BaseSystem.postEnterMap55 8 anonymous function(){GameMap.fbType==UserFb.FB_TYPE_DARK_BOSS?e.postEnterGwBoss():e.isDarkBoss&&e.postEscGwBos"
+    },
+    {
+      "type": "log",
+      "text": "[FF#355 +1882.1ms] listener:exit BaseSystem.postEnterMap55 8 anonymous function(){GameMap.fbType==UserFb.FB_TYPE_DARK_BOSS?e.postEnterGwBoss():e.isDarkBoss&&e.postEscGwBos"
+    },
+    {
+      "type": "log",
+      "text": "[FF#356 +1882.1ms] listener:enter BaseSystem.postEnterMap55 9 anonymous function(){GameMap.fbType==UserFb.FB_TYPE_GOD_WEAPON||GameMap.fbType==UserFb.FB_TYPE_GOD_WEAPON_TOP?"
+    },
+    {
+      "type": "log",
+      "text": "[FF#357 +1882.1ms] listener:exit BaseSystem.postEnterMap55 9 anonymous function(){GameMap.fbType==UserFb.FB_TYPE_GOD_WEAPON||GameMap.fbType==UserFb.FB_TYPE_GOD_WEAPON_TOP?"
+    },
+    {
+      "type": "log",
+      "text": "[FF#358 +1882.1ms] listener:enter BaseSystem.postEnterMap55 10 anonymous function(){GameMap.fbType==UserFb.FB_TYPE_CITY&&e.postEnterCity(),e.isCity&&GameMap.fbType!=UserFb.F"
+    },
+    {
+      "type": "log",
+      "text": "[FF#359 +1882.3ms] listener:exit BaseSystem.postEnterMap55 10 anonymous function(){GameMap.fbType==UserFb.FB_TYPE_CITY&&e.postEnterCity(),e.isCity&&GameMap.fbType!=UserFb.F"
+    },
+    {
+      "type": "log",
+      "text": "[FF#360 +1882.3ms] listener:enter BaseSystem.postEnterMap55 11 anonymous function(){GameMap.fubenID==GlobalConfig.PassionPointConfig.fbId&&this.enterBattle(),this._isPaoDian"
+    },
+    {
+      "type": "log",
+      "text": "[FF#361 +1882.3ms] listener:exit BaseSystem.postEnterMap55 11 anonymous function(){GameMap.fubenID==GlobalConfig.PassionPointConfig.fbId&&this.enterBattle(),this._isPaoDian"
+    },
+    {
+      "type": "log",
+      "text": "[FF#362 +1882.4ms] listener:enter BaseSystem.postEnterMap55 12 anonymous function(){GuildWar.ins().getModel().checkinAppoint()?(ViewManager.ins().closeTopLevel(),ViewManager"
+    },
+    {
+      "type": "log",
+      "text": "[FF#363 +1882.4ms] listener:exit BaseSystem.postEnterMap55 12 anonymous function(){GuildWar.ins().getModel().checkinAppoint()?(ViewManager.ins().closeTopLevel(),ViewManager"
+    },
+    {
+      "type": "log",
+      "text": "[FF#364 +1882.4ms] listener:enter BaseSystem.postEnterMap55 13 r function(){for(var i=[],s=0;s<arguments.length;s++)i[s]=arguments[s];var n;i.length;return n=t?a.cal"
+    },
+    {
+      "type": "log",
+      "text": "[FF#365 +1882.5ms] enter MessageCenter.dispatch Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#366 +1882.6ms] exit MessageCenter.dispatch"
+    },
+    {
+      "type": "log",
+      "text": "[FF#367 +1882.6ms] listener:exit BaseSystem.postEnterMap55 13 r function(){for(var i=[],s=0;s<arguments.length;s++)i[s]=arguments[s];var n;i.length;return n=t?a.cal"
+    },
+    {
+      "type": "log",
+      "text": "[FF#368 +1882.6ms] listener:enter BaseSystem.postEnterMap55 14 anonymous function(){e.isWJBattle&&52e3!=GameMap.fubenID&&e.quitWJBattle()}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#369 +1882.6ms] listener:exit BaseSystem.postEnterMap55 14 anonymous function(){e.isWJBattle&&52e3!=GameMap.fubenID&&e.quitWJBattle()}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#370 +1882.7ms] listener:enter BaseSystem.postEnterMap55 15 anonymous function(){GameMap.fbType==UserFb.FB_TYPE_KF_BOSS?e.postEnterKFBossFb():GameMap.fbType==UserFb.FB_TY"
+    },
+    {
+      "type": "log",
+      "text": "[FF#371 +1882.8ms] listener:exit BaseSystem.postEnterMap55 15 anonymous function(){GameMap.fbType==UserFb.FB_TYPE_KF_BOSS?e.postEnterKFBossFb():GameMap.fbType==UserFb.FB_TY"
+    },
+    {
+      "type": "log",
+      "text": "[FF#372 +1882.8ms] listener:enter BaseSystem.postEnterMap55 16 anonymous function(){GameMap.fbType==UserFb.FB_TYPE_DEVILDOM_BOSS?e.postEnterFb():GameMap.lastFbTyp==UserFb.FB"
+    },
+    {
+      "type": "log",
+      "text": "[FF#373 +1882.8ms] listener:exit BaseSystem.postEnterMap55 16 anonymous function(){GameMap.fbType==UserFb.FB_TYPE_DEVILDOM_BOSS?e.postEnterFb():GameMap.lastFbTyp==UserFb.FB"
+    },
+    {
+      "type": "log",
+      "text": "[FF#374 +1882.8ms] listener:enter BaseSystem.postEnterMap55 17 anonymous function(){GameMap.fbType==UserFb.FB_TYPE_KF_ARENA?this.isKFArena=!0:GameMap.lastFbTyp==UserFb.FB_TY"
+    },
+    {
+      "type": "log",
+      "text": "[FF#375 +1882.8ms] listener:exit BaseSystem.postEnterMap55 17 anonymous function(){GameMap.fbType==UserFb.FB_TYPE_KF_ARENA?this.isKFArena=!0:GameMap.lastFbTyp==UserFb.FB_TY"
+    },
+    {
+      "type": "log",
+      "text": "[FF#376 +1882.8ms] listener:enter BaseSystem.postEnterMap55 18 anonymous function(){e.isCrossScene()}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#377 +1882.8ms] listener:exit BaseSystem.postEnterMap55 18 anonymous function(){e.isCrossScene()}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#378 +1882.9ms] listener:enter BaseSystem.postEnterMap55 19 anonymous function(){GameMap.sceneInMine()&&this.hasNewRecord&&!this.finishedData&&ViewManager.ins().open(Mine"
+    },
+    {
+      "type": "log",
+      "text": "[FF#379 +1882.9ms] listener:exit BaseSystem.postEnterMap55 19 anonymous function(){GameMap.sceneInMine()&&this.hasNewRecord&&!this.finishedData&&ViewManager.ins().open(Mine"
+    },
+    {
+      "type": "log",
+      "text": "[FF#380 +1883.0ms] listener:enter BaseSystem.postEnterMap55 20 anonymous function(){var t=GameMap.fubenID;if(!CityCC.ins().isCity){if(!t||GameMap.fbType==UserFb.FB_TYPE_GUAN"
+    },
+    {
+      "type": "log",
+      "text": "[FF#381 +1883.0ms] listener:exit BaseSystem.postEnterMap55 20 anonymous function(){var t=GameMap.fubenID;if(!CityCC.ins().isCity){if(!t||GameMap.fbType==UserFb.FB_TYPE_GUAN"
+    },
+    {
+      "type": "log",
+      "text": "[FF#382 +1883.0ms] listener:enter BaseSystem.postEnterMap55 21 anonymous function(){var t=this;this.masterAtkTarget={},this.attackMeHandles.length=0,this.canAttackHandles.le"
+    },
+    {
+      "type": "log",
+      "text": "[FF#383 +1883.1ms] listener:exit BaseSystem.postEnterMap55 21 anonymous function(){var t=this;this.masterAtkTarget={},this.attackMeHandles.length=0,this.canAttackHandles.le"
+    },
+    {
+      "type": "log",
+      "text": "[FF#384 +1883.1ms] listener:enter BaseSystem.postEnterMap55 22 w function(...args) {\n        const n = count(label);\n        if (!limit || should(label)) emit('enter"
+    },
+    {
+      "type": "log",
+      "text": "[FF#385 +1883.1ms] enter GameSceneView.onEnterMap "
+    },
+    {
+      "type": "log",
+      "text": "[FF#386 +1883.4ms] exit GameSceneView.onEnterMap"
+    },
+    {
+      "type": "log",
+      "text": "[FF#387 +1883.4ms] listener:exit BaseSystem.postEnterMap55 22 w function(...args) {\n        const n = count(label);\n        if (!limit || should(label)) emit('enter"
+    },
+    {
+      "type": "log",
+      "text": "[FF#388 +1883.4ms] listener:enter BaseSystem.postEnterMap55 23 w function(...args) {\n        const n = count(label);\n        if (!limit || should(label)) emit('enter"
+    },
+    {
+      "type": "log",
+      "text": "[FF#389 +1883.4ms] enter ChatMainUI.checkShow "
+    },
+    {
+      "type": "log",
+      "text": "[FF#390 +1883.4ms] exit ChatMainUI.checkShow"
+    },
+    {
+      "type": "log",
+      "text": "[FF#391 +1883.4ms] listener:exit BaseSystem.postEnterMap55 23 w function(...args) {\n        const n = count(label);\n        if (!limit || should(label)) emit('enter"
+    },
+    {
+      "type": "log",
+      "text": "[FF#392 +1883.4ms] listener:enter BaseSystem.postEnterMap55 24 anonymous function(){this.arrow&&egret.Tween.removeTweens(this.arrow),this.eff&&egret.Tween.removeTweens(this."
+    },
+    {
+      "type": "log",
+      "text": "[FF#393 +1883.5ms] listener:exit BaseSystem.postEnterMap55 24 anonymous function(){this.arrow&&egret.Tween.removeTweens(this.arrow),this.eff&&egret.Tween.removeTweens(this."
+    },
+    {
+      "type": "log",
+      "text": "[FF#394 +1883.5ms] message:exit "
+    },
+    {
+      "type": "log",
+      "text": "[FF#395 +1883.5ms] enter MapView.onEnterFrame 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#396 +1883.5ms] exit MapView.onEnterFrame"
+    },
+    {
+      "type": "log",
+      "text": "[FF#397 +1936.4ms] message:begin BaseSystem.postChangeCanAttackHandle141 listeners=0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#398 +1936.6ms] message:exit BaseSystem.postChangeCanAttackHandle141"
+    },
+    {
+      "type": "log",
+      "text": "[FF#399 +1936.6ms] message:begin BaseSystem.postSeceneIn391 listeners=0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#400 +1936.6ms] message:exit BaseSystem.postSeceneIn391"
+    },
+    {
+      "type": "log",
+      "text": "[FF#401 +1936.7ms] enter UIView2.updateRedPoint "
+    },
+    {
+      "type": "log",
+      "text": "[FF#402 +1936.9ms] exit UIView2.updateRedPoint"
+    },
+    {
+      "type": "log",
+      "text": "[FF#403 +1938.1ms] enter MessageCenter.dispatch Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#404 +1938.3ms] exit MessageCenter.dispatch"
+    },
+    {
+      "type": "log",
+      "text": "[FF#405 +1938.6ms] enter MessageCenter.dispatch Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#406 +1938.7ms] exit MessageCenter.dispatch"
+    },
+    {
+      "type": "log",
+      "text": "[FF#407 +1938.9ms] enter MessageCenter.dispatch Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#408 +1939.1ms] exit MessageCenter.dispatch"
+    },
+    {
+      "type": "log",
+      "text": "[FF#409 +1939.2ms] enter MessageCenter.dispatch Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#410 +1939.2ms] exit MessageCenter.dispatch"
+    },
+    {
+      "type": "log",
+      "text": "[FF#411 +1939.5ms] enter MessageCenter.dispatch Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#412 +1939.7ms] exit MessageCenter.dispatch"
+    },
+    {
+      "type": "log",
+      "text": "[FF#413 +1939.8ms] enter MessageCenter.dispatch Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#414 +1939.9ms] exit MessageCenter.dispatch"
+    },
+    {
+      "type": "log",
+      "text": "[FF#415 +1940.0ms] enter MessageCenter.dispatch Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#416 +1940.2ms] exit MessageCenter.dispatch"
+    },
+    {
+      "type": "log",
+      "text": "[FF#417 +1940.2ms] enter MapView.onEnterFrame 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#418 +1940.2ms] exit MapView.onEnterFrame"
+    },
+    {
+      "type": "log",
+      "text": "[FF#419 +1943.8ms] message:begin BaseSystem.postRoleHint571 listeners=1"
+    },
+    {
+      "type": "log",
+      "text": "[FF#420 +1943.8ms] listener:enter BaseSystem.postRoleHint571 0 anonymous function(t){this.roleBtn.redPoint.visible=t>0}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#421 +1944.0ms] listener:exit BaseSystem.postRoleHint571 0 anonymous function(t){this.roleBtn.redPoint.visible=t>0}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#422 +1944.0ms] message:exit "
+    },
+    {
+      "type": "log",
+      "text": "[FF#423 +1944.1ms] message:begin BaseSystem.postRoleRedPoint404 listeners=1"
+    },
+    {
+      "type": "log",
+      "text": "[FF#424 +1944.1ms] listener:enter BaseSystem.postRoleRedPoint404 0 a function(){n||(n=!0,TimerManager.ins().doTimer(60,1,o,e))}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#425 +1944.2ms] listener:exit BaseSystem.postRoleRedPoint404 0 a function(){n||(n=!0,TimerManager.ins().doTimer(60,1,o,e))}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#426 +1944.2ms] message:exit "
+    },
+    {
+      "type": "log",
+      "text": "[FF#427 +1944.2ms] message:begin BaseSystem.postHeartRoleRedPoint383 listeners=1"
+    },
+    {
+      "type": "log",
+      "text": "[FF#428 +1944.2ms] listener:enter BaseSystem.postHeartRoleRedPoint383 0 a function(){n||(n=!0,TimerManager.ins().doTimer(60,1,o,e))}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#429 +1944.3ms] listener:exit BaseSystem.postHeartRoleRedPoint383 0 a function(){n||(n=!0,TimerManager.ins().doTimer(60,1,o,e))}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#430 +1944.3ms] message:exit "
+    },
+    {
+      "type": "log",
+      "text": "[FF#431 +1944.4ms] message:begin BaseSystem.postGwTask329 listeners=3"
+    },
+    {
+      "type": "log",
+      "text": "[FF#432 +1944.4ms] listener:enter BaseSystem.postGwTask329 0 a function(){n||(n=!0,TimerManager.ins().doTimer(60,1,o,e))}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#433 +1944.4ms] listener:exit BaseSystem.postGwTask329 0 a function(){n||(n=!0,TimerManager.ins().doTimer(60,1,o,e))}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#434 +1944.4ms] listener:enter BaseSystem.postGwTask329 1 a function(){n||(n=!0,TimerManager.ins().doTimer(60,1,o,e))}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#435 +1944.5ms] listener:exit BaseSystem.postGwTask329 1 a function(){n||(n=!0,TimerManager.ins().doTimer(60,1,o,e))}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#436 +1944.5ms] listener:enter BaseSystem.postGwTask329 2 a function(){n||(n=!0,TimerManager.ins().doTimer(60,1,o,e))}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#437 +1944.5ms] listener:exit BaseSystem.postGwTask329 2 a function(){n||(n=!0,TimerManager.ins().doTimer(60,1,o,e))}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#438 +1944.5ms] message:exit "
+    },
+    {
+      "type": "log",
+      "text": "[FF#439 +1944.6ms] message:begin BaseSystem.postForgeTips295 listeners=4"
+    },
+    {
+      "type": "log",
+      "text": "[FF#440 +1944.6ms] listener:enter BaseSystem.postForgeTips295 0 a function(){n||(n=!0,TimerManager.ins().doTimer(60,1,o,e))}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#441 +1944.6ms] listener:exit BaseSystem.postForgeTips295 0 a function(){n||(n=!0,TimerManager.ins().doTimer(60,1,o,e))}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#442 +1944.6ms] listener:enter BaseSystem.postForgeTips295 1 a function(){n||(n=!0,TimerManager.ins().doTimer(60,1,o,e))}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#443 +1944.7ms] listener:exit BaseSystem.postForgeTips295 1 a function(){n||(n=!0,TimerManager.ins().doTimer(60,1,o,e))}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#444 +1944.7ms] listener:enter BaseSystem.postForgeTips295 2 a function(){n||(n=!0,TimerManager.ins().doTimer(60,1,o,e))}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#445 +1944.8ms] listener:exit BaseSystem.postForgeTips295 2 a function(){n||(n=!0,TimerManager.ins().doTimer(60,1,o,e))}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#446 +1944.8ms] listener:enter BaseSystem.postForgeTips295 3 a function(){n||(n=!0,TimerManager.ins().doTimer(60,1,o,e))}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#447 +1944.9ms] listener:exit BaseSystem.postForgeTips295 3 a function(){n||(n=!0,TimerManager.ins().doTimer(60,1,o,e))}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#448 +1944.9ms] message:exit "
+    },
+    {
+      "type": "log",
+      "text": "[FF#449 +1944.9ms] message:begin BaseSystem.postForgeTips295 listeners=4"
+    },
+    {
+      "type": "log",
+      "text": "[FF#450 +1944.9ms] listener:enter BaseSystem.postForgeTips295 0 a function(){n||(n=!0,TimerManager.ins().doTimer(60,1,o,e))}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#451 +1945.0ms] listener:exit BaseSystem.postForgeTips295 0 a function(){n||(n=!0,TimerManager.ins().doTimer(60,1,o,e))}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#452 +1945.0ms] listener:enter BaseSystem.postForgeTips295 1 a function(){n||(n=!0,TimerManager.ins().doTimer(60,1,o,e))}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#453 +1945.0ms] listener:exit BaseSystem.postForgeTips295 1 a function(){n||(n=!0,TimerManager.ins().doTimer(60,1,o,e))}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#454 +1945.1ms] listener:enter BaseSystem.postForgeTips295 2 a function(){n||(n=!0,TimerManager.ins().doTimer(60,1,o,e))}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#455 +1945.1ms] listener:exit BaseSystem.postForgeTips295 2 a function(){n||(n=!0,TimerManager.ins().doTimer(60,1,o,e))}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#456 +1945.2ms] listener:enter BaseSystem.postForgeTips295 3 a function(){n||(n=!0,TimerManager.ins().doTimer(60,1,o,e))}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#457 +1945.3ms] listener:exit BaseSystem.postForgeTips295 3 a function(){n||(n=!0,TimerManager.ins().doTimer(60,1,o,e))}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#458 +1945.3ms] message:exit "
+    },
+    {
+      "type": "log",
+      "text": "[FF#459 +1945.3ms] message:begin BaseSystem.postRoleHint571 listeners=1"
+    },
+    {
+      "type": "log",
+      "text": "[FF#460 +1945.4ms] listener:enter BaseSystem.postRoleHint571 0 anonymous function(t){this.roleBtn.redPoint.visible=t>0}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#461 +1945.4ms] listener:exit BaseSystem.postRoleHint571 0 anonymous function(t){this.roleBtn.redPoint.visible=t>0}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#462 +1945.4ms] message:exit "
+    },
+    {
+      "type": "log",
+      "text": "[FF#463 +1945.4ms] enter MapView.onEnterFrame 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#464 +1945.4ms] exit MapView.onEnterFrame"
+    },
+    {
+      "type": "log",
+      "text": "[FF#465 +1953.3ms] enter MapView.onEnterFrame 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#466 +1953.4ms] exit MapView.onEnterFrame"
+    },
+    {
+      "type": "log",
+      "text": "[FF#467 +1961.5ms] enter MapView.onEnterFrame 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#468 +1961.6ms] exit MapView.onEnterFrame"
+    },
+    {
+      "type": "log",
+      "text": "[FF#469 +1961.9ms] enter MapViewBg.onThumbnailComplete "
+    },
+    {
+      "type": "log",
+      "text": "[FF#470 +1962.0ms] enter MapViewBg.updateHDMap {\"x\":0,\"y\":0}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#471 +1962.7ms] exit MapViewBg.updateHDMap"
+    },
+    {
+      "type": "log",
+      "text": "[FF#472 +1962.8ms] exit MapViewBg.onThumbnailComplete"
+    },
+    {
+      "type": "log",
+      "text": "[FF#473 +1969.7ms] enter MapView.onEnterFrame 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#474 +1969.7ms] exit MapView.onEnterFrame"
+    },
+    {
+      "type": "log",
+      "text": "[FF#475 +1976.6ms] enter MapView.onEnterFrame 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#476 +1976.7ms] exit MapView.onEnterFrame"
+    },
+    {
+      "type": "log",
+      "text": "[FF#477 +1977.2ms] unhandledrejection NotAllowedError: play() failed because the user didn't interact with the document first."
+    },
+    {
+      "type": "log",
+      "text": "[FF#478 +1984.1ms] enter MapView.onEnterFrame 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#479 +1984.2ms] exit MapView.onEnterFrame"
+    },
+    {
+      "type": "log",
+      "text": "[FF#480 +1992.6ms] enter MapView.onEnterFrame 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#481 +1992.7ms] exit MapView.onEnterFrame"
+    },
+    {
+      "type": "log",
+      "text": "[FF#482 +2000.7ms] watchdog counts={\"SystemTicker.update\":336,\"SystemTicker.callLaterAsyncs\":336,\"SystemTicker.render\":171,\"SystemTicker.callLaters\":171,\"MessageCenter.run\":138,\"TimerManager.onEnterFrame\":138,\"GameSocket.onSocketRead\":7,\"GameSocket.processRecvPacket\":6,\"GameSocket.dispatch\":6,\"RoleMgr.doEnterGame\":1,\"SceneManager.runScene\":1,\"MainScene.onEnter\":1,\"ViewManager.open\":5,\"ViewManager.openEasy\":5,\"GameSceneView.initUI\":1,\"MapView.initMap\":1,\"ChatMainUI.checkShow\":2,\"GameApp.postLoginInit\":1,\"MessageCenter.dispatch\":23,\"MapView.onEnterFrame\":30,\"Actor.postInit\":1,\"SubRoles.doSubRole\":1,\"Role.parser\":1,\"GameLogic.postEnterMap\":1,\"MapView.changeMap\":1,\"MapViewBg.initThumbnail\":1,\"MapViewBg.updateHDMap\":3,\"UIView2.expChange\":1,\"GameSceneView.onEnterMap\":1,\"UIView2.updateRedPoint\":1,\"MapViewBg.onThumbnailComplete\":1}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#483 +2001.1ms] enter MessageCenter.dispatch Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#484 +2001.4ms] exit MessageCenter.dispatch"
+    },
+    {
+      "type": "log",
+      "text": "[FF#485 +2001.6ms] enter MessageCenter.dispatch Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#486 +2001.7ms] exit MessageCenter.dispatch"
+    },
+    {
+      "type": "log",
+      "text": "[FF#487 +2002.0ms] enter MessageCenter.dispatch Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#488 +2002.1ms] exit MessageCenter.dispatch"
+    },
+    {
+      "type": "log",
+      "text": "[FF#489 +2002.3ms] enter MessageCenter.dispatch Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#490 +2002.4ms] exit MessageCenter.dispatch"
+    },
+    {
+      "type": "log",
+      "text": "[FF#491 +2002.6ms] enter MessageCenter.dispatch Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#492 +2002.6ms] exit MessageCenter.dispatch"
+    },
+    {
+      "type": "log",
+      "text": "[FF#493 +2002.7ms] enter MapView.onEnterFrame 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#494 +2002.7ms] exit MapView.onEnterFrame"
+    },
+    {
+      "type": "log",
+      "text": "[FF#495 +2009.1ms] message:begin BaseSystem.postForgeWeaponRedPoint304 listeners=1"
+    },
+    {
+      "type": "log",
+      "text": "[FF#496 +2009.3ms] listener:enter BaseSystem.postForgeWeaponRedPoint304 0 a function(){n||(n=!0,TimerManager.ins().doTimer(60,1,o,e))}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#497 +2009.3ms] listener:exit BaseSystem.postForgeWeaponRedPoint304 0 a function(){n||(n=!0,TimerManager.ins().doTimer(60,1,o,e))}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#498 +2009.4ms] message:exit "
+    },
+    {
+      "type": "log",
+      "text": "[FF#499 +2009.4ms] message:begin BaseSystem.postForgeGemRedPoint303 listeners=1"
+    },
+    {
+      "type": "log",
+      "text": "[FF#500 +2009.5ms] listener:enter BaseSystem.postForgeGemRedPoint303 0 a function(){n||(n=!0,TimerManager.ins().doTimer(60,1,o,e))}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#501 +2009.5ms] listener:exit BaseSystem.postForgeGemRedPoint303 0 a function(){n||(n=!0,TimerManager.ins().doTimer(60,1,o,e))}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#502 +2009.5ms] message:exit "
+    },
+    {
+      "type": "log",
+      "text": "[FF#503 +2009.6ms] message:begin BaseSystem.postForgeZhulingRedPoint302 listeners=1"
+    },
+    {
+      "type": "log",
+      "text": "[FF#504 +2009.7ms] listener:enter BaseSystem.postForgeZhulingRedPoint302 0 a function(){n||(n=!0,TimerManager.ins().doTimer(60,1,o,e))}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#505 +2009.7ms] listener:exit BaseSystem.postForgeZhulingRedPoint302 0 a function(){n||(n=!0,TimerManager.ins().doTimer(60,1,o,e))}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#506 +2009.8ms] message:exit "
+    },
+    {
+      "type": "log",
+      "text": "[FF#507 +2009.8ms] message:begin BaseSystem.postForgeBoostRedPoint301 listeners=1"
+    },
+    {
+      "type": "log",
+      "text": "[FF#508 +2009.8ms] listener:enter BaseSystem.postForgeBoostRedPoint301 0 a function(){n||(n=!0,TimerManager.ins().doTimer(60,1,o,e))}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#509 +2009.8ms] listener:exit BaseSystem.postForgeBoostRedPoint301 0 a function(){n||(n=!0,TimerManager.ins().doTimer(60,1,o,e))}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#510 +2009.9ms] message:exit "
+    },
+    {
+      "type": "log",
+      "text": "[FF#511 +2010.0ms] message:begin BaseSystem.postHeartMethodRedPoint382 listeners=0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#512 +2010.1ms] message:exit BaseSystem.postHeartMethodRedPoint382"
+    },
+    {
+      "type": "log",
+      "text": "[FF#513 +2010.2ms] enter MapView.onEnterFrame 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#514 +2010.2ms] exit MapView.onEnterFrame"
+    },
+    {
+      "type": "log",
+      "text": "[FF#515 +2017.7ms] enter MapView.onEnterFrame 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#516 +2017.8ms] exit MapView.onEnterFrame"
+    },
+    {
+      "type": "log",
+      "text": "[FF#517 +2450.9ms] enter SystemTicker.update "
+    },
+    {
+      "type": "log",
+      "text": "[FF#518 +2451.2ms] enter SystemTicker.callLaterAsyncs 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#519 +2501.3ms] watchdog counts={\"SystemTicker.update\":519,\"SystemTicker.callLaterAsyncs\":519,\"SystemTicker.render\":264,\"SystemTicker.callLaters\":264,\"MessageCenter.run\":321,\"TimerManager.onEnterFrame\":321,\"GameSocket.onSocketRead\":7,\"GameSocket.processRecvPacket\":6,\"GameSocket.dispatch\":6,\"RoleMgr.doEnterGame\":1,\"SceneManager.runScene\":1,\"MainScene.onEnter\":1,\"ViewManager.open\":5,\"ViewManager.openEasy\":5,\"GameSceneView.initUI\":1,\"MapView.initMap\":1,\"ChatMainUI.checkShow\":2,\"GameApp.postLoginInit\":1,\"MessageCenter.dispatch\":28,\"MapView.onEnterFrame\":213,\"Actor.postInit\":1,\"SubRoles.doSubRole\":1,\"Role.parser\":1,\"GameLogic.postEnterMap\":1,\"MapView.changeMap\":1,\"MapViewBg.initThumbnail\":1,\"MapViewBg.updateHDMap\":3,\"UIView2.expChange\":1,\"GameSceneView.onEnterMap\":1,\"UIView2.updateRedPoint\":1,\"MapViewBg.onThumbnailComplete\":1}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#520 +2859.2ms] enter MessageCenter.dispatch Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#521 +2859.5ms] exit MessageCenter.dispatch"
+    },
+    {
+      "type": "log",
+      "text": "[FF#522 +2867.7ms] message:begin BaseSystem.postChangeCanAttackHandle141 listeners=0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#523 +2867.8ms] message:exit BaseSystem.postChangeCanAttackHandle141"
+    },
+    {
+      "type": "log",
+      "text": "[FF#524 +3000.6ms] watchdog counts={\"SystemTicker.update\":696,\"SystemTicker.callLaterAsyncs\":696,\"SystemTicker.render\":351,\"SystemTicker.callLaters\":351,\"MessageCenter.run\":498,\"TimerManager.onEnterFrame\":498,\"GameSocket.onSocketRead\":7,\"GameSocket.processRecvPacket\":6,\"GameSocket.dispatch\":6,\"RoleMgr.doEnterGame\":1,\"SceneManager.runScene\":1,\"MainScene.onEnter\":1,\"ViewManager.open\":5,\"ViewManager.openEasy\":5,\"GameSceneView.initUI\":1,\"MapView.initMap\":1,\"ChatMainUI.checkShow\":2,\"GameApp.postLoginInit\":1,\"MessageCenter.dispatch\":29,\"MapView.onEnterFrame\":390,\"Actor.postInit\":1,\"SubRoles.doSubRole\":1,\"Role.parser\":1,\"GameLogic.postEnterMap\":1,\"MapView.changeMap\":1,\"MapViewBg.initThumbnail\":1,\"MapViewBg.updateHDMap\":3,\"UIView2.expChange\":1,\"GameSceneView.onEnterMap\":1,\"UIView2.updateRedPoint\":1,\"MapViewBg.onThumbnailComplete\":1}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#525 +3000.9ms] enter MessageCenter.run queue=0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#526 +3001.0ms] enter TimerManager.onEnterFrame Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#527 +3302.7ms] enter MapView.onEnterFrame 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#528 +3502.5ms] watchdog counts={\"SystemTicker.update\":879,\"SystemTicker.callLaterAsyncs\":879,\"SystemTicker.render\":444,\"SystemTicker.callLaters\":444,\"MessageCenter.run\":681,\"TimerManager.onEnterFrame\":681,\"GameSocket.onSocketRead\":7,\"GameSocket.processRecvPacket\":6,\"GameSocket.dispatch\":6,\"RoleMgr.doEnterGame\":1,\"SceneManager.runScene\":1,\"MainScene.onEnter\":1,\"ViewManager.open\":5,\"ViewManager.openEasy\":5,\"GameSceneView.initUI\":1,\"MapView.initMap\":1,\"ChatMainUI.checkShow\":2,\"GameApp.postLoginInit\":1,\"MessageCenter.dispatch\":29,\"MapView.onEnterFrame\":573,\"Actor.postInit\":1,\"SubRoles.doSubRole\":1,\"Role.parser\":1,\"GameLogic.postEnterMap\":1,\"MapView.changeMap\":1,\"MapViewBg.initThumbnail\":1,\"MapViewBg.updateHDMap\":3,\"UIView2.expChange\":1,\"GameSceneView.onEnterMap\":1,\"UIView2.updateRedPoint\":1,\"MapViewBg.onThumbnailComplete\":1}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#529 +3817.7ms] enter SystemTicker.render Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#530 +3818.0ms] enter SystemTicker.callLaters 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#531 +3867.7ms] enter MessageCenter.dispatch Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#532 +3868.1ms] exit MessageCenter.dispatch"
+    },
+    {
+      "type": "log",
+      "text": "[FF#533 +3875.8ms] message:begin BaseSystem.postChangeCanAttackHandle141 listeners=0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#534 +3876.0ms] message:exit BaseSystem.postChangeCanAttackHandle141"
+    },
+    {
+      "type": "log",
+      "text": "[FF#535 +4001.5ms] watchdog counts={\"SystemTicker.update\":1059,\"SystemTicker.callLaterAsyncs\":1059,\"SystemTicker.render\":534,\"SystemTicker.callLaters\":534,\"MessageCenter.run\":861,\"TimerManager.onEnterFrame\":861,\"GameSocket.onSocketRead\":7,\"GameSocket.processRecvPacket\":6,\"GameSocket.dispatch\":6,\"RoleMgr.doEnterGame\":1,\"SceneManager.runScene\":1,\"MainScene.onEnter\":1,\"ViewManager.open\":5,\"ViewManager.openEasy\":5,\"GameSceneView.initUI\":1,\"MapView.initMap\":1,\"ChatMainUI.checkShow\":2,\"GameApp.postLoginInit\":1,\"MessageCenter.dispatch\":30,\"MapView.onEnterFrame\":753,\"Actor.postInit\":1,\"SubRoles.doSubRole\":1,\"Role.parser\":1,\"GameLogic.postEnterMap\":1,\"MapView.changeMap\":1,\"MapViewBg.initThumbnail\":1,\"MapViewBg.updateHDMap\":3,\"UIView2.expChange\":1,\"GameSceneView.onEnterMap\":1,\"UIView2.updateRedPoint\":1,\"MapViewBg.onThumbnailComplete\":1}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#536 +4502.0ms] watchdog counts={\"SystemTicker.update\":1239,\"SystemTicker.callLaterAsyncs\":1239,\"SystemTicker.render\":624,\"SystemTicker.callLaters\":624,\"MessageCenter.run\":1041,\"TimerManager.onEnterFrame\":1041,\"GameSocket.onSocketRead\":7,\"GameSocket.processRecvPacket\":6,\"GameSocket.dispatch\":6,\"RoleMgr.doEnterGame\":1,\"SceneManager.runScene\":1,\"MainScene.onEnter\":1,\"ViewManager.open\":5,\"ViewManager.openEasy\":5,\"GameSceneView.initUI\":1,\"MapView.initMap\":1,\"ChatMainUI.checkShow\":2,\"GameApp.postLoginInit\":1,\"MessageCenter.dispatch\":30,\"MapView.onEnterFrame\":933,\"Actor.postInit\":1,\"SubRoles.doSubRole\":1,\"Role.parser\":1,\"GameLogic.postEnterMap\":1,\"MapView.changeMap\":1,\"MapViewBg.initThumbnail\":1,\"MapViewBg.updateHDMap\":3,\"UIView2.expChange\":1,\"GameSceneView.onEnterMap\":1,\"UIView2.updateRedPoint\":1,\"MapViewBg.onThumbnailComplete\":1}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#537 +4859.6ms] enter MessageCenter.dispatch Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#538 +4860.1ms] exit MessageCenter.dispatch"
+    },
+    {
+      "type": "log",
+      "text": "[FF#539 +4867.6ms] message:begin BaseSystem.postRoleHint571 listeners=1"
+    },
+    {
+      "type": "log",
+      "text": "[FF#540 +4867.8ms] listener:enter BaseSystem.postRoleHint571 0 anonymous function(t){this.roleBtn.redPoint.visible=t>0}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#541 +4867.9ms] listener:exit BaseSystem.postRoleHint571 0 anonymous function(t){this.roleBtn.redPoint.visible=t>0}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#542 +4867.9ms] message:exit "
+    },
+    {
+      "type": "log",
+      "text": "[FF#543 +4868.0ms] enter MessageCenter.dispatch Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#544 +4868.2ms] exit MessageCenter.dispatch"
+    },
+    {
+      "type": "log",
+      "text": "[FF#545 +4875.8ms] message:begin BaseSystem.postChangeCanAttackHandle141 listeners=0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#546 +4876.0ms] message:exit BaseSystem.postChangeCanAttackHandle141"
+    },
+    {
+      "type": "log",
+      "text": "[FF#547 +5001.1ms] watchdog counts={\"SystemTicker.update\":1416,\"SystemTicker.callLaterAsyncs\":1416,\"SystemTicker.render\":711,\"SystemTicker.callLaters\":711,\"MessageCenter.run\":1218,\"TimerManager.onEnterFrame\":1218,\"GameSocket.onSocketRead\":7,\"GameSocket.processRecvPacket\":6,\"GameSocket.dispatch\":6,\"RoleMgr.doEnterGame\":1,\"SceneManager.runScene\":1,\"MainScene.onEnter\":1,\"ViewManager.open\":5,\"ViewManager.openEasy\":5,\"GameSceneView.initUI\":1,\"MapView.initMap\":1,\"ChatMainUI.checkShow\":2,\"GameApp.postLoginInit\":1,\"MessageCenter.dispatch\":32,\"MapView.onEnterFrame\":1110,\"Actor.postInit\":1,\"SubRoles.doSubRole\":1,\"Role.parser\":1,\"GameLogic.postEnterMap\":1,\"MapView.changeMap\":1,\"MapViewBg.initThumbnail\":1,\"MapViewBg.updateHDMap\":3,\"UIView2.expChange\":1,\"GameSceneView.onEnterMap\":1,\"UIView2.updateRedPoint\":1,\"MapViewBg.onThumbnailComplete\":1}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#548 +5225.9ms] exit SystemTicker.callLaterAsyncs"
+    },
+    {
+      "type": "log",
+      "text": "[FF#549 +5226.0ms] exit SystemTicker.update"
+    },
+    {
+      "type": "log",
+      "text": "[FF#550 +5500.7ms] watchdog counts={\"SystemTicker.update\":1596,\"SystemTicker.callLaterAsyncs\":1596,\"SystemTicker.render\":801,\"SystemTicker.callLaters\":801,\"MessageCenter.run\":1398,\"TimerManager.onEnterFrame\":1398,\"GameSocket.onSocketRead\":7,\"GameSocket.processRecvPacket\":6,\"GameSocket.dispatch\":6,\"RoleMgr.doEnterGame\":1,\"SceneManager.runScene\":1,\"MainScene.onEnter\":1,\"ViewManager.open\":5,\"ViewManager.openEasy\":5,\"GameSceneView.initUI\":1,\"MapView.initMap\":1,\"ChatMainUI.checkShow\":2,\"GameApp.postLoginInit\":1,\"MessageCenter.dispatch\":32,\"MapView.onEnterFrame\":1290,\"Actor.postInit\":1,\"SubRoles.doSubRole\":1,\"Role.parser\":1,\"GameLogic.postEnterMap\":1,\"MapView.changeMap\":1,\"MapViewBg.initThumbnail\":1,\"MapViewBg.updateHDMap\":3,\"UIView2.expChange\":1,\"GameSceneView.onEnterMap\":1,\"UIView2.updateRedPoint\":1,\"MapViewBg.onThumbnailComplete\":1}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#551 +5775.8ms] exit MessageCenter.run"
+    },
+    {
+      "type": "log",
+      "text": "[FF#552 +5776.0ms] exit TimerManager.onEnterFrame"
+    },
+    {
+      "type": "log",
+      "text": "[FF#553 +5867.5ms] enter MessageCenter.dispatch Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#554 +5867.7ms] exit MessageCenter.dispatch"
+    },
+    {
+      "type": "log",
+      "text": "[FF#555 +5875.8ms] message:begin BaseSystem.postChangeCanAttackHandle141 listeners=0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#556 +5875.9ms] message:exit BaseSystem.postChangeCanAttackHandle141"
+    },
+    {
+      "type": "log",
+      "text": "[FF#557 +6001.5ms] watchdog counts={\"SystemTicker.update\":1779,\"SystemTicker.callLaterAsyncs\":1779,\"SystemTicker.render\":894,\"SystemTicker.callLaters\":894,\"MessageCenter.run\":1581,\"TimerManager.onEnterFrame\":1581,\"GameSocket.onSocketRead\":7,\"GameSocket.processRecvPacket\":6,\"GameSocket.dispatch\":6,\"RoleMgr.doEnterGame\":1,\"SceneManager.runScene\":1,\"MainScene.onEnter\":1,\"ViewManager.open\":5,\"ViewManager.openEasy\":5,\"GameSceneView.initUI\":1,\"MapView.initMap\":1,\"ChatMainUI.checkShow\":2,\"GameApp.postLoginInit\":1,\"MessageCenter.dispatch\":33,\"MapView.onEnterFrame\":1473,\"Actor.postInit\":1,\"SubRoles.doSubRole\":1,\"Role.parser\":1,\"GameLogic.postEnterMap\":1,\"MapView.changeMap\":1,\"MapViewBg.initThumbnail\":1,\"MapViewBg.updateHDMap\":3,\"UIView2.expChange\":1,\"GameSceneView.onEnterMap\":1,\"UIView2.updateRedPoint\":1,\"MapViewBg.onThumbnailComplete\":1}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#558 +6075.8ms] exit MapView.onEnterFrame"
+    },
+    {
+      "type": "log",
+      "text": "[FF#559 +6501.6ms] watchdog counts={\"SystemTicker.update\":1959,\"SystemTicker.callLaterAsyncs\":1959,\"SystemTicker.render\":984,\"SystemTicker.callLaters\":984,\"MessageCenter.run\":1761,\"TimerManager.onEnterFrame\":1761,\"GameSocket.onSocketRead\":7,\"GameSocket.processRecvPacket\":6,\"GameSocket.dispatch\":6,\"RoleMgr.doEnterGame\":1,\"SceneManager.runScene\":1,\"MainScene.onEnter\":1,\"ViewManager.open\":5,\"ViewManager.openEasy\":5,\"GameSceneView.initUI\":1,\"MapView.initMap\":1,\"ChatMainUI.checkShow\":2,\"GameApp.postLoginInit\":1,\"MessageCenter.dispatch\":33,\"MapView.onEnterFrame\":1653,\"Actor.postInit\":1,\"SubRoles.doSubRole\":1,\"Role.parser\":1,\"GameLogic.postEnterMap\":1,\"MapView.changeMap\":1,\"MapViewBg.initThumbnail\":1,\"MapViewBg.updateHDMap\":3,\"UIView2.expChange\":1,\"GameSceneView.onEnterMap\":1,\"UIView2.updateRedPoint\":1,\"MapViewBg.onThumbnailComplete\":1}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#560 +6617.5ms] enter SystemTicker.update "
+    },
+    {
+      "type": "log",
+      "text": "[FF#561 +6617.6ms] enter SystemTicker.callLaterAsyncs 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#562 +6867.6ms] enter MessageCenter.dispatch Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#563 +6867.9ms] exit MessageCenter.dispatch"
+    },
+    {
+      "type": "log",
+      "text": "[FF#564 +6875.9ms] message:begin BaseSystem.postChangeCanAttackHandle141 listeners=0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#565 +6876.0ms] message:exit BaseSystem.postChangeCanAttackHandle141"
+    },
+    {
+      "type": "log",
+      "text": "[FF#566 +7001.8ms] watchdog counts={\"SystemTicker.update\":2139,\"SystemTicker.callLaterAsyncs\":2139,\"SystemTicker.render\":1074,\"SystemTicker.callLaters\":1074,\"MessageCenter.run\":1941,\"TimerManager.onEnterFrame\":1941,\"GameSocket.onSocketRead\":7,\"GameSocket.processRecvPacket\":6,\"GameSocket.dispatch\":6,\"RoleMgr.doEnterGame\":1,\"SceneManager.runScene\":1,\"MainScene.onEnter\":1,\"ViewManager.open\":5,\"ViewManager.openEasy\":5,\"GameSceneView.initUI\":1,\"MapView.initMap\":1,\"ChatMainUI.checkShow\":2,\"GameApp.postLoginInit\":1,\"MessageCenter.dispatch\":34,\"MapView.onEnterFrame\":1833,\"Actor.postInit\":1,\"SubRoles.doSubRole\":1,\"Role.parser\":1,\"GameLogic.postEnterMap\":1,\"MapView.changeMap\":1,\"MapViewBg.initThumbnail\":1,\"MapViewBg.updateHDMap\":3,\"UIView2.expChange\":1,\"GameSceneView.onEnterMap\":1,\"UIView2.updateRedPoint\":1,\"MapViewBg.onThumbnailComplete\":1}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#567 +7167.6ms] enter MessageCenter.run queue=0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#568 +7167.7ms] enter TimerManager.onEnterFrame Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#569 +7467.7ms] enter MapView.onEnterFrame 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#570 +7501.5ms] watchdog counts={\"SystemTicker.update\":2319,\"SystemTicker.callLaterAsyncs\":2319,\"SystemTicker.render\":1164,\"SystemTicker.callLaters\":1164,\"MessageCenter.run\":2121,\"TimerManager.onEnterFrame\":2121,\"GameSocket.onSocketRead\":7,\"GameSocket.processRecvPacket\":6,\"GameSocket.dispatch\":6,\"RoleMgr.doEnterGame\":1,\"SceneManager.runScene\":1,\"MainScene.onEnter\":1,\"ViewManager.open\":5,\"ViewManager.openEasy\":5,\"GameSceneView.initUI\":1,\"MapView.initMap\":1,\"ChatMainUI.checkShow\":2,\"GameApp.postLoginInit\":1,\"MessageCenter.dispatch\":34,\"MapView.onEnterFrame\":2013,\"Actor.postInit\":1,\"SubRoles.doSubRole\":1,\"Role.parser\":1,\"GameLogic.postEnterMap\":1,\"MapView.changeMap\":1,\"MapViewBg.initThumbnail\":1,\"MapViewBg.updateHDMap\":3,\"UIView2.expChange\":1,\"GameSceneView.onEnterMap\":1,\"UIView2.updateRedPoint\":1,\"MapViewBg.onThumbnailComplete\":1}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#571 +7867.6ms] enter MessageCenter.dispatch Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#572 +7868.0ms] exit MessageCenter.dispatch"
+    },
+    {
+      "type": "log",
+      "text": "[FF#573 +7875.8ms] message:begin BaseSystem.postChangeCanAttackHandle141 listeners=0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#574 +7876.0ms] message:exit BaseSystem.postChangeCanAttackHandle141"
+    },
+    {
+      "type": "log",
+      "text": "[FF#575 +8001.5ms] watchdog counts={\"SystemTicker.update\":2499,\"SystemTicker.callLaterAsyncs\":2499,\"SystemTicker.render\":1254,\"SystemTicker.callLaters\":1254,\"MessageCenter.run\":2301,\"TimerManager.onEnterFrame\":2301,\"GameSocket.onSocketRead\":7,\"GameSocket.processRecvPacket\":6,\"GameSocket.dispatch\":6,\"RoleMgr.doEnterGame\":1,\"SceneManager.runScene\":1,\"MainScene.onEnter\":1,\"ViewManager.open\":5,\"ViewManager.openEasy\":5,\"GameSceneView.initUI\":1,\"MapView.initMap\":1,\"ChatMainUI.checkShow\":2,\"GameApp.postLoginInit\":1,\"MessageCenter.dispatch\":35,\"MapView.onEnterFrame\":2193,\"Actor.postInit\":1,\"SubRoles.doSubRole\":1,\"Role.parser\":1,\"GameLogic.postEnterMap\":1,\"MapView.changeMap\":1,\"MapViewBg.initThumbnail\":1,\"MapViewBg.updateHDMap\":3,\"UIView2.expChange\":1,\"GameSceneView.onEnterMap\":1,\"UIView2.updateRedPoint\":1,\"MapViewBg.onThumbnailComplete\":1}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#576 +8501.8ms] watchdog counts={\"SystemTicker.update\":2679,\"SystemTicker.callLaterAsyncs\":2679,\"SystemTicker.render\":1344,\"SystemTicker.callLaters\":1344,\"MessageCenter.run\":2481,\"TimerManager.onEnterFrame\":2481,\"GameSocket.onSocketRead\":7,\"GameSocket.processRecvPacket\":6,\"GameSocket.dispatch\":6,\"RoleMgr.doEnterGame\":1,\"SceneManager.runScene\":1,\"MainScene.onEnter\":1,\"ViewManager.open\":5,\"ViewManager.openEasy\":5,\"GameSceneView.initUI\":1,\"MapView.initMap\":1,\"ChatMainUI.checkShow\":2,\"GameApp.postLoginInit\":1,\"MessageCenter.dispatch\":35,\"MapView.onEnterFrame\":2373,\"Actor.postInit\":1,\"SubRoles.doSubRole\":1,\"Role.parser\":1,\"GameLogic.postEnterMap\":1,\"MapView.changeMap\":1,\"MapViewBg.initThumbnail\":1,\"MapViewBg.updateHDMap\":3,\"UIView2.expChange\":1,\"GameSceneView.onEnterMap\":1,\"UIView2.updateRedPoint\":1,\"MapViewBg.onThumbnailComplete\":1}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#577 +8867.6ms] enter MessageCenter.dispatch Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#578 +8867.8ms] exit MessageCenter.dispatch"
+    },
+    {
+      "type": "log",
+      "text": "[FF#579 +8875.8ms] message:begin BaseSystem.postChangeCanAttackHandle141 listeners=0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#580 +8876.1ms] message:exit BaseSystem.postChangeCanAttackHandle141"
+    },
+    {
+      "type": "log",
+      "text": "[FF#581 +9001.7ms] watchdog counts={\"SystemTicker.update\":2859,\"SystemTicker.callLaterAsyncs\":2859,\"SystemTicker.render\":1434,\"SystemTicker.callLaters\":1434,\"MessageCenter.run\":2661,\"TimerManager.onEnterFrame\":2661,\"GameSocket.onSocketRead\":7,\"GameSocket.processRecvPacket\":6,\"GameSocket.dispatch\":6,\"RoleMgr.doEnterGame\":1,\"SceneManager.runScene\":1,\"MainScene.onEnter\":1,\"ViewManager.open\":5,\"ViewManager.openEasy\":5,\"GameSceneView.initUI\":1,\"MapView.initMap\":1,\"ChatMainUI.checkShow\":2,\"GameApp.postLoginInit\":1,\"MessageCenter.dispatch\":36,\"MapView.onEnterFrame\":2553,\"Actor.postInit\":1,\"SubRoles.doSubRole\":1,\"Role.parser\":1,\"GameLogic.postEnterMap\":1,\"MapView.changeMap\":1,\"MapViewBg.initThumbnail\":1,\"MapViewBg.updateHDMap\":3,\"UIView2.expChange\":1,\"GameSceneView.onEnterMap\":1,\"UIView2.updateRedPoint\":1,\"MapViewBg.onThumbnailComplete\":1}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#582 +9367.6ms] exit SystemTicker.callLaters"
+    },
+    {
+      "type": "log",
+      "text": "[FF#583 +9368.1ms] exit SystemTicker.render"
+    },
+    {
+      "type": "log",
+      "text": "[FF#584 +9392.4ms] exit SystemTicker.callLaterAsyncs"
+    },
+    {
+      "type": "log",
+      "text": "[FF#585 +9392.6ms] exit SystemTicker.update"
+    },
+    {
+      "type": "log",
+      "text": "[FF#586 +9501.5ms] watchdog counts={\"SystemTicker.update\":3039,\"SystemTicker.callLaterAsyncs\":3039,\"SystemTicker.render\":1524,\"SystemTicker.callLaters\":1524,\"MessageCenter.run\":2841,\"TimerManager.onEnterFrame\":2841,\"GameSocket.onSocketRead\":7,\"GameSocket.processRecvPacket\":6,\"GameSocket.dispatch\":6,\"RoleMgr.doEnterGame\":1,\"SceneManager.runScene\":1,\"MainScene.onEnter\":1,\"ViewManager.open\":5,\"ViewManager.openEasy\":5,\"GameSceneView.initUI\":1,\"MapView.initMap\":1,\"ChatMainUI.checkShow\":2,\"GameApp.postLoginInit\":1,\"MessageCenter.dispatch\":36,\"MapView.onEnterFrame\":2733,\"Actor.postInit\":1,\"SubRoles.doSubRole\":1,\"Role.parser\":1,\"GameLogic.postEnterMap\":1,\"MapView.changeMap\":1,\"MapViewBg.initThumbnail\":1,\"MapViewBg.updateHDMap\":3,\"UIView2.expChange\":1,\"GameSceneView.onEnterMap\":1,\"UIView2.updateRedPoint\":1,\"MapViewBg.onThumbnailComplete\":1}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#587 +9867.5ms] enter MessageCenter.dispatch Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#588 +9867.8ms] exit MessageCenter.dispatch"
+    },
+    {
+      "type": "log",
+      "text": "[FF#589 +9875.9ms] message:begin BaseSystem.postChangeCanAttackHandle141 listeners=0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#590 +9876.2ms] message:exit BaseSystem.postChangeCanAttackHandle141"
+    },
+    {
+      "type": "log",
+      "text": "[FF#591 +9942.4ms] exit MessageCenter.run"
+    },
+    {
+      "type": "log",
+      "text": "[FF#592 +9942.5ms] exit TimerManager.onEnterFrame"
+    },
+    {
+      "type": "log",
+      "text": "[FF#593 +10002.0ms] watchdog counts={\"SystemTicker.update\":3219,\"SystemTicker.callLaterAsyncs\":3219,\"SystemTicker.render\":1614,\"SystemTicker.callLaters\":1614,\"MessageCenter.run\":3021,\"TimerManager.onEnterFrame\":3021,\"GameSocket.onSocketRead\":7,\"GameSocket.processRecvPacket\":6,\"GameSocket.dispatch\":6,\"RoleMgr.doEnterGame\":1,\"SceneManager.runScene\":1,\"MainScene.onEnter\":1,\"ViewManager.open\":5,\"ViewManager.openEasy\":5,\"GameSceneView.initUI\":1,\"MapView.initMap\":1,\"ChatMainUI.checkShow\":2,\"GameApp.postLoginInit\":1,\"MessageCenter.dispatch\":37,\"MapView.onEnterFrame\":2913,\"Actor.postInit\":1,\"SubRoles.doSubRole\":1,\"Role.parser\":1,\"GameLogic.postEnterMap\":1,\"MapView.changeMap\":1,\"MapViewBg.initThumbnail\":1,\"MapViewBg.updateHDMap\":3,\"UIView2.expChange\":1,\"GameSceneView.onEnterMap\":1,\"UIView2.updateRedPoint\":1,\"MapViewBg.onThumbnailComplete\":1}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#594 +10242.6ms] exit MapView.onEnterFrame"
+    },
+    {
+      "type": "log",
+      "text": "[FF#595 +10502.2ms] watchdog counts={\"SystemTicker.update\":3399,\"SystemTicker.callLaterAsyncs\":3399,\"SystemTicker.render\":1704,\"SystemTicker.callLaters\":1704,\"MessageCenter.run\":3201,\"TimerManager.onEnterFrame\":3201,\"GameSocket.onSocketRead\":7,\"GameSocket.processRecvPacket\":6,\"GameSocket.dispatch\":6,\"RoleMgr.doEnterGame\":1,\"SceneManager.runScene\":1,\"MainScene.onEnter\":1,\"ViewManager.open\":5,\"ViewManager.openEasy\":5,\"GameSceneView.initUI\":1,\"MapView.initMap\":1,\"ChatMainUI.checkShow\":2,\"GameApp.postLoginInit\":1,\"MessageCenter.dispatch\":37,\"MapView.onEnterFrame\":3093,\"Actor.postInit\":1,\"SubRoles.doSubRole\":1,\"Role.parser\":1,\"GameLogic.postEnterMap\":1,\"MapView.changeMap\":1,\"MapViewBg.initThumbnail\":1,\"MapViewBg.updateHDMap\":3,\"UIView2.expChange\":1,\"GameSceneView.onEnterMap\":1,\"UIView2.updateRedPoint\":1,\"MapViewBg.onThumbnailComplete\":1}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#596 +10784.4ms] enter SystemTicker.update "
+    },
+    {
+      "type": "log",
+      "text": "[FF#597 +10784.5ms] enter SystemTicker.callLaterAsyncs 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#598 +10867.7ms] enter MessageCenter.dispatch Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#599 +10867.9ms] exit MessageCenter.dispatch"
+    },
+    {
+      "type": "log",
+      "text": "[FF#600 +10876.0ms] message:begin BaseSystem.postChangeCanAttackHandle141 listeners=0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#601 +10876.3ms] message:exit BaseSystem.postChangeCanAttackHandle141"
+    },
+    {
+      "type": "log",
+      "text": "[FF#602 +11001.5ms] watchdog counts={\"SystemTicker.update\":3579,\"SystemTicker.callLaterAsyncs\":3579,\"SystemTicker.render\":1794,\"SystemTicker.callLaters\":1794,\"MessageCenter.run\":3381,\"TimerManager.onEnterFrame\":3381,\"GameSocket.onSocketRead\":7,\"GameSocket.processRecvPacket\":6,\"GameSocket.dispatch\":6,\"RoleMgr.doEnterGame\":1,\"SceneManager.runScene\":1,\"MainScene.onEnter\":1,\"ViewManager.open\":5,\"ViewManager.openEasy\":5,\"GameSceneView.initUI\":1,\"MapView.initMap\":1,\"ChatMainUI.checkShow\":2,\"GameApp.postLoginInit\":1,\"MessageCenter.dispatch\":38,\"MapView.onEnterFrame\":3273,\"Actor.postInit\":1,\"SubRoles.doSubRole\":1,\"Role.parser\":1,\"GameLogic.postEnterMap\":1,\"MapView.changeMap\":1,\"MapViewBg.initThumbnail\":1,\"MapViewBg.updateHDMap\":3,\"UIView2.expChange\":1,\"GameSceneView.onEnterMap\":1,\"UIView2.updateRedPoint\":1,\"MapViewBg.onThumbnailComplete\":1}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#603 +11334.2ms] enter MessageCenter.run queue=0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#604 +11334.5ms] enter TimerManager.onEnterFrame Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#605 +11501.4ms] watchdog counts={\"SystemTicker.update\":3759,\"SystemTicker.callLaterAsyncs\":3759,\"SystemTicker.render\":1884,\"SystemTicker.callLaters\":1884,\"MessageCenter.run\":3561,\"TimerManager.onEnterFrame\":3561,\"GameSocket.onSocketRead\":7,\"GameSocket.processRecvPacket\":6,\"GameSocket.dispatch\":6,\"RoleMgr.doEnterGame\":1,\"SceneManager.runScene\":1,\"MainScene.onEnter\":1,\"ViewManager.open\":5,\"ViewManager.openEasy\":5,\"GameSceneView.initUI\":1,\"MapView.initMap\":1,\"ChatMainUI.checkShow\":2,\"GameApp.postLoginInit\":1,\"MessageCenter.dispatch\":38,\"MapView.onEnterFrame\":3453,\"Actor.postInit\":1,\"SubRoles.doSubRole\":1,\"Role.parser\":1,\"GameLogic.postEnterMap\":1,\"MapView.changeMap\":1,\"MapViewBg.initThumbnail\":1,\"MapViewBg.updateHDMap\":3,\"UIView2.expChange\":1,\"GameSceneView.onEnterMap\":1,\"UIView2.updateRedPoint\":1,\"MapViewBg.onThumbnailComplete\":1}"
+    },
+    {
+      "type": "log",
+      "text": "[FF#606 +11634.2ms] enter MapView.onEnterFrame 0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#607 +11867.7ms] enter MessageCenter.dispatch Array(2)"
+    },
+    {
+      "type": "log",
+      "text": "[FF#608 +11868.2ms] exit MessageCenter.dispatch"
+    },
+    {
+      "type": "log",
+      "text": "[FF#609 +11875.8ms] message:begin BaseSystem.postChangeCanAttackHandle141 listeners=0"
+    },
+    {
+      "type": "log",
+      "text": "[FF#610 +11876.0ms] message:exit BaseSystem.postChangeCanAttackHandle141"
+    },
+    {
+      "type": "log",
+      "text": "[FF#611 +12001.8ms] watchdog counts={\"SystemTicker.update\":3936,\"SystemTicker.callLaterAsyncs\":3936,\"SystemTicker.render\":1971,\"SystemTicker.callLaters\":1971,\"MessageCenter.run\":3738,\"TimerManager.onEnterFrame\":3738,\"GameSocket.onSocketRead\":7,\"GameSocket.processRecvPacket\":6,\"GameSocket.dispatch\":6,\"RoleMgr.doEnterGame\":1,\"SceneManager.runScene\":1,\"MainScene.onEnter\":1,\"ViewManager.open\":5,\"ViewManager.openEasy\":5,\"GameSceneView.initUI\":1,\"MapView.initMap\":1,\"ChatMainUI.checkShow\":2,\"GameApp.postLoginInit\":1,\"MessageCenter.dispatch\":39,\"MapView.onEnterFrame\":3630,\"Actor.postInit\":1,\"SubRoles.doSubRole\":1,\"Role.parser\":1,\"GameLogic.postEnterMap\":1,\"MapView.changeMap\":1,\"MapViewBg.initThumbnail\":1,\"MapViewBg.updateHDMap\":3,\"UIView2.expChange\":1,\"GameSceneView.onEnterMap\":1,\"UIView2.updateRedPoint\":1,\"MapViewBg.onThumbnailComplete\":1}"
+    }
+  ],
+  "exceptions": [
+    {
+      "exceptionId": 1,
+      "text": "Uncaught (in promise)",
+      "lineNumber": 0,
+      "columnNumber": 8852,
+      "scriptId": "16",
+      "url": "http://localhost/libs/modules/egret/egret.web.min.js",
+      "stackTrace": {
+        "callFrames": [
+          {
+            "functionName": "i.$play",
+            "scriptId": "16",
+            "url": "http://localhost/libs/modules/egret/egret.web.min.js",
+            "lineNumber": 0,
+            "columnNumber": 8852
+          },
+          {
+            "functionName": "i.play",
+            "scriptId": "16",
+            "url": "http://localhost/libs/modules/egret/egret.web.min.js",
+            "lineNumber": 0,
+            "columnNumber": 7446
+          },
+          {
+            "functionName": "e.playSound",
+            "scriptId": "25",
+            "url": "http://localhost/main.min.js",
+            "lineNumber": 111,
+            "columnNumber": 13253
+          },
+          {
+            "functionName": "e.loadedPlay",
+            "scriptId": "25",
+            "url": "http://localhost/main.min.js",
+            "lineNumber": 111,
+            "columnNumber": 13399
+          },
+          {
+            "functionName": "t.onResourceLoadComplete",
+            "scriptId": "25",
+            "url": "http://localhost/main.min.js",
+            "lineNumber": 3,
+            "columnNumber": 3117
+          },
+          {
+            "functionName": "r.onResourceItemComp",
+            "scriptId": "18",
+            "url": "http://localhost/libs/modules/res/res.min.js",
+            "lineNumber": 0,
+            "columnNumber": 26193
+          },
+          {
+            "functionName": "r.onItemComplete",
+            "scriptId": "18",
+            "url": "http://localhost/libs/modules/res/res.min.js",
+            "lineNumber": 0,
+            "columnNumber": 10839
+          },
+          {
+            "functionName": "r.onLoadFinish",
+            "scriptId": "18",
+            "url": "http://localhost/libs/modules/res/res.min.js",
+            "lineNumber": 0,
+            "columnNumber": 18509
+          },
+          {
+            "functionName": "r.$notifyListener",
+            "scriptId": "13",
+            "url": "http://localhost/libs/modules/egret/egret.min.js",
+            "lineNumber": 0,
+            "columnNumber": 6586
+          },
+          {
+            "functionName": "r.dispatchEvent",
+            "scriptId": "13",
+            "url": "http://localhost/libs/modules/egret/egret.min.js",
+            "lineNumber": 0,
+            "columnNumber": 6358
+          },
+          {
+            "functionName": "r.dispatchEventWith",
+            "scriptId": "13",
+            "url": "http://localhost/libs/modules/egret/egret.min.js",
+            "lineNumber": 0,
+            "columnNumber": 6948
+          },
+          {
+            "functionName": "r",
+            "scriptId": "16",
+            "url": "http://localhost/libs/modules/egret/egret.web.min.js",
+            "lineNumber": 0,
+            "columnNumber": 6741
+          }
+        ]
+      },
+      "exception": {
+        "type": "object",
+        "subtype": "error",
+        "className": "DOMException",
+        "description": "NotAllowedError: play() failed because the user didn't interact with the document first.",
+        "objectId": "-2464244763565187897.2.62",
+        "preview": {
+          "type": "object",
+          "subtype": "error",
+          "description": "NotAllowedError: play() failed because the user didn't interact with the document first.",
+          "overflow": false,
+          "properties": [
+            {
+              "name": "code",
+              "type": "number",
+              "value": "0"
+            },
+            {
+              "name": "name",
+              "type": "string",
+              "value": "NotAllowedError"
+            },
+            {
+              "name": "message",
+              "type": "string",
+              "value": "play() failed because the user didn't interact with the document first."
+            }
+          ]
+        }
+      },
+      "executionContextId": 2
+    }
+  ],
+  "wsFrames": [
+    {
+      "event": "Network.webSocketFrameSent",
+      "opcode": 2,
+      "mask": true,
+      "payloadData": "//8Pyg=="
+    },
+    {
+      "event": "Network.webSocketFrameReceived",
+      "opcode": 2,
+      "mask": false,
+      "payloadData": "uD6AOg=="
+    },
+    {
+      "event": "Network.webSocketFrameSent",
+      "opcode": 2,
+      "mask": true,
+      "payloadData": "uD6AOgAAAAD/AQEAAAAGAOW4heWTpQAgAGUxMGFkYzM5NDliYTU5YWJiZTU2ZTA1N2YyMGY4ODNlAA=="
+    },
+    {
+      "event": "Network.webSocketFrameReceived",
+      "opcode": 2,
+      "mask": false,
+      "payloadData": "uD6AOv8BAA=="
+    },
+    {
+      "event": "Network.webSocketFrameSent",
+      "opcode": 2,
+      "mask": true,
+      "payloadData": "uD6AOgEAAAD/BA=="
+    },
+    {
+      "event": "Network.webSocketFrameReceived",
+      "opcode": 2,
+      "mask": false,
+      "payloadData": "uD6AOv8EDtkBAAEBAAAAAQAAAAwA5pyJ54K55pyJ5L2gAAEAAAAFAAAAYgAAAJfHgwAAAAAADwAAAAAAAAA="
+    },
+    {
+      "event": "Network.webSocketFrameSent",
+      "opcode": 2,
+      "mask": true,
+      "payloadData": "uD6AOgIAAAD/BQEAAAAAAAAAAAAAAAA="
+    },
+    {
+      "event": "Network.webSocketFrameReceived",
+      "opcode": 2,
+      "mask": false,
+      "payloadData": "uD6AOv8FAQ=="
+    },
+    {
+      "event": "Network.webSocketFrameReceived",
+      "opcode": 2,
+      "mask": false,
+      "payloadData": "uD6AOgABAQAAAAAAAAABAAAAAQAAAOacieeCueacieS9oAAAAAAAAAAAAAAAAAAAAAAAAAAAAGIAAABAxwMAAAAAAAAAAADhyRUAAAAAAKmVAAAAAAAADwAAAAAAAAAAAAAAvAIAAAAAAAAAAAAAyAAAAAAAAAAAAAAAAAAAAAMAAAAAAAAAAAAAAAAAAACIhAIA"
+    },
+    {
+      "event": "Network.webSocketFrameReceived",
+      "opcode": 2,
+      "mask": false,
+      "payloadData": "uD6AOgACAQAAAAAAAAAAAAEAAAAAAAAAl8eDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    {
+      "event": "Network.webSocketFrameReceived",
+      "opcode": 2,
+      "mask": false,
+      "payloadData": "uD6AOgADKQAAACkAAAAAAAAAAAYA5Zy65pmvAAAAAA=="
+    }
+  ],
+  "failed": [],
+  "pauses": []
+}

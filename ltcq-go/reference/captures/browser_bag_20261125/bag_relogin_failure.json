@@ -1,0 +1,15 @@
+{
+  "error": "Error: 进入场景超时: {\"url\":\"http://localhost/?uid=aabb&trace=1795575606452&bagVerify=relogin\",\"loginAccount\":\"haohaiyao\",\"loginLoading\":true,\"scene\":false,\"map\":null,\"actor\":null,\"bag\":null,\"errors\":[]}",
+  "state": {
+    "url": "http://localhost/?uid=aabb&trace=1795575606452&bagVerify=relogin",
+    "loginAccount": "haohaiyao",
+    "loginLoading": true,
+    "scene": false,
+    "map": null,
+    "actor": null,
+    "bag": null,
+    "errors": []
+  },
+  "runtimeEvents": [],
+  "frames": []
+}

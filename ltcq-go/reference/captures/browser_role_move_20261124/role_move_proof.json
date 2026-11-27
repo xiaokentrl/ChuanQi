@@ -1,0 +1,143 @@
+{
+  "before": {
+    "x": 4928,
+    "y": 1408
+  },
+  "after": {
+    "scene": "MainScene",
+    "fubenID": 41,
+    "mapID": 41,
+    "entityCount": 1,
+    "role": {
+      "handle": 1,
+      "masterHandle": 1,
+      "name": "有点有你",
+      "x": 5044,
+      "y": 1478,
+      "visible": true,
+      "alpha": 1,
+      "stage": true,
+      "action": "s",
+      "isMy": true,
+      "hp": 100,
+      "maxHp": 100
+    },
+    "viewEntityCount": 1,
+    "trace": [
+      {
+        "at": 1937.3999999985099,
+        "label": "GameSocket.processRecvPacket",
+        "phase": "exit"
+      },
+      {
+        "at": 1937.3999999985099,
+        "label": "GameSocket.onSocketRead",
+        "phase": "exit"
+      },
+      {
+        "at": 4272.89999999851,
+        "label": "GameLogic.sendFindPathToServer",
+        "phase": "enter",
+        "detail": [
+          1,
+          1
+        ]
+      },
+      {
+        "at": 4273.29999999702,
+        "label": "GameLogic.sendFindPathToServer",
+        "phase": "exit"
+      },
+      {
+        "at": 4274.10000000149,
+        "label": "GameSocket.onSocketRead",
+        "phase": "enter",
+        "detail": [
+          null,
+          null
+        ]
+      },
+      {
+        "at": 4274.10000000149,
+        "label": "GameSocket.processRecvPacket",
+        "phase": "enter",
+        "detail": [
+          4,
+          28
+        ]
+      },
+      {
+        "at": 4274.10000000149,
+        "label": "GameSocket.dispatch",
+        "phase": "enter",
+        "detail": [
+          0,
+          13,
+          28
+        ]
+      },
+      {
+        "at": 4274.20000000298,
+        "label": "GameLogic.doSyncPos",
+        "phase": "enter",
+        "detail": [
+          6
+        ]
+      },
+      {
+        "at": 4274.79999999702,
+        "label": "GameLogic.doSyncPos",
+        "phase": "exit"
+      },
+      {
+        "at": 4274.89999999851,
+        "label": "GameSocket.dispatch",
+        "phase": "exit"
+      },
+      {
+        "at": 4274.89999999851,
+        "label": "GameSocket.processRecvPacket",
+        "phase": "exit"
+      },
+      {
+        "at": 4274.89999999851,
+        "label": "GameSocket.onSocketRead",
+        "phase": "exit"
+      }
+    ]
+  },
+  "clickPoint": {
+    "x": 280,
+    "y": 445.38,
+    "stageX": 406,
+    "stageY": 595.2,
+    "canvas": {
+      "width": 400,
+      "height": 642,
+      "left": 0,
+      "top": 34.5
+    },
+    "mapView": true,
+    "hit": true,
+    "hitInstrumented": false
+  },
+  "movementSetup": {
+    "testOnlyMineStateOverride": {
+      "fubenID": 41,
+      "mapID": 41,
+      "sceneInMine": true
+    }
+  },
+  "moveProof": [
+    {
+      "event": "sendFindPathToServer",
+      "handle": 1,
+      "pathLength": 1
+    }
+  ],
+  "upstreamFindPath": 1,
+  "otherEntity": 1,
+  "syncPos": 1,
+  "exceptions": 1,
+  "failed": 0
+}

@@ -1,0 +1,19 @@
+[
+  {
+    "sceneID": 2,
+    "configID": 31001,
+    "x": 7,
+    "y": 6,
+    "count": 1,
+    "hp": 2000,
+    "exp": 100,
+    "gold": 1000,
+    "respawnSeconds": 3,
+    "attackDamage": 10,
+    "attackRange": 128,
+    "attackIntervalSeconds": 1,
+    "aggroRange": 256,
+    "chaseStep": 64,
+    "leashRange": 512
+  }
+]

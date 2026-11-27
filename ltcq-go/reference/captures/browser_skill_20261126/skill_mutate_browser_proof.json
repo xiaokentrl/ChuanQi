@@ -1,0 +1,516 @@
+{
+  "date": "2026-11-26",
+  "mode": "mutate",
+  "url": "http://localhost/?uid=aabb&trace=1795642627162&skillVerify=mutate",
+  "gateway": "127.0.0.1:19002",
+  "gameworld": "127.0.0.1:16001",
+  "database": "actor_s1_m5e_skill_20261126",
+  "account": "haohaiyao",
+  "actorID": 65537,
+  "monsterID": 1073741824,
+  "initialState": {
+    "url": "http://localhost/?uid=aabb&trace=1795642627162&skillVerify=mutate",
+    "loginAccount": null,
+    "loginLoading": null,
+    "scene": "GameSceneView",
+    "map": {
+      "id": 2,
+      "fuben": 0
+    },
+    "actor": {
+      "level": 51,
+      "gold": 100000
+    },
+    "skills": [
+      {
+        "id": 11001,
+        "configID": 11001,
+        "lv": 1
+      },
+      {
+        "id": 12001,
+        "configID": 12001,
+        "lv": 1
+      },
+      {
+        "id": 13001,
+        "configID": 13001,
+        "lv": 1
+      },
+      {
+        "id": 14001,
+        "configID": 14001,
+        "lv": 1
+      },
+      {
+        "id": 15001,
+        "configID": 15001,
+        "lv": 1
+      }
+    ],
+    "entities": [
+      {
+        "handle": 65537,
+        "x": 256,
+        "y": 384,
+        "hp": 100
+      },
+      {
+        "handle": 1073741824,
+        "x": 448,
+        "y": 384,
+        "hp": 2000
+      }
+    ],
+    "socketStatus": 3,
+    "errors": []
+  },
+  "upgradedState": {
+    "url": "http://localhost/?uid=aabb&trace=1795642627162&skillVerify=mutate",
+    "loginAccount": null,
+    "loginLoading": null,
+    "scene": "GameSceneView",
+    "map": {
+      "id": 2,
+      "fuben": 0
+    },
+    "actor": {
+      "level": 51,
+      "gold": 95000
+    },
+    "skills": [
+      {
+        "id": 11002,
+        "configID": 11002,
+        "lv": 2
+      },
+      {
+        "id": 12001,
+        "configID": 12001,
+        "lv": 1
+      },
+      {
+        "id": 13001,
+        "configID": 13001,
+        "lv": 1
+      },
+      {
+        "id": 14001,
+        "configID": 14001,
+        "lv": 1
+      },
+      {
+        "id": 15001,
+        "configID": 15001,
+        "lv": 1
+      }
+    ],
+    "entities": [
+      {
+        "handle": 65537,
+        "x": 256,
+        "y": 384,
+        "hp": 100
+      },
+      {
+        "handle": 1073741824,
+        "x": 448,
+        "y": 384,
+        "hp": 2000
+      }
+    ],
+    "socketStatus": 3,
+    "errors": []
+  },
+  "allUpgradedState": {
+    "url": "http://localhost/?uid=aabb&trace=1795642627162&skillVerify=mutate",
+    "loginAccount": null,
+    "loginLoading": null,
+    "scene": "GameSceneView",
+    "map": {
+      "id": 2,
+      "fuben": 0
+    },
+    "actor": {
+      "level": 51,
+      "gold": 7000
+    },
+    "skills": [
+      {
+        "id": 11013,
+        "configID": 11013,
+        "lv": 13
+      },
+      {
+        "id": 12001,
+        "configID": 12001,
+        "lv": 1
+      },
+      {
+        "id": 13001,
+        "configID": 13001,
+        "lv": 1
+      },
+      {
+        "id": 14001,
+        "configID": 14001,
+        "lv": 1
+      },
+      {
+        "id": 15001,
+        "configID": 15001,
+        "lv": 1
+      }
+    ],
+    "entities": [
+      {
+        "handle": 65537,
+        "x": 256,
+        "y": 384,
+        "hp": 100
+      },
+      {
+        "handle": 1073741824,
+        "x": 448,
+        "y": 384,
+        "hp": 2000
+      }
+    ],
+    "socketStatus": 3,
+    "errors": []
+  },
+  "beforeCast": {
+    "url": "http://localhost/?uid=aabb&trace=1795642627162&skillVerify=mutate",
+    "loginAccount": null,
+    "loginLoading": null,
+    "scene": "GameSceneView",
+    "map": {
+      "id": 2,
+      "fuben": 0
+    },
+    "actor": {
+      "level": 51,
+      "gold": 7000
+    },
+    "skills": [
+      {
+        "id": 11013,
+        "configID": 11013,
+        "lv": 13
+      },
+      {
+        "id": 12001,
+        "configID": 12001,
+        "lv": 1
+      },
+      {
+        "id": 13001,
+        "configID": 13001,
+        "lv": 1
+      },
+      {
+        "id": 14001,
+        "configID": 14001,
+        "lv": 1
+      },
+      {
+        "id": 15001,
+        "configID": 15001,
+        "lv": 1
+      }
+    ],
+    "entities": [
+      {
+        "handle": 65537,
+        "x": 384,
+        "y": 384,
+        "hp": 100
+      },
+      {
+        "handle": 1073741824,
+        "x": 448,
+        "y": 384,
+        "hp": 1900
+      }
+    ],
+    "socketStatus": 3,
+    "errors": []
+  },
+  "afterFirstCast": {
+    "url": "http://localhost/?uid=aabb&trace=1795642627162&skillVerify=mutate",
+    "loginAccount": null,
+    "loginLoading": null,
+    "scene": "GameSceneView",
+    "map": {
+      "id": 2,
+      "fuben": 0
+    },
+    "actor": {
+      "level": 51,
+      "gold": 7000
+    },
+    "skills": [
+      {
+        "id": 11013,
+        "configID": 11013,
+        "lv": 13
+      },
+      {
+        "id": 12001,
+        "configID": 12001,
+        "lv": 1
+      },
+      {
+        "id": 13001,
+        "configID": 13001,
+        "lv": 1
+      },
+      {
+        "id": 14001,
+        "configID": 14001,
+        "lv": 1
+      },
+      {
+        "id": 15001,
+        "configID": 15001,
+        "lv": 1
+      }
+    ],
+    "entities": [
+      {
+        "handle": 65537,
+        "x": 384,
+        "y": 384,
+        "hp": 100
+      },
+      {
+        "handle": 1073741824,
+        "x": 448,
+        "y": 384,
+        "hp": 1650
+      }
+    ],
+    "socketStatus": 3,
+    "errors": []
+  },
+  "afterSecondCast": {
+    "url": "http://localhost/?uid=aabb&trace=1795642627162&skillVerify=mutate",
+    "loginAccount": null,
+    "loginLoading": null,
+    "scene": "GameSceneView",
+    "map": {
+      "id": 2,
+      "fuben": 0
+    },
+    "actor": {
+      "level": 51,
+      "gold": 7000
+    },
+    "skills": [
+      {
+        "id": 11013,
+        "configID": 11013,
+        "lv": 13
+      },
+      {
+        "id": 12001,
+        "configID": 12001,
+        "lv": 1
+      },
+      {
+        "id": 13001,
+        "configID": 13001,
+        "lv": 1
+      },
+      {
+        "id": 14001,
+        "configID": 14001,
+        "lv": 1
+      },
+      {
+        "id": 15001,
+        "configID": 15001,
+        "lv": 1
+      }
+    ],
+    "entities": [
+      {
+        "handle": 65537,
+        "x": 384,
+        "y": 384,
+        "hp": 100
+      },
+      {
+        "handle": 1073741824,
+        "x": 448,
+        "y": 384,
+        "hp": 1100
+      }
+    ],
+    "socketStatus": 3,
+    "errors": []
+  },
+  "singleCall": {
+    "available": true
+  },
+  "allCall": {
+    "available": true
+  },
+  "firstCastCall": {
+    "available": true
+  },
+  "moveHex": "e5f3eb3829230000001f000000001000f040010000008001000080010000",
+  "finalState": {
+    "url": "http://localhost/?uid=aabb&trace=1795642627162&skillVerify=mutate",
+    "loginAccount": null,
+    "loginLoading": null,
+    "scene": "GameSceneView",
+    "map": {
+      "id": 2,
+      "fuben": 0
+    },
+    "actor": {
+      "level": 51,
+      "gold": 7000
+    },
+    "skills": [
+      {
+        "id": 11013,
+        "configID": 11013,
+        "lv": 13
+      },
+      {
+        "id": 12001,
+        "configID": 12001,
+        "lv": 1
+      },
+      {
+        "id": 13001,
+        "configID": 13001,
+        "lv": 1
+      },
+      {
+        "id": 14001,
+        "configID": 14001,
+        "lv": 1
+      },
+      {
+        "id": 15001,
+        "configID": 15001,
+        "lv": 1
+      }
+    ],
+    "entities": [
+      {
+        "handle": 65537,
+        "x": 384,
+        "y": 384,
+        "hp": 100
+      },
+      {
+        "handle": 1073741824,
+        "x": 448,
+        "y": 384,
+        "hp": 1100
+      }
+    ],
+    "socketStatus": 3,
+    "errors": []
+  },
+  "validation": {
+    "singleLoginAttempt": true,
+    "sceneEntered": true,
+    "roleDataLengthValid": true,
+    "roleSkillLevelsValid": true,
+    "fiveSkillsParsed": true,
+    "noClientErrors": true,
+    "playerAlive": true,
+    "singleUpgradePacket": true,
+    "singleUpgradeCost": true,
+    "allUpgradePacket": true,
+    "allUpgradeClientState": true,
+    "firstCastLayout": true,
+    "firstCastDamage": true,
+    "cooldownRejected": true,
+    "secondCastDamage": true
+  },
+  "wsConnections": [
+    "ws://127.0.0.1:19002/"
+  ],
+  "loginFrames": [
+    {
+      "index": 2,
+      "direction": "sent",
+      "timestamp": 5747.754934,
+      "hex": "e5f3eb3800000000ff0101000000090068616f68616979616f002000653130616463333934396261353961626265353665303537663230663838336500",
+      "sysid": 255,
+      "cmdid": 1
+    }
+  ],
+  "skillFrames": [
+    {
+      "index": 31,
+      "timestamp": 5748.342769,
+      "cmdid": 4,
+      "frameBytes": 12,
+      "roleID": 0,
+      "slot": 0,
+      "level": 2
+    },
+    {
+      "index": 34,
+      "timestamp": 5748.560804,
+      "cmdid": 5,
+      "frameBytes": 18,
+      "roleID": 0,
+      "levels": [
+        13,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "index": 43,
+      "timestamp": 5748.986877,
+      "cmdid": 1,
+      "frameBytes": 36,
+      "attacker": 65537,
+      "skillID": 11013,
+      "target": 1073741824,
+      "damageCount": 1,
+      "damage": 250
+    },
+    {
+      "index": 52,
+      "timestamp": 5750.298721,
+      "cmdid": 1,
+      "frameBytes": 36,
+      "attacker": 65537,
+      "skillID": 11013,
+      "target": 1073741824,
+      "damageCount": 1,
+      "damage": 250
+    }
+  ],
+  "role": {
+    "index": 22,
+    "frameBytes": 4113,
+    "levels": [
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "trailing": [
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  "wsFrameCount": 55
+}

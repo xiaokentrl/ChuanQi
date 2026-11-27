@@ -1,0 +1,140 @@
+[
+  {
+    "kind": "log",
+    "level": "warning",
+    "text": "<meta name=\"apple-mobile-web-app-capable\" content=\"yes\"> is deprecated. Please include <meta name=\"mobile-web-app-capable\" content=\"yes\">"
+  },
+  {
+    "kind": "console",
+    "type": "log",
+    "text": "资源加载成功！！"
+  },
+  {
+    "kind": "console",
+    "type": "log",
+    "text": "解压成功！！"
+  },
+  {
+    "kind": "ws-sent",
+    "hex": "ffff0fca"
+  },
+  {
+    "kind": "ws-received",
+    "hex": "0cde290c"
+  },
+  {
+    "kind": "ws-sent",
+    "hex": "0cde290c00000000ff01010000000600e5b885e593a5002000653130616463333934396261353961626265353665303537663230663838336500"
+  },
+  {
+    "kind": "ws-received",
+    "hex": "0cde290cff0100"
+  },
+  {
+    "kind": "ws-sent",
+    "hex": "0cde290c01000000ff04"
+  },
+  {
+    "kind": "ws-received",
+    "hex": "0cde290cff040ed901000101000000010000000c00e69c89e782b9e69c89e4bda0000100000004000000620000009ffb8200000000000f00000000000000"
+  },
+  {
+    "kind": "ws-sent",
+    "hex": "0cde290c02000000ff0501000000000000000000000000"
+  },
+  {
+    "kind": "ws-received",
+    "hex": "0cde290cff0501"
+  },
+  {
+    "kind": "console",
+    "type": "log",
+    "text": "[E2E] enter RoleMgr.doEnterGame"
+  },
+  {
+    "kind": "console",
+    "type": "log",
+    "text": "[E2E] enter SceneManager.runScene"
+  },
+  {
+    "kind": "console",
+    "type": "log",
+    "text": "[E2E] exit SceneManager.runScene"
+  },
+  {
+    "kind": "console",
+    "type": "log",
+    "text": "[E2E] scene=MainScene"
+  },
+  {
+    "kind": "console",
+    "type": "log",
+    "text": "[E2E] exit RoleMgr.doEnterGame"
+  },
+  {
+    "kind": "ws-received",
+    "hex": "0cde290c0001000101000000000000000100000001000000e69c89e782b9e69c89e4bda000000000000000000000000000000000000000000062000000772704000000000000000000f0ba070000000000b8900000000000000f0000000000000000000000bc0200000000000000000000c80000000000000000000000000000000300000000000000000000000000000038c10100"
+  },
+  {
+    "kind": "console",
+    "type": "log",
+    "text": "[E2E] enter Actor.postInit"
+  },
+  {
+    "kind": "console",
+    "type": "log",
+    "text": "[E2E] exit Actor.postInit"
+  },
+  {
+    "kind": "ws-sent",
+    "hex": "0cde290c030000004c0100"
+  },
+  {
+    "kind": "ws-sent",
+    "hex": "0cde290c040000004c0101"
+  },
+  {
+    "kind": "ws-sent",
+    "hex": "0cde290c050000000a0a01000000"
+  },
+  {
+    "kind": "ws-sent",
+    "hex": "0cde290c060000000a0a02000000"
+  },
+  {
+    "kind": "ws-sent",
+    "hex": "0cde290c070000000a0a03000000"
+  },
+  {
+    "kind": "ws-sent",
+    "hex": "0cde290c080000000a0a04000000"
+  },
+  {
+    "kind": "ws-sent",
+    "hex": "0cde290c090000000a0a05000000"
+  },
+  {
+    "kind": "ws-sent",
+    "hex": "0cde290c0a0000000a0a06000000"
+  },
+  {
+    "kind": "ws-sent",
+    "hex": "0cde290c0b0000000a0a07000000"
+  },
+  {
+    "kind": "ws-sent",
+    "hex": "0cde290c0c0000001204"
+  },
+  {
+    "kind": "ws-sent",
+    "hex": "0cde290c0d0000002f03"
+  },
+  {
+    "kind": "ws-sent",
+    "hex": "0cde290c0e0000002501"
+  },
+  {
+    "kind": "ws-sent",
+    "hex": "0cde290c0f0000002519"
+  }
+]

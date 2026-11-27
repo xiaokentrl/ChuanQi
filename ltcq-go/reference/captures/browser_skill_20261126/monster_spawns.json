@@ -1,0 +1,15 @@
+[
+  {
+    "sceneID": 2,
+    "configID": 31001,
+    "x": 7,
+    "y": 6,
+    "count": 1,
+    "hp": 2000,
+    "exp": 100,
+    "gold": 1000,
+    "itemID": 200013,
+    "itemCount": 1,
+    "respawnSeconds": 3
+  }
+]

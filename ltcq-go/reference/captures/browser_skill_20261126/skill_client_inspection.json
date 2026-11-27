@@ -1,0 +1,4001 @@
+{
+  "names": [
+    "BookSkillInfo",
+    "ChuanShiShenQiSkillConfig",
+    "ChuanShiSkillItemSkin",
+    "DemonCirSkillConfig",
+    "ExSkillAiLogic",
+    "ExtremeSkillTipsWin",
+    "FireRingSkillBookItem",
+    "FireRingSkillItem",
+    "FireRingSkillPanel",
+    "GodWingSkillTipsWin",
+    "GuildCommonSkillConfig",
+    "GuildPracticeSkillConfig",
+    "GuildRoleSkillInfo",
+    "GuildSkillInfo",
+    "GuildSkillPanel",
+    "GuildSkillShopWin",
+    "GuildSkillSkin",
+    "GuildSkillWin",
+    "GuildSkillWinSkin",
+    "GwGodWeaponSkillView",
+    "GwSkillData",
+    "GwSkillSkin",
+    "GwSkillTipSkin",
+    "GwSkillTipView",
+    "GwWeaponSkillIcon",
+    "HeartMethodSkillTips",
+    "HeirloomSkillItem",
+    "ImbaSkillReviseConfig",
+    "JadeSkillWin",
+    "LYRSkillItemSkin",
+    "LYRSkillSkin",
+    "LyMarkSkillItem",
+    "LyMarkSkillTipsWin",
+    "MiJiSkillConfig",
+    "PunchSkillItem",
+    "PunchSkillItemRender",
+    "PunchSkillTipsWin",
+    "PunchskillTips",
+    "RES_DIR_SKILL",
+    "RES_DIR_SKILLEFF",
+    "RingSkillInfo",
+    "SHORT_SKILLID",
+    "ShenYuSkillTipsSkin",
+    "ShenshouSkillTip",
+    "SkillConst",
+    "SkillData",
+    "SkillEffConfig",
+    "SkillEffNumType",
+    "SkillEffPlayer",
+    "SkillEffType",
+    "SkillItem",
+    "SkillPanel",
+    "SkillPowerConfig",
+    "SkillSkin",
+    "SkillWin",
+    "SkillsOpenConfig",
+    "SkillsUpgradeConfig",
+    "StudySkillNeedItem",
+    "TipsSkillAlertPanel",
+    "UserSkill",
+    "WeaponSkillItem",
+    "WeaponSoulSkillTips",
+    "WingSkillItemRender",
+    "WingSkillItemSkin",
+    "WingSkillTipPanel",
+    "WingSkillTipsPanel",
+    "WorldBossKillMsgConfig",
+    "YupeiSkillTipsNewSkin",
+    "YupeiSkillTipsSkin",
+    "YupeiSkillTipsWin",
+    "ZhanLingSkill",
+    "ZhanlingSkillTipsSkin",
+    "ZhuZaiSkillConfig",
+    "ZhuZaiSkillView",
+    "heartmethodSkillTipSkin",
+    "markSkillItemSkin",
+    "markSkillTipsSkin",
+    "matrix_skill_skin",
+    "matrix_skill_tips",
+    "shenshouSkillItem",
+    "shenshouSkillTips",
+    "skillConst",
+    "weaponSkillItemSkin",
+    "weaponSoulSkilltips",
+    "zhuZaiSkill",
+    "zhuZaiSkillSkin"
+  ],
+  "objects": [
+    {
+      "name": "BookSkillInfo",
+      "type": "function",
+      "keys": [],
+      "methods": []
+    },
+    {
+      "name": "ChuanShiShenQiSkillConfig",
+      "type": "function",
+      "keys": [],
+      "methods": []
+    },
+    {
+      "name": "ChuanShiSkillItemSkin",
+      "type": "function",
+      "keys": [],
+      "methods": []
+    },
+    {
+      "name": "DemonCirSkillConfig",
+      "type": "function",
+      "keys": [],
+      "methods": []
+    },
+    {
+      "name": "ExSkillAiLogic",
+      "type": "function",
+      "keys": [
+        "ins"
+      ],
+      "methods": [
+        "ins"
+      ],
+      "instanceKeys": [
+        "ZL_SKILL_DEVIL",
+        "ZL_SKILL_EXPLOSION",
+        "ZL_SKILL_KILL",
+        "ZL_SKILL_SACRIFICE",
+        "ZL_SKILL_RELIEF",
+        "ZL_SKILL_ANGER",
+        "ZL_H_SKILL_DETER",
+        "ZL_H_SKILL_ANTICIPATI",
+        "ZL_SKILL_REMEDY",
+        "ZL_SKILL_RENJIA",
+        "MAX",
+        "triggerInterval"
+      ],
+      "instanceMethods": [
+        "constructor",
+        "checkWarSpiritBubbleTrigger",
+        "checkHJTrigger",
+        "checkDieTrigger",
+        "checkHPTrigger",
+        "intervalDoFun"
+      ]
+    },
+    {
+      "name": "ExtremeSkillTipsWin",
+      "type": "function",
+      "keys": [
+        "defaultTouchEnabled",
+        "boundsForUpdate",
+        "$enterFrameCallBackList",
+        "$renderCallBackList",
+        "$EVENT_ADD_TO_STAGE_LIST",
+        "$EVENT_REMOVE_FROM_STAGE_LIST",
+        "openCheck"
+      ],
+      "methods": [
+        "openCheck"
+      ]
+    },
+    {
+      "name": "FireRingSkillBookItem",
+      "type": "function",
+      "keys": [
+        "defaultTouchEnabled",
+        "boundsForUpdate",
+        "$enterFrameCallBackList",
+        "$renderCallBackList",
+        "$EVENT_ADD_TO_STAGE_LIST",
+        "$EVENT_REMOVE_FROM_STAGE_LIST",
+        "QUALITY_COLOR",
+        "additionRange"
+      ],
+      "methods": []
+    },
+    {
+      "name": "FireRingSkillItem",
+      "type": "function",
+      "keys": [
+        "defaultTouchEnabled",
+        "boundsForUpdate",
+        "$enterFrameCallBackList",
+        "$renderCallBackList",
+        "$EVENT_ADD_TO_STAGE_LIST",
+        "$EVENT_REMOVE_FROM_STAGE_LIST"
+      ],
+      "methods": []
+    },
+    {
+      "name": "FireRingSkillPanel",
+      "type": "function",
+      "keys": [
+        "defaultTouchEnabled",
+        "boundsForUpdate",
+        "$enterFrameCallBackList",
+        "$renderCallBackList",
+        "$EVENT_ADD_TO_STAGE_LIST",
+        "$EVENT_REMOVE_FROM_STAGE_LIST",
+        "filterKeys",
+        "copyKeys"
+      ],
+      "methods": []
+    },
+    {
+      "name": "GodWingSkillTipsWin",
+      "type": "function",
+      "keys": [
+        "defaultTouchEnabled",
+        "boundsForUpdate",
+        "$enterFrameCallBackList",
+        "$renderCallBackList",
+        "$EVENT_ADD_TO_STAGE_LIST",
+        "$EVENT_REMOVE_FROM_STAGE_LIST",
+        "openCheck"
+      ],
+      "methods": [
+        "openCheck"
+      ]
+    },
+    {
+      "name": "GuildCommonSkillConfig",
+      "type": "function",
+      "keys": [],
+      "methods": []
+    },
+    {
+      "name": "GuildPracticeSkillConfig",
+      "type": "function",
+      "keys": [],
+      "methods": []
+    },
+    {
+      "name": "GuildRoleSkillInfo",
+      "type": "function",
+      "keys": [],
+      "methods": []
+    },
+    {
+      "name": "GuildSkillInfo",
+      "type": "function",
+      "keys": [],
+      "methods": []
+    },
+    {
+      "name": "GuildSkillPanel",
+      "type": "function",
+      "keys": [
+        "defaultTouchEnabled",
+        "boundsForUpdate",
+        "$enterFrameCallBackList",
+        "$renderCallBackList",
+        "$EVENT_ADD_TO_STAGE_LIST",
+        "$EVENT_REMOVE_FROM_STAGE_LIST",
+        "filterKeys",
+        "copyKeys",
+        "openCheck"
+      ],
+      "methods": [
+        "openCheck"
+      ]
+    },
+    {
+      "name": "GuildSkillShopWin",
+      "type": "function",
+      "keys": [],
+      "methods": []
+    },
+    {
+      "name": "GuildSkillSkin",
+      "type": "function",
+      "keys": [],
+      "methods": []
+    },
+    {
+      "name": "GuildSkillWin",
+      "type": "function",
+      "keys": [
+        "defaultTouchEnabled",
+        "boundsForUpdate",
+        "$enterFrameCallBackList",
+        "$renderCallBackList",
+        "$EVENT_ADD_TO_STAGE_LIST",
+        "$EVENT_REMOVE_FROM_STAGE_LIST",
+        "openCheck"
+      ],
+      "methods": [
+        "openCheck"
+      ]
+    },
+    {
+      "name": "GuildSkillWinSkin",
+      "type": "function",
+      "keys": [],
+      "methods": []
+    },
+    {
+      "name": "GwGodWeaponSkillView",
+      "type": "function",
+      "keys": [
+        "defaultTouchEnabled",
+        "boundsForUpdate",
+        "$enterFrameCallBackList",
+        "$renderCallBackList",
+        "$EVENT_ADD_TO_STAGE_LIST",
+        "$EVENT_REMOVE_FROM_STAGE_LIST"
+      ],
+      "methods": []
+    },
+    {
+      "name": "GwSkillData",
+      "type": "function",
+      "keys": [],
+      "methods": []
+    },
+    {
+      "name": "GwSkillSkin",
+      "type": "function",
+      "keys": [],
+      "methods": []
+    },
+    {
+      "name": "GwSkillTipSkin",
+      "type": "function",
+      "keys": [],
+      "methods": []
+    },
+    {
+      "name": "GwSkillTipView",
+      "type": "function",
+      "keys": [
+        "defaultTouchEnabled",
+        "boundsForUpdate",
+        "$enterFrameCallBackList",
+        "$renderCallBackList",
+        "$EVENT_ADD_TO_STAGE_LIST",
+        "$EVENT_REMOVE_FROM_STAGE_LIST",
+        "openCheck"
+      ],
+      "methods": [
+        "openCheck"
+      ]
+    },
+    {
+      "name": "GwWeaponSkillIcon",
+      "type": "function",
+      "keys": [
+        "defaultTouchEnabled",
+        "boundsForUpdate",
+        "$enterFrameCallBackList",
+        "$renderCallBackList",
+        "$EVENT_ADD_TO_STAGE_LIST",
+        "$EVENT_REMOVE_FROM_STAGE_LIST"
+      ],
+      "methods": []
+    },
+    {
+      "name": "HeartMethodSkillTips",
+      "type": "function",
+      "keys": [
+        "defaultTouchEnabled",
+        "boundsForUpdate",
+        "$enterFrameCallBackList",
+        "$renderCallBackList",
+        "$EVENT_ADD_TO_STAGE_LIST",
+        "$EVENT_REMOVE_FROM_STAGE_LIST",
+        "openCheck"
+      ],
+      "methods": [
+        "openCheck"
+      ]
+    },
+    {
+      "name": "HeirloomSkillItem",
+      "type": "function",
+      "keys": [
+        "defaultTouchEnabled",
+        "boundsForUpdate",
+        "$enterFrameCallBackList",
+        "$renderCallBackList",
+        "$EVENT_ADD_TO_STAGE_LIST",
+        "$EVENT_REMOVE_FROM_STAGE_LIST",
+        "openCheck"
+      ],
+      "methods": [
+        "openCheck"
+      ]
+    },
+    {
+      "name": "ImbaSkillReviseConfig",
+      "type": "function",
+      "keys": [],
+      "methods": []
+    },
+    {
+      "name": "JadeSkillWin",
+      "type": "function",
+      "keys": [
+        "defaultTouchEnabled",
+        "boundsForUpdate",
+        "$enterFrameCallBackList",
+        "$renderCallBackList",
+        "$EVENT_ADD_TO_STAGE_LIST",
+        "$EVENT_REMOVE_FROM_STAGE_LIST",
+        "openCheck"
+      ],
+      "methods": [
+        "openCheck"
+      ]
+    },
+    {
+      "name": "LYRSkillItemSkin",
+      "type": "function",
+      "keys": [],
+      "methods": []
+    },
+    {
+      "name": "LYRSkillSkin",
+      "type": "function",
+      "keys": [],
+      "methods": []
+    },
+    {
+      "name": "LyMarkSkillItem",
+      "type": "function",
+      "keys": [
+        "defaultTouchEnabled",
+        "boundsForUpdate",
+        "$enterFrameCallBackList",
+        "$renderCallBackList",
+        "$EVENT_ADD_TO_STAGE_LIST",
+        "$EVENT_REMOVE_FROM_STAGE_LIST"
+      ],
+      "methods": []
+    },
+    {
+      "name": "LyMarkSkillTipsWin",
+      "type": "function",
+      "keys": [
+        "defaultTouchEnabled",
+        "boundsForUpdate",
+        "$enterFrameCallBackList",
+        "$renderCallBackList",
+        "$EVENT_ADD_TO_STAGE_LIST",
+        "$EVENT_REMOVE_FROM_STAGE_LIST",
+        "openCheck"
+      ],
+      "methods": [
+        "openCheck"
+      ]
+    },
+    {
+      "name": "MiJiSkillConfig",
+      "type": "function",
+      "keys": [
+        "getSkillIDByItem"
+      ],
+      "methods": [
+        "getSkillIDByItem"
+      ]
+    },
+    {
+      "name": "PunchSkillItem",
+      "type": "function",
+      "keys": [],
+      "methods": []
+    },
+    {
+      "name": "PunchSkillItemRender",
+      "type": "function",
+      "keys": [
+        "defaultTouchEnabled",
+        "boundsForUpdate",
+        "$enterFrameCallBackList",
+        "$renderCallBackList",
+        "$EVENT_ADD_TO_STAGE_LIST",
+        "$EVENT_REMOVE_FROM_STAGE_LIST",
+        "filterKeys",
+        "copyKeys"
+      ],
+      "methods": []
+    },
+    {
+      "name": "PunchSkillTipsWin",
+      "type": "function",
+      "keys": [
+        "defaultTouchEnabled",
+        "boundsForUpdate",
+        "$enterFrameCallBackList",
+        "$renderCallBackList",
+        "$EVENT_ADD_TO_STAGE_LIST",
+        "$EVENT_REMOVE_FROM_STAGE_LIST",
+        "openCheck"
+      ],
+      "methods": [
+        "openCheck"
+      ]
+    },
+    {
+      "name": "PunchskillTips",
+      "type": "function",
+      "keys": [],
+      "methods": []
+    },
+    {
+      "name": "RES_DIR_SKILL",
+      "type": "string"
+    },
+    {
+      "name": "RES_DIR_SKILLEFF",
+      "type": "string"
+    },
+    {
+      "name": "RingSkillInfo",
+      "type": "function",
+      "keys": [],
+      "methods": []
+    },
+    {
+      "name": "SHORT_SKILLID",
+      "type": "object",
+      "keys": [
+        "24",
+        "32",
+        "33",
+        "34",
+        "35",
+        "MAGIC",
+        "CURE",
+        "POISONING",
+        "ARMOR",
+        "SUMMON"
+      ],
+      "methods": []
+    },
+    {
+      "name": "ShenYuSkillTipsSkin",
+      "type": "function",
+      "keys": [],
+      "methods": []
+    },
+    {
+      "name": "ShenshouSkillTip",
+      "type": "function",
+      "keys": [
+        "defaultTouchEnabled",
+        "boundsForUpdate",
+        "$enterFrameCallBackList",
+        "$renderCallBackList",
+        "$EVENT_ADD_TO_STAGE_LIST",
+        "$EVENT_REMOVE_FROM_STAGE_LIST",
+        "openCheck"
+      ],
+      "methods": [
+        "openCheck"
+      ]
+    },
+    {
+      "name": "SkillConst",
+      "type": "function",
+      "keys": [
+        "EFF_SKY_BALL",
+        "HEJI_SKILLS"
+      ],
+      "methods": []
+    },
+    {
+      "name": "SkillData",
+      "type": "function",
+      "keys": [
+        "getSkillByJob"
+      ],
+      "methods": [
+        "getSkillByJob"
+      ]
+    },
+    {
+      "name": "SkillEffConfig",
+      "type": "function",
+      "keys": [
+        "initValue",
+        "o"
+      ],
+      "methods": [
+        "initValue"
+      ]
+    },
+    {
+      "name": "SkillEffNumType",
+      "type": "object",
+      "keys": [
+        "0",
+        "1",
+        "2",
+        "3",
+        "Single",
+        "All",
+        "NoEff",
+        "SelfAndTarget"
+      ],
+      "methods": []
+    },
+    {
+      "name": "SkillEffPlayer",
+      "type": "function",
+      "keys": [
+        "urlSkill",
+        "urlSkillEff",
+        "playConfigs",
+        "play",
+        "type1",
+        "removeMC",
+        "type96",
+        "type97",
+        "type98",
+        "type99",
+        "layer0",
+        "layer1",
+        "layer2",
+        "layer3",
+        "layer4",
+        "layer5",
+        "layer6",
+        "layer7",
+        "layer8",
+        "urlRoot",
+        "bottomLayer",
+        "topLayer",
+        "setTimeout",
+        "shake"
+      ],
+      "methods": [
+        "playConfigs",
+        "play",
+        "type1",
+        "removeMC",
+        "type96",
+        "type97",
+        "type98",
+        "type99",
+        "layer0",
+        "layer1",
+        "layer2",
+        "layer3",
+        "layer4",
+        "layer5",
+        "layer6",
+        "layer7",
+        "layer8",
+        "setTimeout",
+        "shake"
+      ]
+    },
+    {
+      "name": "SkillEffType",
+      "type": "object",
+      "keys": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "AdditionalDamage",
+        "AddBlood",
+        "AdditionalAttributes",
+        "AdditionalState",
+        "Summon",
+        "Other",
+        "HostAddAttributes",
+        "SuperArmor"
+      ],
+      "methods": []
+    },
+    {
+      "name": "SkillItem",
+      "type": "function",
+      "keys": [],
+      "methods": []
+    },
+    {
+      "name": "SkillPanel",
+      "type": "function",
+      "keys": [
+        "defaultTouchEnabled",
+        "boundsForUpdate",
+        "$enterFrameCallBackList",
+        "$renderCallBackList",
+        "$EVENT_ADD_TO_STAGE_LIST",
+        "$EVENT_REMOVE_FROM_STAGE_LIST"
+      ],
+      "methods": []
+    },
+    {
+      "name": "SkillPowerConfig",
+      "type": "function",
+      "keys": [],
+      "methods": []
+    },
+    {
+      "name": "SkillSkin",
+      "type": "function",
+      "keys": [],
+      "methods": []
+    },
+    {
+      "name": "SkillWin",
+      "type": "function",
+      "keys": [
+        "defaultTouchEnabled",
+        "boundsForUpdate",
+        "$enterFrameCallBackList",
+        "$renderCallBackList",
+        "$EVENT_ADD_TO_STAGE_LIST",
+        "$EVENT_REMOVE_FROM_STAGE_LIST",
+        "openCheck",
+        "checkIsOpen",
+        "Panel_JINENG",
+        "Panel_NEIGONG",
+        "Panel_JINGMAI",
+        "Panel_MIJI",
+        "Panel_ZHANLING"
+      ],
+      "methods": [
+        "openCheck",
+        "checkIsOpen"
+      ]
+    },
+    {
+      "name": "SkillsOpenConfig",
+      "type": "function",
+      "keys": [],
+      "methods": []
+    },
+    {
+      "name": "SkillsUpgradeConfig",
+      "type": "function",
+      "keys": [],
+      "methods": []
+    },
+    {
+      "name": "StudySkillNeedItem",
+      "type": "function",
+      "keys": [],
+      "methods": []
+    },
+    {
+      "name": "TipsSkillAlertPanel",
+      "type": "function",
+      "keys": [
+        "defaultTouchEnabled",
+        "boundsForUpdate",
+        "$enterFrameCallBackList",
+        "$renderCallBackList",
+        "$EVENT_ADD_TO_STAGE_LIST",
+        "$EVENT_REMOVE_FROM_STAGE_LIST"
+      ],
+      "methods": []
+    },
+    {
+      "name": "UserSkill",
+      "type": "function",
+      "keys": [
+        "ins",
+        "MAX_LEVEL",
+        "ACTIVE_LEVEL",
+        "HEJI_SKILL",
+        "HEJI_SHOW_LEVEL",
+        "descArr",
+        "_instance"
+      ],
+      "methods": [
+        "ins"
+      ],
+      "instanceKeys": [
+        "hejiLevel",
+        "hejiCD",
+        "hejiEnable",
+        "isFirst",
+        "fieldUse",
+        "equipListData",
+        "hejiProgressList",
+        "reduceCD",
+        "sysId"
+      ],
+      "instanceMethods": [
+        "constructor",
+        "getPunchForge",
+        "sendUseSkill",
+        "doSkillResult",
+        "postDoBuff",
+        "postDoRemoveBuff",
+        "doAddEffect",
+        "doRemoveEffect",
+        "sendGrewUpSkill",
+        "postSkillUpgrade",
+        "sendGrewUpAllSkill",
+        "postSkillUpgradeAll",
+        "postHejiInfo",
+        "doHejiEquipInfo",
+        "setQimingInfo",
+        "setQmAttr",
+        "doHejiEquipUpdate",
+        "checkHejiOpen",
+        "canHejiEquip",
+        "canExchange",
+        "getMaxzLv",
+        "getPunchExchangePageRedPoint",
+        "getPunchExchangeItemRedPoint",
+        "canAcitve",
+        "canSolve",
+        "doHejiUpdateInfo",
+        "setHejiCD",
+        "getHejiSkillId",
+        "getHejiSkillIdIcon",
+        "getSkillIdIcon",
+        "sendGrewUpHejiSkill",
+        "sendUseHejiSkill",
+        "sendDressHejiEquip",
+        "sendExchangeHejiEquip",
+        "getWearEquipsData",
+        "getSkillLimitLevel",
+        "getSingleSkillGrewUpCost",
+        "canGrewupSkill",
+        "canGrewupAllSkills",
+        "postShowSkillWord",
+        "postHejiUpdate",
+        "postHejiStartCD",
+        "postHejiRemove",
+        "postHejiEquipChange",
+        "checkIsHaveBestEquip",
+        "sendUpgradeForge",
+        "postUpgradeForge",
+        "sendChangeTogeatterHigh",
+        "isHejiSkill"
+      ]
+    },
+    {
+      "name": "WeaponSkillItem",
+      "type": "function",
+      "keys": [
+        "defaultTouchEnabled",
+        "boundsForUpdate",
+        "$enterFrameCallBackList",
+        "$renderCallBackList",
+        "$EVENT_ADD_TO_STAGE_LIST",
+        "$EVENT_REMOVE_FROM_STAGE_LIST"
+      ],
+      "methods": []
+    },
+    {
+      "name": "WeaponSoulSkillTips",
+      "type": "function",
+      "keys": [
+        "defaultTouchEnabled",
+        "boundsForUpdate",
+        "$enterFrameCallBackList",
+        "$renderCallBackList",
+        "$EVENT_ADD_TO_STAGE_LIST",
+        "$EVENT_REMOVE_FROM_STAGE_LIST",
+        "openCheck"
+      ],
+      "methods": [
+        "openCheck"
+      ]
+    },
+    {
+      "name": "WingSkillItemRender",
+      "type": "function",
+      "keys": [
+        "defaultTouchEnabled",
+        "boundsForUpdate",
+        "$enterFrameCallBackList",
+        "$renderCallBackList",
+        "$EVENT_ADD_TO_STAGE_LIST",
+        "$EVENT_REMOVE_FROM_STAGE_LIST"
+      ],
+      "methods": []
+    },
+    {
+      "name": "WingSkillItemSkin",
+      "type": "function",
+      "keys": [],
+      "methods": []
+    },
+    {
+      "name": "WingSkillTipPanel",
+      "type": "function",
+      "keys": [
+        "defaultTouchEnabled",
+        "boundsForUpdate",
+        "$enterFrameCallBackList",
+        "$renderCallBackList",
+        "$EVENT_ADD_TO_STAGE_LIST",
+        "$EVENT_REMOVE_FROM_STAGE_LIST",
+        "openCheck"
+      ],
+      "methods": [
+        "openCheck"
+      ]
+    },
+    {
+      "name": "WingSkillTipsPanel",
+      "type": "function",
+      "keys": [],
+      "methods": []
+    },
+    {
+      "name": "WorldBossKillMsgConfig",
+      "type": "function",
+      "keys": [],
+      "methods": []
+    },
+    {
+      "name": "YupeiSkillTipsNewSkin",
+      "type": "function",
+      "keys": [],
+      "methods": []
+    },
+    {
+      "name": "YupeiSkillTipsSkin",
+      "type": "function",
+      "keys": [],
+      "methods": []
+    },
+    {
+      "name": "YupeiSkillTipsWin",
+      "type": "function",
+      "keys": [
+        "defaultTouchEnabled",
+        "boundsForUpdate",
+        "$enterFrameCallBackList",
+        "$renderCallBackList",
+        "$EVENT_ADD_TO_STAGE_LIST",
+        "$EVENT_REMOVE_FROM_STAGE_LIST",
+        "openCheck"
+      ],
+      "methods": [
+        "openCheck"
+      ]
+    },
+    {
+      "name": "ZhanLingSkill",
+      "type": "function",
+      "keys": [],
+      "methods": []
+    },
+    {
+      "name": "ZhanlingSkillTipsSkin",
+      "type": "function",
+      "keys": [],
+      "methods": []
+    },
+    {
+      "name": "ZhuZaiSkillConfig",
+      "type": "function",
+      "keys": [],
+      "methods": []
+    },
+    {
+      "name": "ZhuZaiSkillView",
+      "type": "function",
+      "keys": [
+        "defaultTouchEnabled",
+        "boundsForUpdate",
+        "$enterFrameCallBackList",
+        "$renderCallBackList",
+        "$EVENT_ADD_TO_STAGE_LIST",
+        "$EVENT_REMOVE_FROM_STAGE_LIST",
+        "openCheck"
+      ],
+      "methods": [
+        "openCheck"
+      ]
+    },
+    {
+      "name": "heartmethodSkillTipSkin",
+      "type": "function",
+      "keys": [],
+      "methods": []
+    },
+    {
+      "name": "markSkillItemSkin",
+      "type": "function",
+      "keys": [],
+      "methods": []
+    },
+    {
+      "name": "markSkillTipsSkin",
+      "type": "function",
+      "keys": [],
+      "methods": []
+    },
+    {
+      "name": "matrix_skill_skin",
+      "type": "function",
+      "keys": [],
+      "methods": []
+    },
+    {
+      "name": "matrix_skill_tips",
+      "type": "function",
+      "keys": [
+        "defaultTouchEnabled",
+        "boundsForUpdate",
+        "$enterFrameCallBackList",
+        "$renderCallBackList",
+        "$EVENT_ADD_TO_STAGE_LIST",
+        "$EVENT_REMOVE_FROM_STAGE_LIST",
+        "openCheck"
+      ],
+      "methods": [
+        "openCheck"
+      ]
+    },
+    {
+      "name": "shenshouSkillItem",
+      "type": "function",
+      "keys": [],
+      "methods": []
+    },
+    {
+      "name": "shenshouSkillTips",
+      "type": "function",
+      "keys": [],
+      "methods": []
+    },
+    {
+      "name": "skillConst",
+      "type": "function",
+      "keys": [
+        "baseSkillIndex"
+      ],
+      "methods": []
+    },
+    {
+      "name": "weaponSkillItemSkin",
+      "type": "function",
+      "keys": [],
+      "methods": []
+    },
+    {
+      "name": "weaponSoulSkilltips",
+      "type": "function",
+      "keys": [],
+      "methods": []
+    },
+    {
+      "name": "zhuZaiSkill",
+      "type": "function",
+      "keys": [],
+      "methods": []
+    },
+    {
+      "name": "zhuZaiSkillSkin",
+      "type": "function",
+      "keys": [],
+      "methods": []
+    }
+  ],
+  "actorKeys": [],
+  "actorProperties": [],
+  "subRolesKeys": [
+    "roles",
+    "jobDic"
+  ],
+  "subRoleKeys": [
+    "dir",
+    "team",
+    "type",
+    "isElite",
+    "attributeData",
+    "attributeExData",
+    "killNum",
+    "isMy",
+    "weaponsId",
+    "isWander",
+    "lyMarkLv",
+    "lyMarkSkills",
+    "runeDatas",
+    "wingSkillData",
+    "lilianLv",
+    "_mbRing",
+    "hsRing",
+    "leiTingSuit",
+    "leiTingEquip",
+    "title",
+    "index",
+    "job",
+    "sex",
+    "power",
+    "skillsData",
+    "yuanshengData",
+    "yuanshenLv",
+    "equipsData",
+    "exRingsData",
+    "wingsData",
+    "jingMaiData",
+    "loongSoulData",
+    "heirloom",
+    "weapons",
+    "jadeData",
+    "zhuangbei",
+    "matrixInfo",
+    "masterHandle",
+    "handle",
+    "x",
+    "y",
+    "_name",
+    "guildID",
+    "guildName",
+    "warLevel"
+  ],
+  "subRoleData": {
+    "dir": 4,
+    "team": 0,
+    "type": 1,
+    "isElite": false,
+    "attributeData": [
+      100,
+      100,
+      100
+    ],
+    "attributeExData": [],
+    "killNum": 0,
+    "isMy": true,
+    "weaponsId": 0,
+    "isWander": false,
+    "lyMarkLv": 0,
+    "lyMarkSkills": [],
+    "runeDatas": [
+      {
+        "_point": -1,
+        "handle": 0,
+        "_configID": 0,
+        "count": 0,
+        "att": [
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          }
+        ],
+        "extAtt": [
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          }
+        ]
+      },
+      {
+        "_point": -1,
+        "handle": 0,
+        "_configID": 0,
+        "count": 0,
+        "att": [
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          }
+        ],
+        "extAtt": [
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          }
+        ]
+      },
+      {
+        "_point": -1,
+        "handle": 0,
+        "_configID": 0,
+        "count": 0,
+        "att": [
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          }
+        ],
+        "extAtt": [
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          }
+        ]
+      },
+      {
+        "_point": -1,
+        "handle": 0,
+        "_configID": 0,
+        "count": 0,
+        "att": [
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          }
+        ],
+        "extAtt": [
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          }
+        ]
+      },
+      {
+        "_point": -1,
+        "handle": 0,
+        "_configID": 0,
+        "count": 0,
+        "att": [
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          }
+        ],
+        "extAtt": [
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          }
+        ]
+      },
+      {
+        "_point": -1,
+        "handle": 0,
+        "_configID": 0,
+        "count": 0,
+        "att": [
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          }
+        ],
+        "extAtt": [
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          }
+        ]
+      },
+      {
+        "_point": -1,
+        "handle": 0,
+        "_configID": 0,
+        "count": 0,
+        "att": [
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          }
+        ],
+        "extAtt": [
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          }
+        ]
+      },
+      {
+        "_point": -1,
+        "handle": 0,
+        "_configID": 0,
+        "count": 0,
+        "att": [
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          }
+        ],
+        "extAtt": [
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          },
+          {
+            "type": 0,
+            "value": 0
+          }
+        ]
+      }
+    ],
+    "wingSkillData": [],
+    "lilianLv": 0,
+    "_mbRing": 0,
+    "hsRing": 0,
+    "leiTingSuit": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "leiTingEquip": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    ],
+    "title": 0,
+    "index": 0,
+    "job": 1,
+    "sex": 0,
+    "power": 1.5852e-319,
+    "skillsData": [
+      {
+        "_specialCD": 0,
+        "_id": 11001,
+        "config": {
+          "id": 11001,
+          "args": {
+            "a": 0.95,
+            "b": 10
+          },
+          "desc_ex": [
+            10
+          ],
+          "desc": 1
+        },
+        "_preId": null
+      },
+      {
+        "_specialCD": 0,
+        "_id": 12001,
+        "config": {
+          "id": 12001,
+          "args": {
+            "a": 0.95,
+            "b": 20
+          },
+          "desc_ex": [
+            20
+          ],
+          "desc": 2
+        },
+        "_preId": null
+      },
+      {
+        "_specialCD": 0,
+        "_id": 13001,
+        "config": {
+          "castType": 3,
+          "desc_ex": [
+            10
+          ],
+          "args": {
+            "a": 0.7,
+            "b": 10
+          },
+          "id": 13001,
+          "affectRange": 2,
+          "affectCount": 8,
+          "desc": 3
+        },
+        "_preId": null
+      },
+      {
+        "_specialCD": 0,
+        "_id": 14001,
+        "config": {
+          "repelDistance": 200,
+          "effType": 3,
+          "desc_ex": [
+            20
+          ],
+          "args": {
+            "a": 1,
+            "b": 20
+          },
+          "id": 14001,
+          "tarEff": [
+            14001
+          ],
+          "teleport": 1,
+          "desc": 4
+        },
+        "_preId": null
+      },
+      {
+        "_specialCD": 0,
+        "_id": 15001,
+        "config": {
+          "id": 15001,
+          "args": {
+            "a": 1.8,
+            "b": 40
+          },
+          "desc_ex": [
+            40
+          ],
+          "desc": 5
+        },
+        "_preId": null
+      }
+    ],
+    "yuanshengData": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    ],
+    "yuanshenLv": 0,
+    "equipsData": [
+      {
+        "strengthen": 0,
+        "spiritLv": 0,
+        "gem": 0,
+        "item": {
+          "_point": -1,
+          "handle": 0,
+          "_configID": 0,
+          "count": 0,
+          "att": [
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            }
+          ],
+          "extAtt": [
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            }
+          ]
+        },
+        "zhuling": 0,
+        "soulLv": 0,
+        "bless": 0,
+        "spiritExp": 0
+      },
+      {
+        "strengthen": 0,
+        "spiritLv": 0,
+        "gem": 0,
+        "item": {
+          "_point": -1,
+          "handle": 0,
+          "_configID": 0,
+          "count": 0,
+          "att": [
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            }
+          ],
+          "extAtt": [
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            }
+          ]
+        },
+        "zhuling": 0,
+        "soulLv": 0,
+        "bless": 0,
+        "spiritExp": 0
+      },
+      {
+        "strengthen": 0,
+        "spiritLv": 0,
+        "gem": 0,
+        "item": {
+          "_point": -1,
+          "handle": 0,
+          "_configID": 0,
+          "count": 0,
+          "att": [
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            }
+          ],
+          "extAtt": [
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            }
+          ]
+        },
+        "zhuling": 0,
+        "soulLv": 0,
+        "bless": 0,
+        "spiritExp": 0
+      },
+      {
+        "strengthen": 0,
+        "spiritLv": 0,
+        "gem": 0,
+        "item": {
+          "_point": -1,
+          "handle": 0,
+          "_configID": 0,
+          "count": 0,
+          "att": [
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            }
+          ],
+          "extAtt": [
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            }
+          ]
+        },
+        "zhuling": 0,
+        "soulLv": 0,
+        "bless": 0,
+        "spiritExp": 0
+      },
+      {
+        "strengthen": 0,
+        "spiritLv": 0,
+        "gem": 0,
+        "item": {
+          "_point": -1,
+          "handle": 0,
+          "_configID": 0,
+          "count": 0,
+          "att": [
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            }
+          ],
+          "extAtt": [
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            }
+          ]
+        },
+        "zhuling": 0,
+        "soulLv": 0,
+        "bless": 0,
+        "spiritExp": 0
+      },
+      {
+        "strengthen": 0,
+        "spiritLv": 0,
+        "gem": 0,
+        "item": {
+          "_point": -1,
+          "handle": 0,
+          "_configID": 0,
+          "count": 0,
+          "att": [
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            }
+          ],
+          "extAtt": [
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            }
+          ]
+        },
+        "zhuling": 0,
+        "soulLv": 0,
+        "bless": 0,
+        "spiritExp": 0
+      },
+      {
+        "strengthen": 0,
+        "spiritLv": 0,
+        "gem": 0,
+        "item": {
+          "_point": -1,
+          "handle": 0,
+          "_configID": 0,
+          "count": 0,
+          "att": [
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            }
+          ],
+          "extAtt": [
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            }
+          ]
+        },
+        "zhuling": 0,
+        "soulLv": 0,
+        "bless": 0,
+        "spiritExp": 0
+      },
+      {
+        "strengthen": 0,
+        "spiritLv": 0,
+        "gem": 0,
+        "item": {
+          "_point": -1,
+          "handle": 0,
+          "_configID": 0,
+          "count": 0,
+          "att": [
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            }
+          ],
+          "extAtt": [
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            }
+          ]
+        },
+        "zhuling": 0,
+        "soulLv": 0,
+        "bless": 0,
+        "spiritExp": 0
+      },
+      {
+        "strengthen": 0,
+        "spiritLv": 0,
+        "gem": 0,
+        "item": {
+          "_point": -1,
+          "handle": 0,
+          "_configID": 0,
+          "count": 0,
+          "att": [
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            }
+          ],
+          "extAtt": [
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            }
+          ]
+        },
+        "zhuling": 0,
+        "soulLv": 0,
+        "bless": 0,
+        "spiritExp": 0
+      },
+      {
+        "strengthen": 0,
+        "spiritLv": 0,
+        "gem": 0,
+        "item": {
+          "_point": -1,
+          "handle": 0,
+          "_configID": 0,
+          "count": 0,
+          "att": [
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            }
+          ],
+          "extAtt": [
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            }
+          ]
+        },
+        "zhuling": 0,
+        "soulLv": 0,
+        "bless": 0,
+        "spiritExp": 0
+      },
+      {
+        "strengthen": 0,
+        "spiritLv": 0,
+        "gem": 0,
+        "item": {
+          "_point": -1,
+          "handle": 0,
+          "_configID": 0,
+          "count": 0,
+          "att": [
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            }
+          ],
+          "extAtt": [
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            }
+          ]
+        },
+        "zhuling": 0,
+        "soulLv": 0,
+        "bless": 0,
+        "spiritExp": 0
+      },
+      {
+        "strengthen": 0,
+        "spiritLv": 0,
+        "gem": 0,
+        "item": {
+          "_point": -1,
+          "handle": 0,
+          "_configID": 0,
+          "count": 0,
+          "att": [
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            }
+          ],
+          "extAtt": [
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            }
+          ]
+        },
+        "zhuling": 0,
+        "soulLv": 0,
+        "bless": 0,
+        "spiritExp": 0
+      },
+      {
+        "strengthen": 0,
+        "spiritLv": 0,
+        "gem": 0,
+        "item": {
+          "_point": -1,
+          "handle": 0,
+          "_configID": 0,
+          "count": 0,
+          "att": [
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            }
+          ],
+          "extAtt": [
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            },
+            {
+              "type": 0,
+              "value": 0
+            }
+          ]
+        },
+        "zhuling": 0,
+        "soulLv": 0,
+        "bless": 0,
+        "spiritExp": 0
+      }
+    ],
+    "exRingsData": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "wingsData": {
+      "openStatus": 0,
+      "clearTime": 0,
+      "aptitudeDan": 0,
+      "flyUpDan": 0,
+      "lv": 0,
+      "exp": 0
+    },
+    "jingMaiData": {
+      "level": 0,
+      "stage": 0
+    },
+    "loongSoulData": {
+      "level": 0,
+      "stage": 0,
+      "exp": 0,
+      "state": 0
+    },
+    "heirloom": {
+      "heirloomData": [
+        {
+          "slot": 0,
+          "lv": 0,
+          "expend": {
+            "id": 0,
+            "count": 0
+          },
+          "attr": [],
+          "icon": 0,
+          "name": "",
+          "image": "",
+          "model": "",
+          "skillicon": "",
+          "skillname": "",
+          "skilldesc": "",
+          "attr_add": 0
+        },
+        {
+          "slot": 0,
+          "lv": 0,
+          "expend": {
+            "id": 0,
+            "count": 0
+          },
+          "attr": [],
+          "icon": 0,
+          "name": "",
+          "image": "",
+          "model": "",
+          "skillicon": "",
+          "skillname": "",
+          "skilldesc": "",
+          "attr_add": 0
+        },
+        {
+          "slot": 0,
+          "lv": 0,
+          "expend": {
+            "id": 0,
+            "count": 0
+          },
+          "attr": [],
+          "icon": 0,
+          "name": "",
+          "image": "",
+          "model": "",
+          "skillicon": "",
+          "skillname": "",
+          "skilldesc": "",
+          "attr_add": 0
+        },
+        {
+          "slot": 0,
+          "lv": 0,
+          "expend": {
+            "id": 0,
+            "count": 0
+          },
+          "attr": [],
+          "icon": 0,
+          "name": "",
+          "image": "",
+          "model": "",
+          "skillicon": "",
+          "skillname": "",
+          "skilldesc": "",
+          "attr_add": 0
+        },
+        {
+          "slot": 0,
+          "lv": 0,
+          "expend": {
+            "id": 0,
+            "count": 0
+          },
+          "attr": [],
+          "icon": 0,
+          "name": "",
+          "image": "",
+          "model": "",
+          "skillicon": "",
+          "skillname": "",
+          "skilldesc": "",
+          "attr_add": 0
+        },
+        {
+          "slot": 0,
+          "lv": 0,
+          "expend": {
+            "id": 0,
+            "count": 0
+          },
+          "attr": [],
+          "icon": 0,
+          "name": "",
+          "image": "",
+          "model": "",
+          "skillicon": "",
+          "skillname": "",
+          "skilldesc": "",
+          "attr_add": 0
+        },
+        {
+          "slot": 0,
+          "lv": 0,
+          "expend": {
+            "id": 0,
+            "count": 0
+          },
+          "attr": [],
+          "icon": 0,
+          "name": "",
+          "image": "",
+          "model": "",
+          "skillicon": "",
+          "skillname": "",
+          "skilldesc": "",
+          "attr_add": 0
+        },
+        {
+          "slot": 0,
+          "lv": 0,
+          "expend": {
+            "id": 0,
+            "count": 0
+          },
+          "attr": [],
+          "icon": 0,
+          "name": "",
+          "image": "",
+          "model": "",
+          "skillicon": "",
+          "skillname": "",
+          "skilldesc": "",
+          "attr_add": 0
+        }
+      ]
+    },
+    "weapons": {
+      "WeaponsSoulInfoData": {
+        "1": {
+          "icon": "",
+          "id": 0,
+          "name": "",
+          "actcond": [],
+          "inside": [],
+          "outside": [],
+          "pic": []
+        },
+        "2": {
+          "icon": "",
+          "id": 0,
+          "name": "",
+          "actcond": [],
+          "inside": [],
+          "outside": [],
+          "pic": []
+        },
+        "3": {
+          "icon": "",
+          "id": 0,
+          "name": "",
+          "actcond": [],
+          "inside": [],
+          "outside": [],
+          "pic": []
+        },
+        "4": {
+          "icon": "",
+          "id": 0,
+          "name": "",
+          "actcond": [],
+          "inside": [],
+          "outside": [],
+          "pic": []
+        },
+        "5": {
+          "icon": "",
+          "id": 0,
+          "name": "",
+          "actcond": [],
+          "inside": [],
+          "outside": [],
+          "pic": []
+        },
+        "6": {
+          "icon": "",
+          "id": 0,
+          "name": "",
+          "actcond": [],
+          "inside": [],
+          "outside": [],
+          "pic": []
+        }
+      },
+      "WeaponsInfoData": {
+        "1": {},
+        "2": {},
+        "3": {},
+        "4": {},
+        "5": {},
+        "6": {},
+        "7": {},
+        "8": {},
+        "9": {},
+        "10": {},
+        "11": {},
+        "12": {},
+        "13": {},
+        "14": {},
+        "15": {},
+        "16": {},
+        "17": {},
+        "18": {},
+        "19": {},
+        "20": {},
+        "21": {},
+        "22": {},
+        "23": {},
+        "24": {},
+        "25": {},
+        "26": {},
+        "27": {},
+        "28": {},
+        "29": {},
+        "30": {},
+        "31": {},
+        "32": {},
+        "33": {},
+        "34": {},
+        "35": {},
+        "36": {},
+        "37": {},
+        "38": {},
+        "39": {},
+        "40": {}
+      },
+      "WeaponsFlexibleInfoData": [],
+      "weaponsId": 0,
+      "flexibleCount": 0
+    },
+    "jadeData": {
+      "lv": 0,
+      "exp": 0,
+      "_isUpdate": true
+    },
+    "zhuangbei": [
+      0,
+      0,
+      0
+    ],
+    "matrixInfo": [
+      {
+        "Lv": 0,
+        "WYLv": 0,
+        "WYEXP": 0,
+        "index": 1,
+        "TZData": [
+          {
+            "id": 1,
+            "TZLv": 0
+          },
+          {
+            "id": 2,
+            "TZLv": 0
+          },
+          {
+            "id": 3,
+            "TZLv": 0
+          },
+          {
+            "id": 4,
+            "TZLv": 0
+          }
+        ],
+        "qnLingwuCount": 0,
+        "QNData": [
+          null,
+          {
+            "QNIndex": 1,
+            "QNState": 0,
+            "QNRadomValue": 0
+          },
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          {
+            "QNIndex": 11,
+            "QNState": 0,
+            "QNRadomValue": 0
+          },
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          {
+            "QNIndex": 21,
+            "QNState": 0,
+            "QNRadomValue": 0
+          },
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          {
+            "QNIndex": 31,
+            "QNState": 0,
+            "QNRadomValue": 0
+          },
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          {
+            "QNIndex": 41,
+            "QNState": 0,
+            "QNRadomValue": 0
+          }
+        ],
+        "huanHuaState": 0
+      },
+      {
+        "Lv": 0,
+        "WYLv": 0,
+        "WYEXP": 0,
+        "index": 2,
+        "TZData": [
+          {
+            "id": 1,
+            "TZLv": 0
+          },
+          {
+            "id": 2,
+            "TZLv": 0
+          },
+          {
+            "id": 3,
+            "TZLv": 0
+          },
+          {
+            "id": 4,
+            "TZLv": 0
+          }
+        ],
+        "qnLingwuCount": 0,
+        "QNData": [
+          null,
+          {
+            "QNIndex": 1,
+            "QNState": 0,
+            "QNRadomValue": 0
+          },
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          {
+            "QNIndex": 11,
+            "QNState": 0,
+            "QNRadomValue": 0
+          },
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          {
+            "QNIndex": 21,
+            "QNState": 0,
+            "QNRadomValue": 0
+          },
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          {
+            "QNIndex": 31,
+            "QNState": 0,
+            "QNRadomValue": 0
+          },
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          {
+            "QNIndex": 51,
+            "QNState": 0,
+            "QNRadomValue": 0
+          }
+        ],
+        "huanHuaState": 0
+      },
+      {
+        "Lv": 0,
+        "WYLv": 0,
+        "WYEXP": 0,
+        "index": 3,
+        "TZData": [
+          {
+            "id": 1,
+            "TZLv": 0
+          },
+          {
+            "id": 2,
+            "TZLv": 0
+          },
+          {
+            "id": 3,
+            "TZLv": 0
+          },
+          {
+            "id": 4,
+            "TZLv": 0
+          }
+        ],
+        "qnLingwuCount": 0,
+        "QNData": [
+          null,
+          null,
+          {
+            "QNIndex": 2,
+            "QNState": 0,
+            "QNRadomValue": 0
+          },
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          {
+            "QNIndex": 12,
+            "QNState": 0,
+            "QNRadomValue": 0
+          },
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          {
+            "QNIndex": 22,
+            "QNState": 0,
+            "QNRadomValue": 0
+          },
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          {
+            "QNIndex": 32,
+            "QNState": 0,
+            "QNRadomValue": 0
+          },
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          {
+            "QNIndex": 61,
+            "QNState": 0,
+            "QNRadomValue": 0
+          }
+        ],
+        "huanHuaState": 0
+      },
+      {
+        "Lv": 0,
+        "WYLv": 0,
+        "WYEXP": 0,
+        "index": 4,
+        "TZData": [
+          {
+            "id": 1,
+            "TZLv": 0
+          },
+          {
+            "id": 2,
+            "TZLv": 0
+          },
+          {
+            "id": 3,
+            "TZLv": 0
+          },
+          {
+            "id": 4,
+            "TZLv": 0
+          }
+        ],
+        "qnLingwuCount": 0,
+        "QNData": [
+          null,
+          null,
+          {
+            "QNIndex": 2,
+            "QNState": 0,
+            "QNRadomValue": 0
+          },
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          {
+            "QNIndex": 12,
+            "QNState": 0,
+            "QNRadomValue": 0
+          },
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          {
+            "QNIndex": 22,
+            "QNState": 0,
+            "QNRadomValue": 0
+          },
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          {
+            "QNIndex": 32,
+            "QNState": 0,
+            "QNRadomValue": 0
+          },
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          {
+            "QNIndex": 71,
+            "QNState": 0,
+            "QNRadomValue": 0
+          }
+        ],
+        "huanHuaState": 0
+      },
+      {
+        "Lv": 0,
+        "WYLv": 0,
+        "WYEXP": 0,
+        "index": 5,
+        "TZData": [
+          {
+            "id": 1,
+            "TZLv": 0
+          },
+          {
+            "id": 2,
+            "TZLv": 0
+          },
+          {
+            "id": 3,
+            "TZLv": 0
+          },
+          {
+            "id": 4,
+            "TZLv": 0
+          }
+        ],
+        "qnLingwuCount": 0,
+        "QNData": [
+          null,
+          {
+            "QNIndex": 1,
+            "QNState": 0,
+            "QNRadomValue": 0
+          },
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          {
+            "QNIndex": 11,
+            "QNState": 0,
+            "QNRadomValue": 0
+          },
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          {
+            "QNIndex": 21,
+            "QNState": 0,
+            "QNRadomValue": 0
+          },
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          {
+            "QNIndex": 31,
+            "QNState": 0,
+            "QNRadomValue": 0
+          },
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          {
+            "QNIndex": 81,
+            "QNState": 0,
+            "QNRadomValue": 0
+          }
+        ],
+        "huanHuaState": 0
+      },
+      {
+        "Lv": 0,
+        "WYLv": 0,
+        "WYEXP": 0,
+        "index": 6,
+        "TZData": [
+          {
+            "id": 1,
+            "TZLv": 0
+          },
+          {
+            "id": 2,
+            "TZLv": 0
+          },
+          {
+            "id": 3,
+            "TZLv": 0
+          },
+          {
+            "id": 4,
+            "TZLv": 0
+          }
+        ],
+        "qnLingwuCount": 0,
+        "QNData": [
+          null,
+          {
+            "QNIndex": 1,
+            "QNState": 0,
+            "QNRadomValue": 0
+          },
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          {
+            "QNIndex": 11,
+            "QNState": 0,
+            "QNRadomValue": 0
+          },
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          {
+            "QNIndex": 21,
+            "QNState": 0,
+            "QNRadomValue": 0
+          },
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          {
+            "QNIndex": 31,
+            "QNState": 0,
+            "QNRadomValue": 0
+          },
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          {
+            "QNIndex": 91,
+            "QNState": 0,
+            "QNRadomValue": 0
+          }
+        ],
+        "huanHuaState": 0
+      }
+    ],
+    "masterHandle": 65537,
+    "handle": 65537,
+    "x": 256,
+    "y": 384,
+    "_name": "追风尘世",
+    "guildID": 0,
+    "guildName": ""
+  },
+  "userSkillData": {
+    "hejiLevel": -1,
+    "hejiCD": 0,
+    "hejiEnable": false,
+    "isFirst": true,
+    "fieldUse": false,
+    "equipListData": [],
+    "hejiProgressList": [],
+    "reduceCD": 0,
+    "sysId": 2
+  },
+  "skillByJob": {
+    "_specialCD": 0,
+    "_id": 11001,
+    "config": {
+      "id": 11001,
+      "args": {
+        "a": 0.95,
+        "b": 10
+      },
+      "desc_ex": [
+        10
+      ],
+      "desc": 1
+    },
+    "_preId": null
+  },
+  "methodSources": {
+    "sendUseSkill": "function(t,e,i){var s=this.getBytes(1);s.writeDouble(t),s.writeDouble(e),s.writeInt(i),this.sendToServer(s)}",
+    "doSkillResult": "function(t){var e=t.readDouble(),i=t.readInt(),s=t.readDouble(),n=EntityManager.ins().getEntityByHandle(e);if(n){var o=EntityManager.ins().getEntityByHandle(s);if(o&&(!o.parent&&n.isMy&&EntityShowMgr.ins().showHideSomeOne(s),!n.parent&&o.isMy&&EntityShowMgr.ins().showHideSomeOne(e),n.parent)){var a=new SkillData(i),r=0;7==Math.floor(i/1e4)&&(r=DamageTypes.Heji);var h,l=t.readShort();n.isMy&&(o.showBlood(!0),o.showName(!0)),o.isMy&&(n.showBlood(!0),n.showName(!0));for(var u=[],c=[],p=0;l>p;p++)h=t.readDouble(),c=[h],u[p]=c;AIUtil.ins().userSkill(n,o,a),n instanceof CharRole&&GuildWar.ins().getModel().checkinAppoint(2,!0)&&SubRoles.ins().getIsMyPlayer(s)&&n.infoModel.name&&GuildWar.ins().getModel().changeWeiXieList(n.infoModel.masterHandle,!0,n.infoModel.name)}}}",
+    "sendGrewUpSkill": "function(t,e){var i=this.getBytes(4);i.writeShort(t),i.writeShort(e),this.sendToServer(i)}",
+    "postSkillUpgrade": "function(){for(var i=[],s=0;s<arguments.length;s++)i[s]=arguments[s];var n;i.length;return n=t?a.call.apply(a,[this].concat(i)):a.apply(void 0,i),(\"boolean\"!=typeof n||n)&&e.ins().dispatch(o,n),n}",
+    "sendGrewUpAllSkill": "function(t,e,i){void 0===e&&(e=!0),void 0===i&&(i=0);var s=this.getBytes(5);s.writeShort(e?1:0),s.writeShort(t),s.writeShort(i),this.sendToServer(s)}",
+    "postSkillUpgradeAll": "function(){for(var i=[],s=0;s<arguments.length;s++)i[s]=arguments[s];var n;i.length;return n=t?a.call.apply(a,[this].concat(i)):a.apply(void 0,i),(\"boolean\"!=typeof n||n)&&e.ins().dispatch(o,n),n}",
+    "canGrewupSkill": "function(){for(var t=[],e=this.getSkillLimitLevel(),i=SubRoles.ins().subRolesLen,s=0;i>s;s++)for(var n=SubRoles.ins().getSubRoleByIndex(s),o=0;o<n.skillsData.length;o++){var a=n.skillsData[o];if(a.lv>0&&e>a.lv){var r=GlobalConfig.SkillsUpgradeConfig[a.lv].cost;\nif(Actor.gold>=r){t[s]=!0;break}}}return t}",
+    "canGrewupAllSkills": "function(t){for(var i=this.getSkillLimitLevel(),s=SubRoles.ins().getSubRoleByIndex(t).skillsData,n=!1,o=Actor.gold,a=0;a<s.length;a++){var r=s[a];if(0!=r.configID){var h=GlobalConfig.SkillsUpgradeConfig[r.lv];h&&o>=h.cost&&r.configID!=i&&(n=!0)}}if(n){for(var a=0;5>a;a++){var r=s[a];if(r.lv>0&&r.lv<e.ins().getSkillLimitLevel()){var l=e.ins().getSingleSkillGrewUpCost(t,a);if(l>0)return!0}}return!1}return n}",
+    "getSingleSkillGrewUpCost": "function(t,e){var i=this.getSkillLimitLevel(),s=SubRoles.ins().getSubRoleByIndex(t).skillsData[e],n=Actor.gold,o=0;if(s.lv>0){for(var a=s.lv;i>a;a++){var r=GlobalConfig.SkillsUpgradeConfig[a].cost;if(o+r>n)return o;o+=r}return o}return 0}"
+  }
+}

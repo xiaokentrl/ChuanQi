@@ -1,0 +1,1 @@
+database=actor_s1_m5e_skill_20261126 actor=65537 level=51 exp=0 gold=7000 scene=2

@@ -1,0 +1,181 @@
+{
+  "date": "2026-11-26",
+  "mode": "restart",
+  "url": "http://localhost/?uid=aabb&trace=1795642684339&skillVerify=restart",
+  "gateway": "127.0.0.1:19002",
+  "gameworld": "127.0.0.1:16001",
+  "database": "actor_s1_m5e_skill_20261126",
+  "account": "haohaiyao",
+  "actorID": 65537,
+  "monsterID": 1073741824,
+  "initialState": {
+    "url": "http://localhost/?uid=aabb&trace=1795642684339&skillVerify=restart",
+    "loginAccount": null,
+    "loginLoading": null,
+    "scene": "GameSceneView",
+    "map": {
+      "id": 2,
+      "fuben": 0
+    },
+    "actor": {
+      "level": 51,
+      "gold": 7000
+    },
+    "skills": [
+      {
+        "id": 11013,
+        "configID": 11013,
+        "lv": 13
+      },
+      {
+        "id": 12001,
+        "configID": 12001,
+        "lv": 1
+      },
+      {
+        "id": 13001,
+        "configID": 13001,
+        "lv": 1
+      },
+      {
+        "id": 14001,
+        "configID": 14001,
+        "lv": 1
+      },
+      {
+        "id": 15001,
+        "configID": 15001,
+        "lv": 1
+      }
+    ],
+    "entities": [
+      {
+        "handle": 65537,
+        "x": 256,
+        "y": 384,
+        "hp": 100
+      },
+      {
+        "handle": 1073741824,
+        "x": 448,
+        "y": 384,
+        "hp": 2000
+      }
+    ],
+    "socketStatus": 3,
+    "errors": []
+  },
+  "upgradedState": null,
+  "allUpgradedState": null,
+  "beforeCast": null,
+  "afterFirstCast": null,
+  "afterSecondCast": null,
+  "singleCall": null,
+  "allCall": null,
+  "firstCastCall": null,
+  "cooldownCastCall": null,
+  "secondCastCall": null,
+  "moveHex": null,
+  "finalState": {
+    "url": "http://localhost/?uid=aabb&trace=1795642684339&skillVerify=restart",
+    "loginAccount": null,
+    "loginLoading": null,
+    "scene": "GameSceneView",
+    "map": {
+      "id": 2,
+      "fuben": 0
+    },
+    "actor": {
+      "level": 51,
+      "gold": 7000
+    },
+    "skills": [
+      {
+        "id": 11013,
+        "configID": 11013,
+        "lv": 13
+      },
+      {
+        "id": 12001,
+        "configID": 12001,
+        "lv": 1
+      },
+      {
+        "id": 13001,
+        "configID": 13001,
+        "lv": 1
+      },
+      {
+        "id": 14001,
+        "configID": 14001,
+        "lv": 1
+      },
+      {
+        "id": 15001,
+        "configID": 15001,
+        "lv": 1
+      }
+    ],
+    "entities": [
+      {
+        "handle": 65537,
+        "x": 256,
+        "y": 384,
+        "hp": 100
+      },
+      {
+        "handle": 1073741824,
+        "x": 448,
+        "y": 384,
+        "hp": 2000
+      }
+    ],
+    "socketStatus": 3,
+    "errors": []
+  },
+  "validation": {
+    "singleLoginAttempt": true,
+    "sceneEntered": true,
+    "roleDataLengthValid": true,
+    "roleSkillLevelsValid": true,
+    "fiveSkillsParsed": true,
+    "noClientErrors": true,
+    "playerAlive": true,
+    "persistedSkills": true,
+    "persistedGold": true,
+    "noSkillMutations": true
+  },
+  "wsConnections": [
+    "ws://127.0.0.1:19002/"
+  ],
+  "loginFrames": [
+    {
+      "index": 2,
+      "direction": "sent",
+      "timestamp": 5805.02866,
+      "hex": "8c8b150d00000000ff0101000000090068616f68616979616f002000653130616463333934396261353961626265353665303537663230663838336500",
+      "sysid": 255,
+      "cmdid": 1
+    }
+  ],
+  "skillFrames": [],
+  "role": {
+    "index": 22,
+    "frameBytes": 4113,
+    "levels": [
+      13,
+      1,
+      1,
+      1,
+      1
+    ],
+    "trailing": [
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  },
+  "wsFrameCount": 30
+}

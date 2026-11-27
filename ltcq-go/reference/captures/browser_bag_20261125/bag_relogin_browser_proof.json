@@ -1,0 +1,164 @@
+{
+  "date": "2026-11-26",
+  "mode": "relogin",
+  "url": "http://localhost/?uid=aabb&trace=1795638063346&bagVerify=relogin",
+  "gateway": "127.0.0.1:19002",
+  "gameworld": "127.0.0.1:16001",
+  "database": "actor_s1_m5e_m5h_20261125",
+  "account": "haohaiyao",
+  "actorID": 65537,
+  "itemID": 200013,
+  "initialState": {
+    "url": "http://localhost/?uid=aabb&trace=1795638063346&bagVerify=relogin",
+    "loginAccount": null,
+    "loginLoading": null,
+    "scene": "GameSceneView",
+    "map": {
+      "id": 2,
+      "fuben": 0
+    },
+    "actor": {
+      "level": 51,
+      "exp": 1300,
+      "gold": 13000
+    },
+    "entities": [
+      {
+        "handle": 65537,
+        "x": 256,
+        "y": 384,
+        "hp": 100
+      },
+      {
+        "handle": 1073741824,
+        "x": 448,
+        "y": 384,
+        "hp": 2000
+      }
+    ],
+    "socketStatus": 3,
+    "bag": {
+      "bagNum": 200,
+      "items": [
+        {
+          "handle": 4.244267441707166e-309,
+          "configID": 200013,
+          "count": 1
+        }
+      ]
+    },
+    "errors": []
+  },
+  "drainedState": null,
+  "stackedState": null,
+  "usedState": null,
+  "drainCall": null,
+  "useCall": null,
+  "finalState": {
+    "url": "http://localhost/?uid=aabb&trace=1795638063346&bagVerify=relogin",
+    "loginAccount": null,
+    "loginLoading": null,
+    "scene": "GameSceneView",
+    "map": {
+      "id": 2,
+      "fuben": 0
+    },
+    "actor": {
+      "level": 51,
+      "exp": 1300,
+      "gold": 13000
+    },
+    "entities": [
+      {
+        "handle": 65537,
+        "x": 256,
+        "y": 384,
+        "hp": 100
+      },
+      {
+        "handle": 1073741824,
+        "x": 448,
+        "y": 384,
+        "hp": 2000
+      }
+    ],
+    "socketStatus": 3,
+    "bag": {
+      "bagNum": 200,
+      "items": [
+        {
+          "handle": 4.244267441707166e-309,
+          "configID": 200013,
+          "count": 1
+        }
+      ]
+    },
+    "errors": []
+  },
+  "validation": {
+    "singleLoginAttempt": true,
+    "sceneEntered": true,
+    "bagTypesInitialized": true,
+    "bagInitLayoutsValid": true,
+    "initialItemLayoutValid": true,
+    "persistedOrMutatedCount": true,
+    "noClientErrors": true,
+    "persistedInitItem": true,
+    "noBagMutations": true
+  },
+  "wsConnections": [
+    "ws://127.0.0.1:19002/"
+  ],
+  "loginFrames": [
+    {
+      "index": 2,
+      "direction": "sent",
+      "timestamp": 1184.235698,
+      "hex": "cf9a962c00000000ff0101000000090068616f68616979616f002000653130616463333934396261353961626265353665303537663230663838336500",
+      "sysid": 255,
+      "cmdid": 1
+    }
+  ],
+  "useCommands": [],
+  "bagFrames": [
+    {
+      "index": 26,
+      "timestamp": 1184.311655,
+      "cmdid": 1,
+      "frameBytes": 156,
+      "resetFlag": 1,
+      "bagType": 0,
+      "itemCount": 1,
+      "items": [
+        {
+          "handle": 4.244267441707166e-309,
+          "handleBits": "30d4d00010001",
+          "configID": 200013,
+          "count": 1
+        }
+      ]
+    },
+    {
+      "index": 27,
+      "timestamp": 1184.311966,
+      "cmdid": 1,
+      "frameBytes": 12,
+      "resetFlag": 1,
+      "bagType": 1,
+      "itemCount": 0,
+      "items": []
+    },
+    {
+      "index": 28,
+      "timestamp": 1184.312143,
+      "cmdid": 1,
+      "frameBytes": 12,
+      "resetFlag": 1,
+      "bagType": 2,
+      "itemCount": 0,
+      "items": []
+    }
+  ],
+  "moveHex": null,
+  "wsFrameCount": 30
+}

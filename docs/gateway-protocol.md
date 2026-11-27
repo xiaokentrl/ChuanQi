@@ -95,3 +95,16 @@ Load:   sysVarCount_ = -1; curSysVarCount_ = 0;
 **修复方向**：①反编译 dbserver 的 0x209 处理函数（dbserver 已导入 Ghidra）；②或抓 5001 流量看 0x209 请求/响应；③或 sysvar 表插入种子行测试
 
 **教训**：曾误判 golden cmd=5 的 `00 00 cd cd` 为 gateway 前缀——实际是客户端登录数据自带字段，gateway 双重添加导致额外失败（已回退）
+
+## 七、★ 混合路径实测（2026-11-28 09:19-09:20）
+
+**拓扑（用户重组后）**：探针 → C++ gateway(9002) → **Go gameworld(6001)** → 响应回探针
+- 探针登录帧（skey 前缀 + golden 同构数据）→ C++ gateway 转发 → Go gameworld 处理
+- **探针收到响应帧 `ff 01 00`（7B）** = 登录响应格式（与 B2 时代成功登录一致）
+- gameworld 端 openuser 三次（09:19:15/09:19:57/09:20:43）与探针/重连次数吻合
+- **结论：Go gameworld 经 C++ gateway 的登录处理+响应链路实测通过（M2+M4 混合形态）**
+
+**环境注意事项**：
+- s1/Debug/gameworld/boot.log 由一个竞争的僵尸 C++ gameworld 实例写入（wait-for-db 卡住、反复重启）——非当前栈成员（当前 Go gameworld=596/6001，C++ 基线=17076/16001），清理时注意区分
+- EServer AutoStartAndRestartService 会自动拉起被杀的服务——实验杀进程前先确认 EServer 的自动重启行为
+- soak 断点：11-28 00:21:50 为上一段最后采样（机器休眠停滞），判读口径改为累计运行时长

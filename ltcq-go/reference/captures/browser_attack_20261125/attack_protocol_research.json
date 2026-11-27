@@ -1,0 +1,29 @@
+{
+  "date": "2026-11-25",
+  "client": "data/h5game/main.min.js",
+  "conclusion": "当前真实客户端没有可触发的独立普通攻击上行；M5-C 使用服务端权威自动战斗，不伪造技能或切换目标协议。",
+  "evidence": {
+    "sendUseSkillDefinitionOffset": 3403006,
+    "sendUseSkillDefinitionCount": 1,
+    "sendUseSkillCallSites": 0,
+    "roleAIOffset": 266766,
+    "switchTargetUpstreamFound": false,
+    "observedClickTargetPackets": [
+      "e99434161100000000020201",
+      "e99434161200000045030001000000",
+      "e99434161300000000ff"
+    ],
+    "observedClickTargetPacketMeanings": [
+      "sysid=0 cmdid=2",
+      "sysid=69 cmdid=3",
+      "sysid=0 cmdid=255"
+    ],
+    "directTargetHandleMutationSentPacket": false
+  },
+  "confirmedDownstreamParsers": {
+    "0009": "double handle + double currentHP",
+    "0010": "double handle",
+    "0020": "double attacker + double target + double damage + uint32 damageType",
+    "0201": "double caster + int32 skill + double target + uint16 count + double targets"
+  }
+}
