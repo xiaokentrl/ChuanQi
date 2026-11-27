@@ -149,3 +149,10 @@ MySQL 5.7 默认 `--secure-file-priv` 禁止该语句 → **原版生产环境�
 1. **反编译 `PrecessData`**：确认包帧（长度前缀/CMD 位置/serverid 来源）
 2. **反编译 7 个 Insert\***：各表字段序与类型（对照 main.lua 的 INSERT 模板验证）
 3. 反编译 `PostLogPacket`：确认它是"gameworld→loggerserver 的包接收"还是"scribe 发送"
+
+## 附：A2 BagAdd golden 定位记录（2026-11-28）
+
+- `a2_bag_golden_20261127.raw` 中候选帧 @71757：`03 04 01 dc cf cc 1f 00 00 01 00 89 8a 01 00 01 00 00 00 04 00 00 00 01...`
+  （`03 04` 头 + 掩码字段，非 101001——需按 @additem 时间线对齐确认目标帧）
+- 字段语义（RUNBOOK 五十七已解码）：[2]=bagTab、handle=不透明 f64、[19/23/27/31]=att 属性对、[147]=tipFlag、帧长 148B
+- ItemConfig loader + 容量模型已入库（a7051f68/5c8575e4）——BagAdd 帧校准为 A2 最后一步
