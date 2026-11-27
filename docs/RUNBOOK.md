@@ -1284,3 +1284,16 @@ payload 148B = `u8 sysid(3)` + `u8 subcmd(4)` + `u8 bagType` + `ItemData(144B)` 
 - `go test ./...` 全通过、`go vet ./...` 通过、`git diff --check` 通过。
 - 这是 A5 giveAwards 的**前置基础能力之一**，不是 giveAwards 本身；Lua table→奖励列表解码、跨表原子性、容量模型、邮件补发仍缺（RUNBOOK 五十九），giveAwards 继续不实现。
 - 注入值只影响 Lua VM 常量可见性，不改变 Go 侧任何业务 API 或协议；无需重启服务栈（当次测试 VM 验证即可）。
+## 六十一、A5 基础能力：Lua 奖励数组表解码 helper（2026-11-27）
+
+### 新增
+- `ltcq-go/internal/engineapi/awards.go`：`AwardItem{Type,ID,Count,Job}` 与 `decodeAwards(v luahost.Value) ([]AwardItem, error)`。
+- 语义对齐原版 `actorawards.lua:42-46` 的 `ipairs(rewards)`：从下标 1 起逐项取，**遇 nil 即停止**（不用 `#table`/`Len()`，因 nil 洞长度不确定）；每行读 `type/id/count/job`，缺失按 0（对齐 `giveAwardEx` 的 `or 0` 默认值）。
+- 不注入 count 默认值 1（原版 `giveAwardEx` 的 `or 1` 留给调用方），不执行发放，不接 `LActor.giveAwards` 注册——这是纯解码基础能力。
+
+### 验证
+- `awards_test.go` 6+3 个用例：正常四字段、缺字段默认 0、额外 hash 字段忽略、空表、nil 洞截断、非 table 元素报错；非 table 顶层（数字/字符串/nil）拒绝。
+- `go test ./...`、`go vet ./...`、`git diff --check` 全通过。
+
+### 边界
+- 这是 giveAwards 前置条件的第 2 项（Lua table 解码）。剩余缺口：跨表原子性（背包写 actorvariable + 货币写 actors）、容量模型（getEquipBagSpace）、邮件补发链路；`giveAwards` 本体继续不实现，stub 不计入覆盖门禁。
