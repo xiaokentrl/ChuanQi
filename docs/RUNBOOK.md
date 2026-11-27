@@ -1320,3 +1320,23 @@ payload 148B = `u8 sysid(3)` + `u8 subcmd(4)` + `u8 bagType` + `ItemData(144B)` 
 - golden 已锚定：拾取触发上行 `[01][01]` flag=0、消失包 `[00][0a]`、BagAdd `[03][04]` 布局、EXP/MONEY 下行。
 - Go 侧推断（待后续 golden 校准）：① 服务端按距离归属掉落（客户端不回传 handle，服务端必然自行判定；半径 2 格为选定值）；② 60s 过期时长；③ 一次触发结算半径内全部掉落（golden 一次触发伴随多帧消失包）。
 - 装备掉落进装备背包（bagTab=1）走 `AddItem` 现有 resolver 路由，装备容量/att[] 生成仍属 NEXT-STEPS P1 装备背包闭环，不在本轮。
+
+## 六十三、A2 实机验收：掉落帧布局权威修正 + 登录卡死排查（2026-11-28）
+
+### 掉落 OtherEntity 布局权威修正（实测驱动，已提交 1030860a）
+- 首轮实机测试击杀正常（exp/gold 到账）但客户端无 type=6 实体。抓客户端收到的 `[00][04]` 帧并与 main.min.js 权威解析器比对，定位 Go 掉落帧布局错误：**`[00][04]` 帧内 `[u16]` 直接是实体类型（readShort），没有 count 字段**——原实现写成 `[u16 count=1][u32 type=6]`，客户端把 type 读成 1（Role）走角色分支，掉落永不渲染。
+- 权威布局（`EntityModel.parserBase`，main.min.js）：`type:short + handle:readDouble + configID:readInt + masterHandle:readDouble + x/y:readInt`；`type==6(DropItem)` 分支接 `RewardData.parser`（`type/id/count` 三 i32）。Go 怪物/玩家帧同构（buildMonsterEntity 的 `AppendUint16(p,2)` 即 type=2）——此前 A2 逆向把 type 误读成 count+type 两字段。
+- 修正 `buildOtherEntityFrame`：`[u16 6][f64 handle][u32 configID][f64 masterHandle][u32 x][u32 y][u32 type][u32 id][u32 count]`；combat_test/drop_test 断言同步更新，全量测试+golden 回归绿。
+
+### 实机环境排查（A2 验收暂时受阻，非 A2 回归）
+- 浏览器击杀链路本轮未走通的原因是**登录卡死**（非掉落代码）：鉴权通过（`ff 01 00` 已发）后客户端 5s 即断开、65s 循环重试，角色列表请求从未发出。
+- 关键排查结论：
+  1. **旧实例 17076 为管理员进程且持有双监听**——Go Windows 默认 SO_REUSEADDR 允许新实例并存绑定 16001，但 gateway 连接始终落入旧进程；普通权限无法终止（Access denied），已按 RUNBOOK 四十二先例 UAC 提权终止。此坑解释了"重启实例无效"的假象。
+  2. **用 8b9d88a9（M5/A5 基线，17076 的源码基线）构建的 gameworld 同样复现登录卡死**——证明卡死非 A2 提交回归；18:44-19:03 工作会话的确切环境条件（进程组合）已不可复现。
+  3. **混合路径发现**：C++ gateway(6332) 每 65s 向其上游转发 `sysid=1 cmdid=0 len=69` 帧（seq 为 CDCD 填充模式）——Go 侧 RouteUpstream 只认 `sysid=255` 登录，sysid=1 进 fireNetMsg→Lua 静默。**C++ 路径的登录协议（sysid=1）Go 侧从未实现**，属"混合路径/端口还原"待办的新工作项。
+  4. **C++ gameworld（原 PID 596）已死亡**：四件套现存 dbserver(9868)/gateway(6332)/loggerserver(6760)，gameworld 缺失——与"端口布局还原"待办直接相关。
+- 当前部署拓扑（隔离栈）：6001=A2 gameworld(13652, 带 monster_spawns_a2.json)←C++ gateway 9002；16001=A2 gameworld←Go gateway 20700(19002)；gateway/gameworld 二进制与配置均已在库。
+
+### A2 当前状态
+- **代码与单测完成**：击杀→CreateDrop→OtherEntity(type=6)→拾取上行 `[01][01]` flag=0→AddItem(BagAdd golden 布局)→消失包→落盘，全链路单测断言（含二次击杀/拾取）+ BagAdd golden 回归全绿，67404283+1030860a 已推送。
+- **实机浏览器验收待登录链路打通后执行**：验收路径=进场景 2→自动战斗击杀→掉落物出现（type=6 实体）→自动拾取→背包 200013 增加→存盘。服务端已带 `掉落生成` 诊断日志（CreateDrop）可核对。
