@@ -114,3 +114,13 @@ Load:   sysVarCount_ = -1; curSysVarCount_ = 0;
 a2_bag_golden_20261127.raw 含 tcpcap 段标记文本（"@time [C] len=N"行），需先剥离元数据重组字节流再搜 CCEE 帧：
 perl 剥离法参考 frame_analyze2.pl（正则提取 hex 列还原原始字节），重组后按 [CCEE][len][CDCDCDCD][cmd=3][sub=4][body 144B] 遍历，
 目标帧候选 @71757 附近（`03 04 01 dc cf cc...`），对照 RUNBOOK 五十七字段语义（[2]=bagTab/att 对/[147]=tipFlag/148B）校准 buildBagAddItem。
+
+## 九、★ golden BagAdd 帧已锁定（2026-11-28）
+
+WS 帧遍历器（客户端↔gateway 腿，跳过 HTTP 头按 RFC6455 遍历）在 a2_bag_golden S 流
+锁定 BagAdd 帧：**@70128, op=2, len=152**（= 4B 会话前缀 `7b 44 80 37` + 148B BagAdd 帧），
+payload: `7b448037 | 0304 | 01dccfcc 1f000001 00898a01 00010000 0004...`
+同族帧（len 140-162）：@97 InitData、@30847、@32666、@74577（`14 01 01 00 80 00 7c 43 "C:0x16b2ff&T:` 广播）。
+
+**下一步**：以 @70128 帧（152B）为 golden 逐字节对照校准 buildBagAddItem
+（对照脚本=本轮 WS 遍历器，a2_s_ws.bin 已存 Temp）。校准后 A2 掉落拾取实现即无协议障碍。
