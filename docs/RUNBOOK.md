@@ -1168,3 +1168,29 @@ go build -o .tmp_b1/gateway.exe ./cmd/gateway
 - C++ 基线端口 `9002/6001/5001/7001` 与 Go 隔离端口 `16001/19002`、捕获口 `19003` **当前均不监听**——环境重启后服务栈尚未拉起。
 - 因此本轮未启动任何新的服务端进程、未改共享库；A2 golden 补抓与 72h soak 重跑都需先把服务栈恢复后再执行。
 - 文档与代码改动仅 `docs/NEXT-STEPS.md`、`docs/RUNBOOK.md`，抓包产物仍不纳入 git。
+
+## 五十五、服务栈恢复 + A2 拾取 golden 突破 + 72h soak 重跑（2026-11-27）
+
+### 服务栈恢复（用户确认"恢复完整服务栈"后执行）
+- C++ 四件套按 `dbserver → gameworld → gateway → loggerserver` 顺序拉起：
+  - dbserver PID 9868（5001）；gameworld PID 596（6001，管理口 10001）；gateway PID 6332（9002）；loggerserver PID 6760（7001）。
+  - 关键排障：首次 gameworld 早于 loggerserver 启动，出现持续 `connect fail! logger server 10061`，且浏览器登录卡在"登录连接中"、tcpcap 只收到 630B 握手就 EOF。按正确顺序重启 loggerserver → gameworld 后 `gameworld→logger(7001) Established=1`，gateway 重连 6001，`wsprobe 9002` 登录出现 `ff 01 00` 业务响应，浏览器随即成功进场景。**结论：C++ 启动顺序里 loggerserver 必须先于 gameworld。**
+- nginx 随环境重启已在运行（PID 17292），80/8081 均监听，8081 区服列表端口 `19003` 正常，vhost 未动。
+- Go 隔离栈：重新 `go build` 后启动 gameworld PID 17076（16001，隔离库 `actor_s1_m5e_b1_20261126`）、gateway PID 7720（19002，注册 gateway_s1）；`wsprobe 19002/haohaiyao` 登录 `ok=1`。
+- 恢复后端口全 UP：80/8081/5001/6001/7001/9002/16001/19002。
+
+### A2 拾取 golden 成功捕获（关键突破）
+- 根因纠正：前端 `main.min.js` 显示地面掉落物 `CharItem2.touchEnabled=false`，**不可点击**；拾取是 `DropHelp.findDrop()` 每 100ms 自动寻路靠近后本地飞入动画 + `UserFb.sendGetReward()`。之前两轮"点击画面候选位置"永远不可能触发拾取，并非点击坐标问题。
+- 用独立 Edge（`--remote-debugging-port=9223`）+ CDP 脚本 `.tmp_b1/a2_pickup_golden.mjs`：patch `GameSocket` 抓 WebSocket 上下行，登录后用 `window.gm('@dropbag 10101 x y')` 造物品掉落（dropgroup 10101 → 100% 掉物品 2000001 聚灵奇石），角色自动寻路拾取。
+- 捕获产物：`reference/captures/a2_pickup_golden_20261127.raw`（936,603B，tcpcap 19003→9002 全量上下行）+ `a2_pickup_golden_20261127.json`（CDP hook 解析，43 上行/265 下行帧）。
+- 账号安全：`haohaiyao` GM 临时 enable（gmlevel 0→1）后已 restore 并二次核对 `gmlevel=0 closed=0`；测试 Edge 与 tcpcap 均已停止，CDP 9223/19003 已关闭。
+- **确认的 golden 包序**（payload 上行 sysid/cmdid 取 byte8-9，下行取 byte4-5；前缀为每帧 skey）：
+  - GM 造掉落上行 `[00][00]`：`… 0000 1a00 4064726f7062616720313031303120313035343520343737363200` = `@dropbag 10101 10545 47762`（skey+seq 后 `@dropbag ...` 字符串）。
+  - 拾取上行 `[01][01]`（`CMD_Fuben/Guanqia=1`, cmd=1）：`… 0101 00`，payload 1B flag=0（普通地图 `fubenID=0`），多次发出，由 `DropHelp` 靠近掉落物后自动触发。
+  - 拾取下行：`[00][07]` `sBaseCmd_UpdateExp`（经验，如 `… 0007 53000000 8b4f0300 20000000`）、`[00][05]` `sBaseCmd_UpdateMoney`（金币）、`[00][0a]` `sBaseCmd_EntityDisapear`（掉落物消失，3 帧 `… 000a ff/fe/fd 000000 …`，handle 低字节递减）。
+  - 本次 `@dropbag 10101` 实际发包为 EXP+MONEY+Disapear，未见 `[00][06]` GetItem / `[03][04]` BagAdd；即本条路径奖励走货币/经验，不进背包物品。要验证"物品进包"链路需再抓一次确掉装备的 dropgroup，但**拾取上行与掉落物消失下行已拿到**。
+- 实现边界：A2 不再"完全没有 golden"——拾取触发上行 `[01][01]`、下行 Disapear/EXP/MONEY 已有实测；但 `[01][01]` 同时是 `UserFb.sendGetReward`（通用领奖），语义并非"按 handle 拾取某个掉落物"，Go 侧不可据此凭空造"指定掉落物拾取"协议。A2 仍按"不猜协议"原则，只把这些 golden 作为后续对齐依据。
+
+### 72h soak 重跑
+- 改造 `.tmp_b1/soak_72h.ps1`：按端口动态查 PID（不再硬编码 17832/19400），DB/WS 检查加 try/catch 防止环境重启时再次中断；旧日志备份为 `soak_72h.log.prev_20261127`。
+- 新 soak PID 5652，`SOAK_START end=2026-11-30 22:51:50`；首轮采样 MEM gameworld(pid=17076)/gateway(pid=7720)、DB actorid/level/exp/gold/bag_tail、WS `ff 01 00` 回包均正常。计划满 72h 后判读。
