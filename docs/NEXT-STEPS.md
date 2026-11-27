@@ -26,9 +26,9 @@
 - **A5 收尾**：按 `engine-api-matrix.tsv` 高频缺口逐批补齐可安全实现的 API。已完成 A5-19 `setIntProperty`、A5-20 `setCamp/getCamp`、A5-21 `readInt64/readData/changeMoney`、A5-22 `checkItemNum/consumeItem`、A5-23 `addItem/getStoreItemCount` 窄语义。继续暂缓 `relive`、`giveAwards/canGiveAwards`、`setExp/setLevel`、`reCalcAttr`、`getEntityType` 等缺容量模型、枚举值、协议或状态副作用的项；`AddSkill` 经复核暂缓（实参是 `SkillsConfig` configID，如 `71001/16001`，与 `Skills[baseID]` 不同空间，且混有怪物句柄）；`writePacket` 暂缓（仅有 arity=3 与 `false`/省略第三参调用，无 byte-level golden 可区分裸写与 u16 长度前缀）。
 - **B1 全栈演练**：✅ 已验收——隔离库 `actor_s1_m5e_b1_20261126` + `16001/19002` + `http://demo.test:8080/` 跑通登录鉴权→角色加载→进场景→打怪奖励→存档→重登恢复；C++ 基线 `80/5001/6001/7001/9002` 全程未受影响。背包 UI 点击未展开面板，改以 `actorvariable.variable` blob 长度/尾字节在重登前后一致验证背包数据稳定。
 - **B2 稳定性**：🔶 同号并发登录、失败回滚、10 轮短周期 soak 已通过；旧 72h soak（PID 19184）因环境重启于 2026-11-27 00:02 提前终止（RUNBOOK 五十四）。服务栈已按用户确认完整恢复（C++ 四件套 + Go 隔离，loggerserver 必须先于 gameworld），soak 脚本改造为按端口动态查 PID + 异常保护并已重跑（PID 5652，`2026-11-27 22:51:50` 起，计划 `2026-11-30 22:51:50` 结束），首轮采样正常，满 72h 后判读。
-- **M6 校准**：🔶 `wsprobe` 已具备 `count/concurrency/observe` 批量并发能力；100/500/5000 路 burst 均全部成功（5000 路/100 并发/100ms 观察，5.064s 完成）。数值对齐仍未开始：Go `monster_spawns.example.json` 的 `exp=100/gold=1000` 是开发占位，C++ `droptable.type=0.id=0/1/2` 分别映射绑定币/金币/绑定元宝且经验走独立链路，需真实击杀 golden 才能定数值；跨服按 ADR-005 保持 stub。
+- **M6 校准**：🔶 `wsprobe` 100/500/5000 路 burst 全部成功。数值对齐**判定当前 C++ 试玩服不可行**（RUNBOOK 五十八）：31001 的 exp/gold 固化在 C++ 二进制无文本配置；服务端权威自动战斗 + chapter.lua 挂机定时器前端无法停止，抓到的 EXP/MONEY 无法区分击杀奖励还是挂机节拍，不能作为对齐依据；本轮未抓取、未改 Go 占位 `exp=100/gold=1000`。新前置：可控单怪击杀环境（dev 模式/停 chapter 定时器 GM）或反编译出 31001 常量。跨服按 ADR-005 保持 stub。
 - **A2 掉落/拾取**：三类 golden 均已实测取得（RUNBOOK 五十五/五十六）：拾取上行 `[01][01]`（`sendGetReward`，flag=0）、掉落物消失 `[00][0a]`、物品进包 `[03][04]`（`@additem 101001 1` 对照，itemID/count 字段对齐）。raw/json 已存（不入 git），GM 临时提权已恢复 0。边界：`[01][01]` 是通用领奖非指定 handle 拾取；C++ BagAdd payload 与 Go `buildBagAddItem` 在 `[2]`(bagTab)、handle 编码、末尾u32/尾字节有差异（长度同 148B），M5-H 虽已验收通过，但要严格对齐须另立 golden 校准项。A2 保持暂缓，不猜协议、不改 `bag.go`。
-- **下一步（2026-11-27 更新）**：① 服务栈已完整恢复并保持在线；② 72h soak（PID 5652）后台运行中，满 72h 后判读内存/DB/登录趋势；③ A2 三类 golden（拾取上行 `[01][01]`、消失 `[00][0a]`、进包 `[03][04]`）已齐且字段语义已查清（RUNBOOK 五十七）：`[2]`=bagType（装备=1/普通=0）、handle 是不透明 f64（无需对齐）、`[19/23/27/31]`=att[0/1] 属性对、`[147]`=tipFlag；评估结论是**装备背包/属性/提示不可安全落地**（Go 无 ItemConfig loader、无 addItem 质量/属性参数、单背包存档、全链路未联动），本轮不改 `bag.go`，缺口列入下一步；④ A5 暂缓项（`relive/AddSkill/writePacket/giveAwards` 等）只在枚举、容量模型、协议 golden 或状态副作用证据补全后恢复；⑤ M6 数值对齐需纯击杀 golden——本次 A2 抓到的 EXP/MONEY 来自自动战斗串扰，不能直接用于定数值；⑥ 5000 路 burst 已通过，下一步是数值对齐而非继续堆并发。
+- **下一步（2026-11-27 更新）**：① 服务栈已完整恢复并保持在线；② 72h soak（PID 5652）后台运行中，满 72h 后判读内存/DB/登录趋势；③ A2 三类 golden（拾取上行 `[01][01]`、消失 `[00][0a]`、进包 `[03][04]`）已齐且字段语义已查清（RUNBOOK 五十七）：`[2]`=bagType（装备=1/普通=0）、handle 是不透明 f64（无需对齐）、`[19/23/27/31]`=att[0/1] 属性对、`[147]`=tipFlag；评估结论是**装备背包/属性/提示不可安全落地**（Go 无 ItemConfig loader、无 addItem 质量/属性参数、单背包存档、全链路未联动），本轮不改 `bag.go`，缺口列入下一步；④ A5 暂缓项（`relive/AddSkill/writePacket/giveAwards` 等）只在枚举、容量模型、协议 golden 或状态副作用证据补全后恢复；⑤ M6 数值对齐在 C++ 试玩服不可行（RUNBOOK 五十八：二进制固化数值 + 挂机串扰无法从前端根除），需先具备可控击杀环境或反编译常量，本轮不改 Go 占位；⑥ 5000 路 burst 已通过，下一步是数值对齐而非继续堆并发。
 
 ## 二、路线图（2026-11-25 按需求价值重排）
 
@@ -136,8 +136,9 @@
 |---|---|---|---|
 | P0 进行中 | 72h soak（PID 5652）满期判读 | 等 2026-11-30 22:51:50 | `soak_72h.log` 满 72h，内存无单调增长、DB 一致、登录回包正常 |
 | P1 | A2 装备背包闭环 | ① item/equip config loader + `isEquip`；② `LActor.addItem` 保留 quality/属性；③ 分背包存档；④ InitData/Add/Delete/Update bagType 联动；⑤ att[] 生成 | 真浏览器 `@additem 101001` 装备进 `bagModel[1]`、属性与 C++ golden 对齐、提示正常 |
-| P2 | M6 数值对齐 | 纯击杀 golden（停自动战斗，单怪单杀，剔除串扰） | 用真实 C++ EXP/MONEY 替换 Go `exp=100/gold=1000` 占位 |
+| P2 暂缓 | M6 数值对齐 | 当前 C++ 试玩服不可行（31001 数值在二进制、挂机串扰无法前端根除）；需 dev 单怪环境/停 chapter 定时器 GM/反编译常量 | 拿到可信单杀 golden 后才替换 Go `exp=100/gold=1000` |
 | P3 | A5 暂缓项 | `relive/AddSkill/writePacket/giveAwards` 各自补枚举/容量模型/byte golden | 有证据才恢复，不猜协议 |
 | P4 | gateway 工作集观察 | 5000 路 burst 后未回落，结合 soak 内存趋势 | 判定是否连接泄漏，必要时专项排查 |
 
 - 说明：A2 的 P1 不是"改一个 bagType 字节"，而是配置加载→参数保留→存档模型→全协议链的完整工程项，缺证据宁可暂缓；handle 编码差异已确认无需处理，不要在此浪费工时。
+- 2026-11-27 M6 数值对齐边界查证（RUNBOOK 五十八）：C++ 31001 的 exp/gold 固化在二进制无文本配置；服务端权威自动战斗 + chapter 挂机定时器前端无法停止，EXP/MONEY 串扰不可区分，当前试玩服拿不到可信纯击杀 golden。未抓污染数据、未改 Go 占位值；P2 暂缓，需 dev 单怪环境或反编译常量。P4 soak 16 样本 gameworld 稳定、gateway +1MB、登录失败 0。

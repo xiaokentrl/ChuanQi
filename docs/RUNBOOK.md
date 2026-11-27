@@ -1229,3 +1229,20 @@ payload 148B = `u8 sysid(3)` + `u8 subcmd(4)` + `u8 bagType` + `ItemData(144B)` 
 - 要实现"装备进装备背包 + 带属性 + 提示"，需同时具备：① Go 侧 ItemConfig/equip.config loader 与 `isEquip` 判断（`main.min.js`/`item.lua:17-20` 依赖 `cfg.type`，Go 侧 0 匹配）；② `LActor.addItem` 完整 quality/strong/bind/属性参数（Go 未保留）；③ 存档模型由单背包扩为分背包；④ InitData/Add/Delete/Update/UseItem 全链路 bagType 联动；⑤ 装备属性 att[] 生成。缺任一环都会变成猜实现。
 - 因此维持"不猜协议/不改核心实现"边界，**未改 `bag.go`**；上述缺口写入下一步规划，待逐项补齐证据后再动。
 - M5-H 验收（`RUNBOOK.md:534-549`、`bag_mutate_browser_proof.json`）用物品 200013（非装备），15 项断言全 true，证明 Go 普通物品链路正确；装备链路从未被 Go 覆盖，这正是 A2 的完整待办。
+## 五十八、M6 数值对齐边界查证：C++ 试玩服无法取得可信击杀 golden（2026-11-27）
+
+### 配置链路结论
+- C++ 主场景怪物（Go 示例用的 31001）`MonstersConfig[31001]`（data/server/s1/Debug/gameworld/data/config/monster/monsters.config:3-13）只有 id/name/type/hp/atk/def/res/skill/ai，**没有 exp/gold/dropId 字段**；击杀经验/金币数值固化在 C++ 二进制（Ghidra 符号 `Monster::OnKilledByEntity` / `Actor::AddExp` / `Actor::ChangeGold`），文本配置无对照值。
+- 唯一有文本的数值是挂机关卡（chapters.config:3-28 chapter 1）：`waveExp=13`/`expTime=2s`（每 2 秒 13 exp，聚合非单杀）、`monsterDropId=1320001`/`dropTime=2s` → dropgroup 1320001 → droptable 120001 → `{rate=33,type=0,id=1,count=157}`（每 2 秒 33% 概率 157 金币，期望≈51.81/2s）。这些是"一波 3 只 + 定时器"聚合值，不是"杀一只怪得多少"，不能用于单怪数值对齐。
+- `type=0` 货币枚举（_G.lua:171-176）：`mtBindCoin=0/mtCoin=1/mtBindYuanbao=2/mtYuanbao=3`；经验不在枚举内，走独立 `LActor.addExp`（actorexp.lua:41-70 → `[00][07]`）。金币走 `giveAwards → changeCurrency → Actor::ChangeGold → [00][05]`（actorawards.lua:5-20）。
+- Go 侧对齐目标：`config/monster_spawns.example.json` 的 `exp=100/gold=1000` → `combat.go:477 progression.GrantKill(attacker, rule.Exp, rule.Gold)` → `[00][07]` added / `[00][05]` 金额；这是开发占位，RUNBOOK:303/NEXT-STEPS:29 已明确。
+
+### 为何当前 C++ 试玩服拿不到可信"纯击杀 golden"
+- 服务端权威自动战斗（RUNBOOK:256-261）：玩家进范围后 gameworld 每 500ms 选最近怪攻击，不伪造客户端攻击包；前端 `RoleAI.useSkill()` 只是本地演出，没有"发一次攻击上行让服务端执行"的可靠接口。
+- 前端 `GameLogic.ins().stopAI()`（发 cBase 子命令 33）可停服务端 AI、`RoleAI.ins().clear()` 停客户端 AI、`PlayFun.ins().closeAuto()` 关自动挑战，但 **chapter.lua 的 waveExp/dropTime 是服务端章节挂机定时器，前端无法停止**，EXP/MONEY 串扰不可避免（main.min.js 中无对应开关）。
+- 因此即使 CDP 抓到 `[00][07]` added 与 `[00][05]` 金额，也无法区分是击杀奖励还是挂机节拍，不能作为对齐依据；强行抓取会污染证据、违反"不猜协议/不伪造数据"原则。
+
+### 决策与边界
+- 本轮未启动 CDP/tcpcap（19003/9223 均空闲），未改 Go 占位配置，未动 C++ 服务；GM 仍为 0。
+- M6 数值对齐的**新前置条件**：需要"可控击杀 + 无挂机串扰"的环境（如 dev 模式单场景单怪、或服务端提供停 chapter 定时器的 GM/协议），或 C++ 二进制反编译给出 31001 的 exp/gold 常量；在此之前 `exp=100/gold=1000` 保留为占位，不得当作原版值。
+- P4 内存观察：soak PID 5652（16 样本，约 15 分钟）gameworld 62.02→62.04MB 稳定、gateway 44.15→45.2MB（+1MB，继续观察），登录失败 0；未见泄漏证据，待 72h 满期判读。
