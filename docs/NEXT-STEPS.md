@@ -25,10 +25,10 @@
 - **原则**：只做有现有字段、World/Actor 状态、原版调用点或对称写/读证据的 API；stub 不计入覆盖门禁；不改前端、schema、共享数据库或现网服务。
 - **A5 收尾**：按 `engine-api-matrix.tsv` 高频缺口逐批补齐可安全实现的 API。已完成 A5-19 `setIntProperty`、A5-20 `setCamp/getCamp`、A5-21 `readInt64/readData/changeMoney`、A5-22 `checkItemNum/consumeItem`、A5-23 `addItem/getStoreItemCount` 窄语义。继续暂缓 `relive`、`giveAwards/canGiveAwards`、`setExp/setLevel`、`reCalcAttr`、`getEntityType` 等缺容量模型、枚举值、协议或状态副作用的项；`AddSkill` 经复核暂缓（实参是 `SkillsConfig` configID，如 `71001/16001`，与 `Skills[baseID]` 不同空间，且混有怪物句柄）；`writePacket` 暂缓（仅有 arity=3 与 `false`/省略第三参调用，无 byte-level golden 可区分裸写与 u16 长度前缀）。
 - **B1 全栈演练**：✅ 已验收——隔离库 `actor_s1_m5e_b1_20261126` + `16001/19002` + `http://demo.test:8080/` 跑通登录鉴权→角色加载→进场景→打怪奖励→存档→重登恢复；C++ 基线 `80/5001/6001/7001/9002` 全程未受影响。背包 UI 点击未展开面板，改以 `actorvariable.variable` blob 长度/尾字节在重登前后一致验证背包数据稳定。
-- **B2 稳定性**：🔶 同号并发登录、失败回滚、10 轮短周期 soak 已通过；72h soak 已于 2026-11-26 23:15:59 后台启动（PID 19184，结束时间 2026-11-29 23:15:59），日志 `ltcq-go/.tmp_b1/soak_72h.log` 每分钟记录内存/DB/登录回包；长时间趋势待结束后判读。
+- **B2 稳定性**：🔶 同号并发登录、失败回滚、10 轮短周期 soak 已通过；72h soak（PID 19184）已于 2026-11-27 00:02:42 因环境重启导致 MySQL 连接被拒而**提前终止**（非判定失败），仅积累约 47 分钟/44 个 MEM 样本，区间内内存与 DB 稳定但 72h 目标未达成（RUNBOOK 五十四）。当前 3306 已恢复，C++/Go 服务端口均未监听，需先拉起服务栈再重跑 soak。
 - **M6 校准**：🔶 `wsprobe` 已具备 `count/concurrency/observe` 批量并发能力；100/500/5000 路 burst 均全部成功（5000 路/100 并发/100ms 观察，5.064s 完成）。数值对齐仍未开始：Go `monster_spawns.example.json` 的 `exp=100/gold=1000` 是开发占位，C++ `droptable.type=0.id=0/1/2` 分别映射绑定币/金币/绑定元宝且经验走独立链路，需真实击杀 golden 才能定数值；跨服按 ADR-005 保持 stub。
 - **A2 掉落/拾取**：临时 GM 抓包已完成——`haohaiyao` `gmlevel` 曾遗留为 1，已恢复为 0（RUNBOOK 五十三）。第二轮抓到 8 帧 `4e01` 掉落实体下行（entity 每次 -60，`@dropbags` 连续造掉落），但 `0006`(GetItem)/`000a`(EntityDisapear) 下行均为 0，`0304` 为登录批初始化，`050a/0a0a` 不是拾取请求；**仍缺完整拾取 golden**，A2 继续暂缓，不猜协议。
-- **下一步（2026-11-27 更新）**：① 等 72h soak（PID 19184）结束后判读日志；② A2 的关键卡点已从"没有掉落"变为"浏览器点击未命中脚下掉落物、未产生拾取上行"，需先解决点击命中再抓一次明确拾取会话（经 `8081/19003/tcpcap`），同时可顺带定 M6 真实奖励数值；③ A5 暂缓项（`relive/AddSkill/writePacket/giveAwards` 等）只在枚举、容量模型、协议 golden 或状态副作用证据补全后恢复；④ 5000 路 burst 已通过，下一步是数值对齐而非继续堆并发。
+- **下一步（2026-11-27 更新）**：① 先恢复服务栈（MySQL 3306 已在线，但 C++ `9002/6001/5001/7001` 与 Go `16001/19002` 当前均未监听），这是 A2 补抓与 soak 重跑的前置条件；② 72h soak 因环境重启提前终止，需稳定后重新发起并满 72h 判读；③ A2 的关键卡点已从"没有掉落"变为"浏览器点击未命中脚下掉落物、未产生拾取上行"，需先解决点击命中再抓一次明确拾取会话（经 `8081/19003/tcpcap`），同时顺带定 M6 真实奖励数值；④ A5 暂缓项（`relive/AddSkill/writePacket/giveAwards` 等）只在枚举、容量模型、协议 golden 或状态副作用证据补全后恢复；⑤ 5000 路 burst 已通过，下一步是数值对齐而非继续堆并发。
 
 ## 二、路线图（2026-11-25 按需求价值重排）
 
