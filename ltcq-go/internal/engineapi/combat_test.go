@@ -391,7 +391,7 @@ func TestCombatKillGrantsRewardOnceAndRespawns(t *testing.T) {
 		buildHpChange(1<<30, 0),
 		buildNotifyFlyHp(1, 1<<30, 100),
 		{cmdBase, sBaseCmdRemoveEntity},
-		buildBagAddItem(1, 200013, 1, 0, 0),
+		buildBagAddItem(1, 200013, 1, 0, nil, 0),
 		buildGoldChange(currencyGold, 2000),
 		buildExpChange(51, 600, 100),
 	}
