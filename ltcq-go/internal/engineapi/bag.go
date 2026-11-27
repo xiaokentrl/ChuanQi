@@ -154,6 +154,17 @@ func (a *Actor) AddItem(itemID, count int) (bool, error) {
 	if old < 0 || count > int(^uint(0)>>1)-old {
 		return false, fmt.Errorf("物品数量溢出: item=%d count=%d", itemID, count)
 	}
+	// 容量检查（BagBaseConfig.baseSize=200 语义：不同物品种类数）；已叠加物品不占新槽。
+	// 装备物品（bagTab=1）走独立装备背包容量，待装备容量证据后启用。
+	var isEquip bool
+	if a.itemResolver != nil {
+		if info, ok := a.itemResolver(itemID); ok {
+			isEquip = info.BagTab == 1
+		}
+	}
+	if old == 0 && !isEquip && a.bagCapacity > 0 && len(a.Items)+1 > a.bagCapacity {
+		return false, fmt.Errorf("背包已满: %d/%d", len(a.Items), a.bagCapacity)
+	}
 	next := make(map[int]int, len(a.Items)+1)
 	for id, value := range a.Items {
 		next[id] = value
@@ -304,4 +315,18 @@ func newBagUseHandler(router *NetRouter) func(uint16, int, []byte) error {
 		}
 		return router.SendToSession(sid, buildBagUseResult(ok))
 	}
+}
+
+// SetBagCapacity 设置普通背包容量（BagBaseConfig.baseSize=200；0=不限）。
+func (a *Actor) SetBagCapacity(n int) {
+	a.mu.Lock()
+	a.bagCapacity = n
+	a.mu.Unlock()
+}
+
+// SetItemResolver 注入物品判定（BagTab 路由；由引擎 Bootstrap 时接 VM 配置）。
+func (a *Actor) SetItemResolver(r func(int) (ItemInfo, bool)) {
+	a.mu.Lock()
+	a.itemResolver = r
+	a.mu.Unlock()
 }

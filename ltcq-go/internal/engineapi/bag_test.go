@@ -222,3 +222,56 @@ func TestLuaGiveAndCostItem(t *testing.T) {
 		t.Fatalf("剩余物品=%v err=%v", got, err)
 	}
 }
+
+func TestBagCapacity(t *testing.T) {
+	a := newActor(1)
+	a.SetBagCapacity(2)
+	a.SetBagCapacity(2)
+	resolverCalls := 0
+	a.SetItemResolver(func(id int) (ItemInfo, bool) {
+		resolverCalls++
+		if id == 101001 {
+			return ItemInfo{ID: id, BagTab: 1}, true // 装备走独立容量
+		}
+		return ItemInfo{ID: id, BagTab: 0}, true
+	})
+
+	ok, _ := a.AddItem(1, 1) // 普通槽 1/2
+	if !ok {
+		t.Fatal("普通物品 1 应加入")
+	}
+	ok, _ = a.AddItem(2, 1) // 普通槽 2/2
+	if !ok {
+		t.Fatal("普通物品 2 应加入")
+	}
+	ok, err := a.AddItem(3, 1) // 普通槽满 → 拒绝
+	if ok || err == nil {
+		t.Fatal("背包已满应拒绝")
+	}
+	ok, _ = a.AddItem(1, 1) // 已有叠加不占新槽
+	if !ok {
+		t.Fatal("叠加应通过")
+	}
+	ok, _ = a.AddItem(101001, 1) // 装备绕过普通容量
+	if !ok {
+		t.Fatal("装备应绕过普通容量")
+	}
+	if resolverCalls < 3 {
+		t.Fatalf("resolver 调用过少: %d", resolverCalls)
+	}
+	if len(a.Items) != 3 {
+		t.Fatalf("物品种类数不符: %d", len(a.Items))
+	}
+}
+
+func TestBagCapacityUnlimited(t *testing.T) {
+	a := newActor(1)
+	for i := 1; i <= 5; i++ {
+		if ok, _ := a.AddItem(1000+i, 1); !ok {
+			t.Fatalf("物品 %d 应加入", i)
+		}
+	}
+	if len(a.Items) != 5 {
+		t.Fatalf("不限容量下物品数不符: %d", len(a.Items))
+	}
+}

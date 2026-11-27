@@ -35,26 +35,28 @@ type Actor struct {
 	HP                int
 	MaxHP             int
 	mu                sync.RWMutex
-	VIPLevel          int           // vip 等级（actors.vip_level）
-	Recharge          int           // 累计充值（actors.recharge）
-	CreateTime        int64         // 角色创建 Unix 秒（actors.createtime）
-	AppID             string        // 渠道 ID（actors.appid）
-	PfID              string        // 平台 ID（actors.pfid）
-	GuildID           int           // 公会 ID（actors.guildid）
-	Camp              int           // 进程内阵营标签，不落库、不发包、不参与战斗判定
-	GuildName         string        // 公会名快照（actors.guild_name）
-	ChapterLevel      int           // 章节等级（actors.chapterlevel）
-	MonthCard         int           // 月卡状态（actors.monthcard）
-	Reincarnate       int           // 轮回等级（actors.reincarnate_lv）
-	Currency          map[int]int   // NumericType → 数量
-	Items             map[int]int   // itemId → 数量
-	ClientConfig      map[int]int   // 客户端配置 key→val（clientconfig.lua cliCfg；持久化）
-	Skills            map[int]int   // skillId → 等级（持久化）
-	Static            luahost.Value // staticVar（Lua 表，Go 自有 TableNode 格式持久化）
-	Dirty             bool          // 任一持久化字段变更
-	ClientConfigDirty bool          // ClientConfig 是否已变更且未落库
-	SkillsDirty       bool          // Skills 是否已变更且未落库
-	StaticDirty       bool          // Static 是否已变更且未落库
+	VIPLevel          int                        // vip 等级（actors.vip_level）
+	Recharge          int                        // 累计充值（actors.recharge）
+	CreateTime        int64                      // 角色创建 Unix 秒（actors.createtime）
+	bagCapacity       int                        // 普通背包容量（BagBaseConfig.baseSize=200；0=不限，待装备容量证据）
+	itemResolver      func(int) (ItemInfo, bool) // 物品判定注入（BagTab 路由）
+	AppID             string                     // 渠道 ID（actors.appid）
+	PfID              string                     // 平台 ID（actors.pfid）
+	GuildID           int                        // 公会 ID（actors.guildid）
+	Camp              int                        // 进程内阵营标签，不落库、不发包、不参与战斗判定
+	GuildName         string                     // 公会名快照（actors.guild_name）
+	ChapterLevel      int                        // 章节等级（actors.chapterlevel）
+	MonthCard         int                        // 月卡状态（actors.monthcard）
+	Reincarnate       int                        // 轮回等级（actors.reincarnate_lv）
+	Currency          map[int]int                // NumericType → 数量
+	Items             map[int]int                // itemId → 数量
+	ClientConfig      map[int]int                // 客户端配置 key→val（clientconfig.lua cliCfg；持久化）
+	Skills            map[int]int                // skillId → 等级（持久化）
+	Static            luahost.Value              // staticVar（Lua 表，Go 自有 TableNode 格式持久化）
+	Dirty             bool                       // 任一持久化字段变更
+	ClientConfigDirty bool                       // ClientConfig 是否已变更且未落库
+	SkillsDirty       bool                       // Skills 是否已变更且未落库
+	StaticDirty       bool                       // Static 是否已变更且未落库
 	bagBase           []byte
 	bagStore          BagStore
 	bagNotify         func([]byte) error

@@ -77,3 +77,16 @@ func LoadItemTables(g *luahost.GopherLua, paths ...string) error {
 	}
 	return nil
 }
+
+// LoadBagBaseSize 读取 BagBaseConfig.baseSize（普通背包基础容量，证据=config/bag/base.config）。
+func LoadBagBaseSize(g *luahost.GopherLua) (int, bool) {
+	t, ok := g.L.GetGlobal("BagBaseConfig").(*lua.LTable)
+	if !ok {
+		return 0, false
+	}
+	size := int(lua.LVAsNumber(t.RawGetString("baseSize")))
+	if size <= 0 {
+		return 0, false
+	}
+	return size, true
+}
