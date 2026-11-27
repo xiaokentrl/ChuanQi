@@ -114,19 +114,21 @@ T0 分组（实现批次）：
 
 ### LActor.getStaticVar(actor) → table
 - 调用 163 处。**玩家持久化主通道**：各系统存 `var.系统名 = {...}`，跨登录持久（落 actorblob，格式见 persistence-format.md）。
-- Go：返回惰性 LTable，写时标脏，登出/定时序列化。单 VM 串行无锁。
+- Go：返回惰性 LTable（首建时标脏）；Lua 对表字段写入**不即时标脏**，落库走 `persist.go flushDirty`，触发点为断线 close handler（先无条件 `markStaticDirty`）、客户端配置处理、技能升级；无独立周期序列化。查询用 ActorManager 读写锁（非无锁）。
 
 ### LActor.postScriptEventLite(actor, delayMs, func, ...) / cancelScriptEvent(handle)
 - 调用 141/84 处。玩家级闭包定时器（postscripttimer.lua 封装，C++ 回调点 `MY_PostScriptOnTimeEvent`）。
-- Go：注册到 postscripttimer 调度器；**登出自动清理**（actorevent aeUserLogout 挂钩）。Lite=一次性，Ex=可重复。
+- Go 侧**仅提供底层调度器** `LActor.postScriptEvent/cancelScriptTimer`（`timer.go`，由 TimerDriver 驱动）；`Lite/Ex/cancelScriptEvent` 及 `aeUserLogout` 清理由原版 Lua `postscripttimer.lua:112-141` 包装实现并在 Bootstrap 时覆盖 Go 注册表中的 stub（`actor.go:95-98` 的 Lite 仍是 `return 0`、cancel 仍是 stubNoop）。Lite=一次性、Ex=可重复来自该 Lua 包装。
 
-### LActor.giveAwards(actor, awardTable, reason)
-- 调用 133 处。awardTable = 配置奖励列表（如 `TaskCfg.awardList`，元素 {id,count[,bind]}），reason=日志标签字符串。
-- Go：遍历发放 → 物品走背包、货币走 changeCurrency 族；失败整体回滚。canGiveAwards(77 处) 先验背包空间。
+### LActor.giveAwards(actor, rewards, ...)
+- 调用 133 处。权威定义见 `actorawards.lua:42-46`：`for _,reward in ipairs(rewards) do giveAward(actor, reward, ...) end`，逐条 best-effort，**无整批回滚**。
+- 奖励元素真实结构是 `{type,id,count,job}`（`giveAwardEx`, `actorawards.lua:22-32`）：`type=0`(AwardType_Numeric) 走 `changeCurrency`/`NumericType_Achieve`，`type=1`(AwardType_Item) 走 `giveItem`；`job!=0` 且不匹配当前职业则跳过；`log` 为 nil 时 `giveAwardBase` 直接不发放（`actorawards.lua:8`）。旧文档写的 `{id,count[,bind]}` 与真实 Lua 不符，已纠正。
+- Go **未实现** `giveAwards`（仍为 stub）。暂缓原因：`AwardType_*` 枚举未注入 Go VM、Lua 数组表→奖励列表无解码、背包/货币跨表无原子性、无邮件补发链路；新 golden（RUNBOOK 五十六/五十七）只补了"发什么包"的协议认知，不解决这些缺口。
+- `canGiveAwards(actor, rewards)`（77 处）原语义（`actorawards.lua:48-68`）用 `awardsNeedCount` 按 `ItemConfig/isEquip` 统计装备件数，再与 `getEquipBagSpace` 比较；Go 单背包 `Items map[int]int` 无格数/装备包概念，保持 stubBool 恒 false（失败关闭），不把 guarded 调用方切到发放路径。详见 RUNBOOK 五十九。
 
 ### LActor.costItem(actor, itemId, count, reason) → bool
 - 调用 126 处。扣物品，reason 入日志。同族：consumeItem(19)/costItemByUid(6)/checkItemNum(13)。
-- Go：背包扣减 + DB 脏标记；不足返回 false 不扣。
+- Go：背包扣减 + **同步写 `actorvariable.variable` + 下发背包协议**（`Actor.CostItem` → `saveBagLocked` → `SaveBagBlob`，先落库再改内存）；不足返回 false 不扣、不写库。
 
 ### LActor.checkItemNum(actor, itemId, count[, useYuanBao]) / consumeItem(actor, itemId, count[, useYuanBao, log]) → bool
 - 原版 `actorcost.lua:6-65` 是 Lua 包装，`useYuanBao=true` 会按商城价用元宝补差价；该价格表与替代价证据不足，Go 只实现窄语义。
@@ -136,7 +138,7 @@ T0 分组（实现批次）：
 
 ### LActor.getCurrency(actor, type) / getMoneyCount(actor, type) / changeCurrency(actor, type, delta, reason)
 - 调用 107/36/69 处。已确认使用 **mt*** 枚举：mtBindCoin=0、mtCoin=1、mtBindYuanbao=2、mtYuanbao=3。
-- `getCurrency` 与 `getMoneyCount` 共用在线 Actor 查询实现：`actors.gold/yuanbao` 登录时装入货币表 1/3；绑定货币 0/2 及未知类型当前返回 0。空参、缺类型或离线返回 0，不创建 Actor。
+- `getCurrency` 与 `getMoneyCount` 共用在线 Actor 查询实现：登录快照仅从 `actors.gold/yuanbao` 装入货币表 1/3；绑定币种 0/2 不加载，但 `changeCurrency` 对 0/2 会写入同一内存货币表（纯内存、不落库），`getCurrency` 会如实返回该内存值；只有未命中/未知类型返回 0。空参、缺类型或离线返回 0，不创建 Actor。
 - `changeCurrency` 对金币 `type=1` 和元宝 `type=3` 使用可选 `CurrencyStore` 单字段写入现有 `actors.gold/yuanbao`；Actor 锁内完成严格整数、余额和溢出校验，数据库成功后才更新内存，失败保持原余额。`delta=0` 幂等成功且不写库，离线 Actor、非法参数和缺少存档器均返回错误。绑定币种 `type=0/2` 与其他数值类型暂保持纯内存语义；仍不能充当跨物品、多币种奖励事务的原子入口。
 - `changeYuanBao(actor, delta, reason, ...)` 是元宝专用别名，固定走 `type=3` 的同一存档路径；第四个及以后的业务参数不改变金额语义，也不影响余额校验。原版调用见 `actorcost.lua:56`、`campbattlefb.lua:539`、`auctionsystem.lua:587/927`。
 - `changeMoney(actor, mtType, delta, 1, true, tips, ...)`（39 处）桥接到 `changeCurrency`：前三个参数同构，第 6 参日志 tip 作为 reason；`phylum/classField/family/genus` 等扩展参数不参与扣款，也不作为余额条件。与已暂缓的 `changeGold` 不同，这里有明确 `mt*` 类型证据。三参短调用同样支持。
@@ -170,7 +172,7 @@ T0 分组（实现批次）：
 
 ### LActor.reCalcAttr(actor, force?)
 - 调用 46 处。属性重算收口：遍历各系统加成（Lua 提供 get*Attr 族）→ C++ 合成 → setIntProperty。
-- Go：pipeline 重算（各系统注册的加成提供器按序取值）。force=false 时增量重算。
+- Go **未实现**（`actor.go:143` 注册为 stubNoop，调用无副作用）。原版 C++ 有 `Actor::ReCalcAttr/ReCalcExAttr/ReCalcBattleAttr`（`reference/ghidra/functions.tsv:1814-1816`）与 `LActor::reCalcAttr`，但加成提供器注册链未还原；不存在 pipeline 或 force 增量语义。
 
 ### LActor.setIntProperty(actor, property, value)
 - 调用 66 处；property 枚举全集 `_G.lua:1011-1124` 已确认，A5-13 已先接通同白名单的只读查询。
@@ -195,14 +197,14 @@ T0 分组（实现批次）：
 
 ### LActor.enterFuBen(actor, fbId, ...) / exitFuben(actor) / getFubenHandle
 - 调用 43/45/54 处。副本进出（instance 系统对接点）。
-- Go：实例管理器；Lua 侧生命周期回调经 instanceevent。
+- Go **未实现**（`actor.go:130-131` 两者均为 stubNoop，调用无副作用）；无实例管理器与 instanceevent 回调链。`sceneconfig.go:16` 仅加载 `config/instance/scene.config` 场景配置，不等于副本生命周期。
 
 ### LActor.sendTipmsg(actor, msg, typeMask?)
 - 调用 310 处。typeMask=ttScreenCenter/ttTipmsgWindow 等位或（枚举见 _G.lua）。
-- Go：组包 CMD_Notice 系列子命令，写 msg + type。
+- Go **未实现**（`actor.go:107` 为 stubNoop），不组包、不下发任何提示；typeMask 位掩码语义虽已确认（`_G.lua:17-26`），但 CMD_Notice 协议通道未接通。
 
 ### LActor.getItemCount(actor, itemId) → n / addItem / giveItem / canAddItem
-- 背包查询/发放族。giveItem(42) 直接发放；addItem(31) 带位置语义；getEquipBagSpace(12) 装备包空间。
+- 背包查询/发放族。giveItem(42) 直接发放；addItem(31) 带位置语义；getEquipBagSpace(12) 查装备包剩余格数（Go 未实现，单背包无格数/装备包概念，见 giveAwards 条与 RUNBOOK 五十九）。
 - Go 已实现 `addItem(actor,itemId,quality,strong,count,bind,logstr,logId)` 的窄语义：取 `args[1]=itemId`、`args[4]=count` 复用 `Actor.AddItem`，quality/strong/bind/日志参数忽略，不检查装备背包容量。
 - `getStoreItemCount(actor,storeType)`（11 处）仅 `ipBag=0` 返回背包物品总数；`ipDepot=1/ipLottery=2/ipEntrust=3/ipBabel=5` 等其他仓库类型返回 0，不伪造仓库；离线/非法参数同样返回 0。
 
