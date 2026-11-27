@@ -1214,3 +1214,18 @@ go build -o .tmp_b1/gateway.exe ./cmd/gateway
 - Go `bag.go:240-244 buildBagAddItem` = `{3,4,bagTypeOther=0}` + `appendBagItem`（`bagItemHandle=itemID<<32|actorID` 再按 u64 写、后接 itemID/count 与 16 组 8B 零）+ 尾 `0`：长度同为 148B，但 `[2]=0`（C++ 为 1）、handle 编码与末尾u32组/尾字节不同。
 - 注意：M5-H 背包此前已用真实浏览器断言通过（客户端能消费 Go 包），本次差异只说明 **C++ golden 的 BagAdd 字节布局与 Go 现有实现不一致**，不能据此断言 Go 包错误；要对齐须另立 golden 校准项，本轮遵守"不猜协议/不改核心实现"边界，未改 `bag.go`。
 - A2 边界更新：拾取上行 `[01][01]`、掉落物消失 `[00][0a]`、物品进包 `[03][04]` 三类 golden 均已实测取得；但 `[01][01]` 是通用 `sendGetReward`（非指定 handle 拾取），且 BagAdd 布局有差异，A2 保持暂缓、仅作为对齐依据。
+
+## 五十七、BagAdd 字段语义查证与"不可安全落地"决策（2026-11-27）
+
+### 客户端 `[03][04]` 权威布局（data/h5game/main.min.js:44 UserBag.doAddItem）
+payload 148B = `u8 sysid(3)` + `u8 subcmd(4)` + `u8 bagType` + `ItemData(144B)` + `u8 tipFlag`：
+- `ItemData.parser`（main.min.js:44:15129）：`handle=f64 LE`(8B) + `configID=i32`(4B) + `count=i32`(4B) + `att[0..7]`(8 对 i32 type/value=64B) + `extAtt[0..7]`(8 对 i32=64B) = 144B。
+- `[2]=bagType`：`UserBag.BAG_TYPE_OTHTER=0 / BAG_TYPE_EQUIP=1 / BAG_TYPE_TREASUREHUNT=2`（main.min.js:45）。golden 的 `[2]=1` 是**装备背包**（因 `@additem 101001` 是装备），Go M5-H 的 `[2]=0` 是普通物品背包——两者场景不同，非简单错误。
+- handle 8B：客户端 `readDouble()` 当作**不透明句柄**，仅用于 `doDeleteItem`/`doUpDataItem` 按 handle 匹配，不反解 itemID/actorID。Go `bagItemHandle=itemID<<32|actorID` 经 `Float64bits/Float64frombits` 位重解释写出，客户端已验证可正常匹配；**handle 编码差异无需对齐**。
+- `[19/23/27/31]` 非 quality/star/bind，而是 `ItemData.att[0]={type:4=atAttack,value:1}`、`att[1]={type:2=atMaxHp,value:1}`（`AttributeType` 见 main.min.js:2）；C++ golden 装备带属性、Go 全零。
+- `[147]=tipFlag`：`doAddItem` 读 `n`，非 0 时弹"获得…/好装备"提示。Go 恒 0（静默），M5-H 已验证物品正常入包但不弹提示。
+
+### 决策：本轮不改 Go 代码（证据足够但实现链缺环）
+- 要实现"装备进装备背包 + 带属性 + 提示"，需同时具备：① Go 侧 ItemConfig/equip.config loader 与 `isEquip` 判断（`main.min.js`/`item.lua:17-20` 依赖 `cfg.type`，Go 侧 0 匹配）；② `LActor.addItem` 完整 quality/strong/bind/属性参数（Go 未保留）；③ 存档模型由单背包扩为分背包；④ InitData/Add/Delete/Update/UseItem 全链路 bagType 联动；⑤ 装备属性 att[] 生成。缺任一环都会变成猜实现。
+- 因此维持"不猜协议/不改核心实现"边界，**未改 `bag.go`**；上述缺口写入下一步规划，待逐项补齐证据后再动。
+- M5-H 验收（`RUNBOOK.md:534-549`、`bag_mutate_browser_proof.json`）用物品 200013（非装备），15 项断言全 true，证明 Go 普通物品链路正确；装备链路从未被 Go 覆盖，这正是 A2 的完整待办。

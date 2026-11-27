@@ -28,7 +28,7 @@
 - **B2 稳定性**：🔶 同号并发登录、失败回滚、10 轮短周期 soak 已通过；旧 72h soak（PID 19184）因环境重启于 2026-11-27 00:02 提前终止（RUNBOOK 五十四）。服务栈已按用户确认完整恢复（C++ 四件套 + Go 隔离，loggerserver 必须先于 gameworld），soak 脚本改造为按端口动态查 PID + 异常保护并已重跑（PID 5652，`2026-11-27 22:51:50` 起，计划 `2026-11-30 22:51:50` 结束），首轮采样正常，满 72h 后判读。
 - **M6 校准**：🔶 `wsprobe` 已具备 `count/concurrency/observe` 批量并发能力；100/500/5000 路 burst 均全部成功（5000 路/100 并发/100ms 观察，5.064s 完成）。数值对齐仍未开始：Go `monster_spawns.example.json` 的 `exp=100/gold=1000` 是开发占位，C++ `droptable.type=0.id=0/1/2` 分别映射绑定币/金币/绑定元宝且经验走独立链路，需真实击杀 golden 才能定数值；跨服按 ADR-005 保持 stub。
 - **A2 掉落/拾取**：三类 golden 均已实测取得（RUNBOOK 五十五/五十六）：拾取上行 `[01][01]`（`sendGetReward`，flag=0）、掉落物消失 `[00][0a]`、物品进包 `[03][04]`（`@additem 101001 1` 对照，itemID/count 字段对齐）。raw/json 已存（不入 git），GM 临时提权已恢复 0。边界：`[01][01]` 是通用领奖非指定 handle 拾取；C++ BagAdd payload 与 Go `buildBagAddItem` 在 `[2]`(bagTab)、handle 编码、末尾u32/尾字节有差异（长度同 148B），M5-H 虽已验收通过，但要严格对齐须另立 golden 校准项。A2 保持暂缓，不猜协议、不改 `bag.go`。
-- **下一步（2026-11-27 更新）**：① 服务栈已完整恢复并保持在线；② 72h soak（PID 5652）后台运行中，满 72h 后判读内存/DB/登录趋势；③ A2 三类 golden（拾取上行 `[01][01]`、消失 `[00][0a]`、进包 `[03][04]`）已齐，下一步是 BagAdd 字节布局校准：C++ golden 与 Go `buildBagAddItem` 在 `[2]`/handle 编码/尾字段有差异（长度同 148B，M5-H 已验收通过），需专项评估是否影响客户端，仍不猜协议；④ A5 暂缓项（`relive/AddSkill/writePacket/giveAwards` 等）只在枚举、容量模型、协议 golden 或状态副作用证据补全后恢复；⑤ M6 数值对齐需纯击杀 golden——本次 A2 抓到的 EXP/MONEY 来自自动战斗串扰，不能直接用于定数值；⑥ 5000 路 burst 已通过，下一步是数值对齐而非继续堆并发。
+- **下一步（2026-11-27 更新）**：① 服务栈已完整恢复并保持在线；② 72h soak（PID 5652）后台运行中，满 72h 后判读内存/DB/登录趋势；③ A2 三类 golden（拾取上行 `[01][01]`、消失 `[00][0a]`、进包 `[03][04]`）已齐且字段语义已查清（RUNBOOK 五十七）：`[2]`=bagType（装备=1/普通=0）、handle 是不透明 f64（无需对齐）、`[19/23/27/31]`=att[0/1] 属性对、`[147]`=tipFlag；评估结论是**装备背包/属性/提示不可安全落地**（Go 无 ItemConfig loader、无 addItem 质量/属性参数、单背包存档、全链路未联动），本轮不改 `bag.go`，缺口列入下一步；④ A5 暂缓项（`relive/AddSkill/writePacket/giveAwards` 等）只在枚举、容量模型、协议 golden 或状态副作用证据补全后恢复；⑤ M6 数值对齐需纯击杀 golden——本次 A2 抓到的 EXP/MONEY 来自自动战斗串扰，不能直接用于定数值；⑥ 5000 路 burst 已通过，下一步是数值对齐而非继续堆并发。
 
 ## 二、路线图（2026-11-25 按需求价值重排）
 
@@ -128,3 +128,17 @@
 - 2026-11-26 M6 5000 路 burst：`wsprobe -count 5000 -concurrency 100 -observe 100ms -quiet` 5.064s 完成，`ok=5000 fail=0`；gameworld 工作集 31.51MB→35.37MB，gateway 17.17MB→34.74MB，冷却 60s 后分别 35.45MB/34.74MB；19002 上 ESTABLISHED=2、TIME_WAIT=5002，符合短连接 burst 特征；gameworld 日志无 WARN/ERROR。DB 表行数稳定、背包 blob 不变，角色经验/金币随 72h soak 周期正常增长。详见 `RUNBOOK.md` 五十。
 - 2026-11-26 暂缓项复核与捕获准备：A2 无 golden（现有 raw/json 均无掉落/拾取包序）；AddSkill 实参是 configID（`71001/16001`），与 `Skills[baseID]` 不同空间且混有怪物句柄，继续暂缓；writePacket 只有 arity=3 与 false/省略调用，无 byte-level golden，继续暂缓。M6 数值对齐发现 Go `exp=100/gold=1000` 为开发占位，C++ droptable type=0 只发绑定币/金币/绑定元宝、经验走独立链路。已新增 nginx `8081` 捕获入口（区服端口 `19003` → `tcpcap` → C++ `9002`），待用户确认后抓 golden。详见 `RUNBOOK.md` 五十一。
 - 2026-11-26 A2 首次捕获：用户以"继续"确认后启动 `tcpcap 19003→9002` 并经 `http://demo.test:8081/` 登录 C++ 试玩服；raw 文件 `ltcq-go/reference/captures/a2_drop_pickup_20261126.raw`（128,554B），解析出 3 帧候选掉落实体下行 `4e21ae40 4e01...`，含实体/掉落字段变化，但未成功触发拾取，缺上行拾取请求与拾取后包序。`haohaiyao` 的 `gmlevel=0`，无法用 `@dropbags` 造掉落；需用户授权临时 GM 或指认掉落物位置。tcpcap 已停止，19003 关闭，C++ 基线未受影响。详见 `RUNBOOK.md` 五十二。
+- 2026-11-27 A2 三类 golden 齐备 + 布局语义查清：CDP 抓到拾取上行 `[01][01]`、掉落消失 `[00][0a]`、物品进包 `[03][04]`（RUNBOOK 五十五/五十六）；字段语义权威解析确认 `[2]`=bagType(装备1/普通0)、handle 不透明 f64 无需对齐、`[19/23/27/31]`=att[0/1]、`[147]`=tipFlag（RUNBOOK 五十七）。评估"装备背包/属性/提示"不可安全落地（Go 无 ItemConfig loader、无 addItem 质量属性参数、单背包存档、全链路未联动），未改 `bag.go`。
+
+## 七、下一步路线（2026-11-27 制定，按前置条件排序）
+
+| 优先级 | 任务 | 前置条件 | 验收标准 |
+|---|---|---|---|
+| P0 进行中 | 72h soak（PID 5652）满期判读 | 等 2026-11-30 22:51:50 | `soak_72h.log` 满 72h，内存无单调增长、DB 一致、登录回包正常 |
+| P1 | A2 装备背包闭环 | ① item/equip config loader + `isEquip`；② `LActor.addItem` 保留 quality/属性；③ 分背包存档；④ InitData/Add/Delete/Update bagType 联动；⑤ att[] 生成 | 真浏览器 `@additem 101001` 装备进 `bagModel[1]`、属性与 C++ golden 对齐、提示正常 |
+| P2 | M6 数值对齐 | 纯击杀 golden（停自动战斗，单怪单杀，剔除串扰） | 用真实 C++ EXP/MONEY 替换 Go `exp=100/gold=1000` 占位 |
+| P3 | A5 暂缓项 | `relive/AddSkill/writePacket/giveAwards` 各自补枚举/容量模型/byte golden | 有证据才恢复，不猜协议 |
+| P4 | gateway 工作集观察 | 5000 路 burst 后未回落，结合 soak 内存趋势 | 判定是否连接泄漏，必要时专项排查 |
+
+- 说明：A2 的 P1 不是"改一个 bagType 字节"，而是配置加载→参数保留→存档模型→全协议链的完整工程项，缺证据宁可暂缓；handle 编码差异已确认无需处理，不要在此浪费工时。
+
